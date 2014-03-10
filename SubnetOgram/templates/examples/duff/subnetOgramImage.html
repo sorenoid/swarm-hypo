@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- <meta http-equiv="refresh" content="60" /> -->
+	<link rel="stylesheet" href="css/duff.css" th:attrprepend="href=${pathToRoot} + 'templates/duff/'" />
+	<script src="includes/duff.js" type="text/javascript" th:attrprepend="src=${pathToRoot} + 'templates/duff/'" > </script>
+	<script src="includes/simpledateformat.js" type="text/javascript" th:attrprepend="src=${pathToRoot}" > </script>
+   <title th:text="${subnetDisplayName} + ' ' + ${textTimeFormat.format(startTime)} + ' - ' + ${textTimeFormat.format(endTime)}">Little Sitkin 07/Jul/2012 01:00 - 07/Jul/2012 01:10</title>
+</head>
+
+<body>
+<!-- Begin top navbar -->
+<div class="nav">
+        <ul class="nav">
+        <select name="networkLinks" class="nav" onchange="window.location=this.value;" th:if="${not #maps.isEmpty(networkLinks) and #maps.size(networkLinks) > 1}"	>
+            <option value="" th:each="network : ${networkLinks.keySet()}" th:text="${network}" th:value="${networkLinks.get(network)}" class="nav" th:selected="${network == networkName}" ></option>
+        </select>
+            <select name="subnetLinks" class="nav" onchange="window.location=this.value;" th:if="${not #maps.isEmpty(subnetLinks) and #maps.size(subnetLinks) > 1}" >
+        <option value="" th:each="subnet : ${subnetLinks.keySet()}" th:text="${subnet}" th:value="${subnetLinks.get(subnet)}" class="nav" th:selected="${subnet == subnetName}" ></option>
+        </select>
+	<li class="nav" title="Load a specific time" onClick="toggle_visibility('absolutetime')">Absolute time</li>
+	<a href="../LittlestSitkin/LittlestSitkin_mosaic.html" th:href="${currentMosaic}" shape="rect"><li class="nav" title="most recent mosaic">Mosaic</li></a>
+	<li class="nav" href="#" onClick="toggle_visibility('colorbar');" shape="rect">Colorbar</li>
+        </ul>
+</div>
+<!-- End top navbar -->
+<div class="clear"></div>
+<form method="get" id="absolutetime" class="hidden">
+<span id="absolutetime">
+			End time (<span th:text="${timeZoneName}"></span>): <input type="text" name="month" value="MM" size="2" /> / <input type="text" name="day" value="DD" size="2" /> / <input type="text" name="year" value="YYYY" size="4" /> 
+			<input type="text" name="hour" value="HH" size="2" />:<input type="text" name="minute" value="MM" size="2" />
+
+<input type="hidden" name="pathDateFormat" value="" th:value="${nextFilePathDateFormat}" />
+<input type="hidden" name="nameDateFormat" value="" th:value="${nextFileNameDateFormat}" />
+<input type="hidden" name="networkName" value="" th:value="${networkName}" />
+<input type="hidden" name="subnetName" value="" th:value="${subnetName}" />
+<input type="hidden" name="pathToRoot" value="" th:value="${pathToRoot}" />
+<input type="hidden" name="fileExtension" value="" th:value="${fileExtension}" />
+<input type="hidden" name="timeZoneOffset" value="" th:value="${timeZoneOffset}" />
+			<input type="button" name="submit" value="Go" onClick="loadAbsoluteTime(this.form)" />
+</span>
+</form>
+<center>
+<div id="title">
+	<div id="navLeft">
+		<a title="" th:title="${previousSubnetName}" href="" th:href="${previousSubnetFile}"><span class="button" title="previous subnet">&#9668;</span></a>
+	</div>
+	<div id="navRight">
+		<a title="" th:title="${nextSubnetName}" href="" th:href="${nextSubnetFile}"><span class="button" title="next subnet" id="navRight">&#9658;</span></a>
+	</div>
+	<div style="width: 100%;" th:text="${subnetDisplayName}"></div>
+
+	<div class="clear" style="height: .25em;"></div>
+
+	<div id="navLeft">
+		<a title="previous image" href="" th:href="${previousFile}"><span class="button" id="navLeft" title="previous image">&#9668;</span></a>
+	</div>
+	<div id="navRight">
+		<a title="next image" id="nextImage" href="" th:href="${nextFile}"><span class="button" style="width: 1em;float: left;" title="next image">&#9658;</span></a>
+		<a title="current image" href="" th:href="${currentFile}"><span class="button" style="width: 2em;float: right;" title="current image">&#9658;&#9658;</span></a>
+	</div>
+	<div style="width: 100%;" th:text="${textTimeFormat.format(startTime)} + ' - ' + ${textTimeFormat.format(endTime)} + ' ' + ${timeZoneName}">01:10 - 01:20 UTC</div>
+</div>
+</center>
+<div class="image">
+	<img src="LittlestSitkin.png" th:src="${imageSettings.fileName} + '.png'"/>
+	<div id="colorbar">
+		<img src="images/colorbar3.png" th:attrprepend="src=${pathToRoot}"/>
+	</div>
+</div>
+</body>
+</html>

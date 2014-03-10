@@ -1,0 +1,52 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-3.dtd"> 
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${name} + ' ' + ${#dates.format(startTime, 'yyyy-MM-dd HH:mm')} + ' - ' + ${#dates.format(endTime, 'HH:mm')}">Little Sitkin 07/Jul/2012 01:00 - 07/Jul/2012 01:10</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="refresh" content="60" th:attr="content=${refresh}" th:if="${refresh}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../css/gtvg.css"  />
+</head> 
+<body>
+
+<div id="nav">
+        <ul>
+  	<li class="subnetlink" th:if="${previous}">
+		<a title="Jump to the previous subnet along the arc, same time period" href="?test" th:text="'\&#9650;  ' + ${previous}">&#9650; Semisopochnoi</a>
+	</li>
+  	<li class="subnetpulldown" th:if="${not #lists.isEmpty(volcanoes)}">
+		<select title="Jump to a different subnet" onchange="window.open('?subnet=', '_top')" name="subnet">
+			<option value="LittleSitkin" th:each="volc : ${volcanoes}" th:text="${volc.getName()}" th:attr="value=${volc.getValue()}">Little Sitkin</option>
+		</select>
+	</li>
+  	<li class="subnetlink" th:if="${next}">
+		<a title="Jump to the next subnet along the arc, same time period" href="" th:text="'&#9660; ' + ${next}">&#9660; Wrangell</a>
+	</li>
+	
+	  	<li>
+		<a title="Jump back in time 10 minutes" href="">&#9668; Earlier</a>
+	</li>
+  	<li>
+		<a title="Jump forward in time 10 minutes" href="">&#9658; Later</a>
+	</li>
+  	<li>
+		<a title="Jump to the most recent spectrogram for LittleSitkin" href="">Latest</a>
+	</li>
+	<li title="Return to last spectrogram mosaic. This is useful when performing twice-daily seismicity checks.">
+		<a href="">Mosaic</a>
+	</li>
+	<li title="Permanent link to this spectrogram" onClick="toggle_visibility('show_url')">Permalink</li>
+        </ul>
+</div>
+
+
+  <!-- ClassLoader template -->
+  <h1 th:text="${name} + ' ' + ${#dates.format(startTime, 'yyyy-MM-dd HH:mm')} + ' - ' + ${#dates.format(endTime, 'HH:mm')}">Little Sitkin 07/Jul/2012 01:00 - 07/Jul/2012 01:10</h1>
+  
+  <h2 th:text="'Next comes ' + ${next}" th:if="${next}">Next</h2>
+  <h2 th:text="'Last was ' + ${previous}" th:if="${previous}">Previous</h2>
+  <p th:text="${welcome2}">Welcome to our grocery store!</p> 
+</body>
+</html>
+

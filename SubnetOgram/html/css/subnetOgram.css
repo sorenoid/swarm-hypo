@@ -1,0 +1,117 @@
+ul.mosaic{
+  list-style: none;
+  width:604px;
+  background:#f00;
+  padding:0;
+  overflow:hidden
+}
+li.mosaic{
+ width:151px;
+ height:198px;
+ margin:0 0px 10px 0;
+ background:#FFF;
+ padding:0;
+ float:left;
+}
+li.mosaic:nth-child(6n+7) {
+  margin-right:0px;
+  clear:left;
+}
+td.mosaic
+{
+	margin:0px;
+	border:0px;
+	padding:0px;
+	overflow: auto;
+	height: 150px; 
+	width: 96px;	
+}
+
+li.nav 
+{
+	color:#565656;
+	position:relative;
+	list-style:none;
+	margin:0px auto;
+	float:left;
+	line-height:1.74em;
+	border:1px solid #FFFFFF;
+	text-align:center;
+	display:block;
+	padding:0.25em 0.25em 0.25em 0.5em;
+	text-decoration:none;
+	/*background-color:#F5F5F5;*/
+	background-color:#DFDFDF;
+	font-size:100%;
+}
+
+/*
+body {background-color:#202020;} 
+
+ul.nav
+{
+	align: center;
+}
+li.nav 
+{
+	color:#cccccc;
+	position:relative;
+	list-style:none;
+  list-style-type: none;
+  list-style-image: none;
+  list-style-position: outside;
+	margin:0px auto;
+	float:left;
+	line-height:1.74em;
+	border:1px solid #000000;
+	text-align:center;
+	display:block;
+	padding:0.25em 0.25em 0.25em 0.5em;
+	text-decoration:none;
+	background-color:#444444;
+	font-size:100%;
+	
+  margin-top: 0px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
+  float: left;
+  line-height: 1.74em;
+  border-top-width: 1px;
+  border-right-width-value: 1px;
+  border-bottom-width: 1px;
+  border-left-width-value: 1px;
+  border-top-style: solid;
+  border-right-style-value: solid;
+  border-bottom-style: solid;
+  border-left-style-value: solid;
+  border-image-source: none;
+  border-image-slice: 100% 100% 100% 100%;
+  border-image-width: 1 1 1 1;
+  border-image-outset: 0 0 0 0;
+  border-image-repeat: stretch stretch;
+  text-align: center;
+  display: block;
+  padding-top: 0.25em;
+  padding-right: 0.25em;
+  padding-bottom: 0.25em;
+  padding-left: 0.5em;
+  font-size: 100%;
+}
+
+li.nav:hover
+{
+  color: #5656ff;
+  background-color: #666666;
+  font-size: 100%;
+}
+*/
+div.clear
+{
+	clear: both;
+}
+
+div.image
+{
+	align:center;
+}

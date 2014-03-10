@@ -1,0 +1,3 @@
+Manifest-Version: 1.0 
+Class-Path: subnetogram-bin.jar commons-collections-3.2.1 javassist.jar JSAP-2.1.jar ognl-2.6.7.jar slf4j-api-1.7.1.jar slf4j-jdk14-1.7.1.jar thymeleaf-2.0.13.jar jtransforms-2.4.jar
+Main-Class: gov.usgs.subnetogram.SgramSiteGenerator

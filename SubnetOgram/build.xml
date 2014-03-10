@@ -1,0 +1,166 @@
+<project name="Subnetogram" default="compile" basedir=".">
+	<description>USGS Swarm Build File</description>
+
+	<property name="package" value="gov.usgs.subnetogram"/>
+	<property name="version" value="1.1"/>
+	<property name="jarfile" value="subnetogram.jar" />
+	<property name="classpath" location="../USGS/contrib/jtransforms-2.4.jar;../USGS/contrib/log4j-1.2.13.jar;../USGS/contrib/seedCodec-1.0.6.jar;../USGS/contrib/fissuresImpl-1.1.13.jar;../USGS/contrib/fissuresUtil-1.0.18.jar;../USGS/contrib/fissuresIDL-1.0.jar;../USGS/lib/winston.jar;../USGS/lib/vdx.jar;../USGS/lib/earthworm.jar;../USGS/lib/math.jar;../USGS/lib/net.jar;../USGS/lib/plot.jar;../USGS/lib/util.jar;../USGS/contrib/colt.jar;../USGS/contrib/JavaSeedLite.jar;../USGS/contrib/looks-2.0.4.jar;../USGS/contrib/forms-1.0.7.jar;../USGS/contrib/jnlp.jar;../USGS/contrib/lib/commons-collections-3.2.1;../USGS/contrib/lib/javassist.jar;../USGS/contrib/lib/JSAP-2.1.jar;../USGS/contrib/lib/ognl-2.6.7.jar;../USGS/contrib/lib/slf4j-api-1.7.1.jar;../USGS/contrib/lib/slf4j-jdk14-1.7.1.jar;../USGS/contrib/thymeleaf-2.0.13.jar" />
+	<property name="source" location="." />
+	<property name="destination" location="./classes"/>	
+
+	<property name="dist-appdir" value="subnetogram" />
+	<property name="dist-tempdir" location="./temp" />
+	<property name="dist-basedir" location="./dist" />
+	<property name="dist-jarfile" value="subnetogram.jar"/>
+	<property name="dist-jarfile-bin" value="subnetogram-bin.jar"/>
+	<property name="classdir" value="classes"/>
+	
+	<target name="help">
+		<echo>
+Available targets:		
+help    -- displays this help information
+init    -- 
+clean   -- remove the classes directory
+compile -- compiles Java code
+jar     -- generates new jarfile
+dist    -- generates new binary distribution
+		</echo>
+	</target>
+	
+	<target name="init">
+	</target>
+
+	<target name="clean" description="remove the classes directory">
+		<delete dir="${destination}"/>
+		<mkdir  dir="${destination}"/>
+	</target>
+
+	<target name="compile" depends="clean" description="compile the source">
+		<javac srcdir="${source}" destdir="${destination}" classpath="${classpath}" target="1.5" debug="on" includeantruntime="false"/>
+		<ant antfile="${source}/../USGS/buildversion.xml" target="version" dir="${source}/../USGS" inheritAll="true">
+			<property name="package" value="${package}"/>
+			<property name="version" value="${version}"/>
+			<property name="srcpath" value="${source}"/>
+			<property name="destpath" value="${destination}"/>
+		</ant>
+	</target>
+
+	<target name="jar" depends="compile" description="generates new jarfile">
+		<mkdir dir="${source}/../USGS/lib"/>
+		<jar destfile="${source}/../USGS/lib/${jarfile}" basedir="${destination}" includes="**/*.class"/>
+	</target>
+	
+	<target name="deploy">
+		<ant target="jar" inheritAll="false" antfile="../USGS/build.xml" />
+	</target>
+
+	<target name="dist" depends="deploy">
+		
+		<!-- rebuild the dist dir -->
+		<delete dir="${dist-basedir}"/>
+		<mkdir  dir="${dist-basedir}"/>
+
+		<!-- Create the distribution directory structure -->
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/" />
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/templates" />
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/config" />
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/doc" />
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/html" />
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/lib" />
+		
+		<jar destfile="${dist-tempdir}/${dist-appdir}/lib/${dist-jarfile-bin}">
+			<fileset dir="${source}/../VDX/${classdir}">
+				<include name="**/**.class" />
+			</fileset>
+			<fileset dir="${source}/../Earthworm/${classdir}">
+				<include name="**/**.class" />
+			</fileset>
+			<fileset dir="${source}/../Plot/${classdir}">
+				<include name="**/**.class" />	
+			</fileset>
+			<fileset dir="${source}/../Swarm/${classdir}">
+				<include name="**/**.class" />	
+			</fileset>
+			<fileset dir="${source}/../Swarm">
+				<include name="**/**.properties" />	
+			</fileset>
+			<fileset dir="${source}/../Math/${classdir}">
+				<include name="**/**.class" />	
+			</fileset>
+			<fileset dir="${source}/../Net/${classdir}">
+				<include name="gov/usgs/net/*.class" />	
+			</fileset>
+			<fileset dir="${source}/../Util/${classdir}">
+				<include name="**/**.class" />	
+			</fileset>
+			<fileset dir="${source}/../SubnetOgram/bin">
+				<include name="**/**.class" />	
+				<include name="**/**.html" />	
+			</fileset>
+			<fileset dir="${source}/../Winston/${classdir}">
+				<include name="**/**.class" />
+			</fileset>
+			<fileset dir="${source}">
+				<include name="images/*.png" />
+				<include name="images/*.jpg" />
+				<include name="images/*.gif" />
+			</fileset>
+		</jar>
+		
+		<jar manifest="src/META-INF/manifest.mf" destfile="${dist-tempdir}/${dist-appdir}/lib/${dist-jarfile}" />
+		
+		<!-- Copy the distribution files -->
+		<copy todir="${dist-tempdir}/${dist-appdir}/lib">
+			<fileset dir="${source}/../USGS/contrib">
+				<include name="colt.jar" />
+				<include name="JavaSeedLite.jar" />
+				<include name="seedCodec-1.0.6.jar" />
+				<include name="looks-2.0.4.jar" />
+				<include name="forms-1.0.7.jar" />
+				<include name="fissuresIDL-1.0.jar" />
+				<include name="fissuresUtil-1.0.18.jar" />
+				<include name="fissuresImpl-1.1.13.jar" />
+				<include name="log4j-1.2.13.jar" />
+				<include name="jtransforms-2.4.jar" />
+				<include name="commons-collections-3.2.1" />
+				<include name="javassist.jar" />
+				<include name="JSAP-2.1.jar" />
+				<include name="ognl-2.6.7.jar" />
+				<include name="slf4j-api-1.7.1.jar" />
+				<include name="slf4j-jdk14-1.7.1.jar" />
+				<include name="thymeleaf-2.0.13.jar" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${dist-tempdir}/${dist-appdir}/config">
+			<fileset dir="${source}/config" />
+		</copy>
+		
+		<copy todir="${dist-tempdir}/${dist-appdir}/templates">
+			<fileset dir="${source}/templates" />
+		</copy>
+		<copy todir="${dist-tempdir}/${dist-appdir}/userDoc">
+			<fileset dir="${source}/userDoc" />
+		</copy>
+		<copy todir="${dist-tempdir}/${dist-appdir}/javadoc">
+			<fileset dir="${source}/javadoc" />
+		</copy>
+		<copy todir="${dist-tempdir}/${dist-appdir}/html">
+			<fileset dir="${source}/html" />
+		</copy>
+		
+		<copy todir="${dist-tempdir}/${dist-appdir}">
+			<fileset dir="${source}">
+				<include name="run.sh" />
+				<include name="run.bat" />
+			</fileset>
+		</copy>
+
+		<tar destfile="${dist-basedir}/subnetogram-bin.tar.gz" basedir="${dist-tempdir}" compression="gzip" />
+		<zip destfile="${dist-basedir}/subnetogram-${version}.zip"    basedir="${dist-tempdir}" />
+		
+		<!-- Delete the temporary distribution folder -->
+		<delete dir="${dist-tempdir}" />
+		
+	</target>
+</project>

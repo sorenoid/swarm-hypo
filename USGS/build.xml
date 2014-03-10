@@ -1,0 +1,96 @@
+<project name="USGS VHP" default="help" basedir=".">
+	<description>USGS VHP Main Build File</description>
+
+	<property name="root" location="."/>
+	<property name="classdir" value="classes"/>
+	<property name="contrib" value="http://volcanoes.usgs.gov/software/contrib"/>
+	
+	<target name="help">
+		<echo>
+Available targets:			
+help    -- displays this help information
+init    --
+clean   -- deletes lib/*.jar files
+touch   -- touch *.java in source tree
+contrib -- download the contrib library (use before building)
+build   -- build the USGS codebase (use after checkout *)
+		</echo>
+	</target>
+	
+	<target name="init">
+	</target>
+
+	<target name="clean">
+		<delete>
+			<fileset dir="${root}/lib/" includes="*.jar"/>
+		</delete>
+	</target>
+	
+	<target name="touch">
+		<touch>
+			<fileset dir="${root}/../" includes="**/*.java"/>
+		</touch>
+	</target>
+	
+	<target name="contrib" depends="init" description="Download the contrib libraries">
+		<mkdir dir="${root}/contrib" />
+		<get src="${contrib}/colt.jar" dest="${root}/contrib/colt.jar" />
+		<get src="${contrib}/comm.jar" dest="${root}/contrib/comm.jar" />
+		<get src="${contrib}/commons-collections-3.2.1.jar" dest="${root}/contrib/commons-collections-3.2.1.jar" />
+		<get src="${contrib}/fissuresIDL-1.0.jar" dest="${root}/contrib/fissuresIDL-1.0.jar" />
+		<get src="${contrib}/fissuresImpl-1.1.13.jar" dest="${root}/contrib/fissuresImpl-1.1.13.jar" />
+		<get src="${contrib}/fissuresUtil-1.0.18.jar" dest="${root}/contrib/fissuresUtil-1.0.18.jar" />
+		<get src="${contrib}/forms-1.0.7.jar" dest="${root}/contrib/forms-1.0.7.jar" />
+		<get src="${contrib}/jai_codec.jar" dest="${root}/contrib/jai_codec.jar" />
+		<get src="${contrib}/jai_core.jar" dest="${root}/contrib/jai_core.jar" />
+		<get src="${contrib}/jnlp.jar" dest="${root}/contrib/jnlp.jar" />
+		<get src="${contrib}/JSAP-2.1.jar" dest="${root}/contrib/JSAP-2.1.jar" />
+		<get src="${contrib}/jtransforms-2.4.jar" dest="${root}/contrib/jtransforms-2.4.jar" />
+		<get src="${contrib}/log4j-1.2.13.jar" dest="${root}/contrib/log4j-1.2.13.jar" />
+		<get src="${contrib}/looks-2.0.4.jar" dest="${root}/contrib/looks-2.0.4.jar" />
+		<get src="${contrib}/mysql.jar" dest="${root}/contrib/mysql.jar" />	
+		<get src="${contrib}/rrd4j-2.0.5.jar" dest="${root}/contrib/rrd4j-2.0.5.jar" />
+		<get src="${contrib}/JavaSeedLite.jar" dest="${root}/contrib/JavaSeedLite.jar" />
+		<get src="${contrib}/seedCodec-1.0.6.jar" dest="${root}/contrib/seedCodec-1.0.6.jar" />
+		<get src="${contrib}/servlet.jar" dest="${root}/contrib/servlet.jar" />
+		<get src="${contrib}/seisFile-1.5.2.jar" dest="${root}/contrib/seisFile-1.5.2.jar" />
+		<get src="${contrib}/slf4j-api-1.7.1.jar" dest="${root}/contrib/slf4j-api-1.7.1.jar" />
+		<get src="${contrib}/slf4j-log4j12-1.7.1.jar" dest="${root}/contrib/slf4j-log4j12-1.7.1.jar" />
+		<get src="${contrib}/javassist.jar" dest="${root}/contrib/javassist.jar" />
+		<get src="${contrib}/thymeleaf-2.0.13.jar" dest="${root}/contrib/thymeleaf-2.0.13.jar" />
+		<get src="${contrib}/ognl-2.6.7.jar" dest="${root}/contrib/ognl-2.6.7.jar" />
+		<get src="${contrib}/oscache-2.1-mod2.jar" dest="${root}/contrib/oscache-2.1-mod2.jar" />			
+		<get src="${contrib}/seedlink_lite_1.2.1.jar" dest="${root}/contrib/" />
+		<get src="${contrib}/seedlink_lite_src_1.2.1.jar" dest="${root}/contrib/" />
+	</target>
+	
+	<target name="build" depends="init" description="Build USGS codebase">
+		<!-- Order is important.  Some projects depend on others. -->
+		<ant target="jar" inheritAll="false" antfile="${root}/../Util/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Math/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Net/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Plot/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Pinnacle/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../VDX/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Valve3/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Earthworm/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Winston/build.xml" />
+		<ant target="jar" inheritAll="false" antfile="${root}/../Swarm/build.xml" />
+	</target>
+	
+	<target name="jar" depends="build" description="Create one large jar file">
+		<jar destfile="${root}/lib/usgs.jar">
+			<fileset includes="**/**.class" dir="${root}/../Util/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Earthworm/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Math/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Net/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Pinnacle/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Plot/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Swarm/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Valve3/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../VDX/${classdir}" />
+			<fileset includes="**/**.class" dir="${root}/../Winston/${classdir}" />
+		</jar>
+	</target>
+	
+</project>

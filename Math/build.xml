@@ -1,0 +1,45 @@
+<project name="Math" default="compile" basedir=".">
+	<description>USGS Math Build File</description>
+
+	<property name="package" value="gov.usgs.math"/>
+	<property name="version" value="3.0.0"/>
+	<property name="jarfile" value="math.jar"/>
+	<property name="classpath" location="../USGS/lib/util.jar;../USGS/contrib/colt.jar;../USGS/contrib/jtransforms-2.4.jar"/>		
+	<property name="source" location="."/>
+	<property name="destination" location="./classes"/>	
+	
+	<target name="help">
+		<echo>
+Available targets:			
+help    -- displays this help information
+init    --
+clean   -- remove the classes directory
+compile -- compiles the source
+jar     -- generates new jarfile
+		</echo>
+	</target>
+	
+	<target name="init">
+	</target>
+
+	<target name="clean" description="remove the classes directory">
+		<delete dir="${destination}"/>
+		<mkdir  dir="${destination}"/>
+	</target>
+
+	<target name="compile" depends="clean" description="compile the source">
+		<javac srcdir="${source}" destdir="${destination}" classpath="${classpath}" target="1.5" debug="on" includeantruntime="false"/>
+		<ant antfile="${source}/../USGS/buildversion.xml" target="version" dir="${source}/../USGS" inheritAll="true">
+			<property name="package" value="${package}"/>
+			<property name="version" value="${version}"/>
+			<property name="srcpath" value="${source}"/>
+			<property name="destpath" value="${destination}"/>
+		</ant>
+	</target>
+
+	<target name="jar" depends="compile" description="generates new jarfile">
+		<mkdir dir="${source}/../USGS/lib"/>
+		<jar destfile="${source}/../USGS/lib/${jarfile}" basedir="${destination}" includes="**/*.class"/>
+	</target>
+
+</project>

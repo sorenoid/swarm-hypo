@@ -1,0 +1,34 @@
+////////////////////////////////////////////////////////////////////////////////
+//  DO NOT MODIFY THIS FILE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING.
+////////////////////////////////////////////////////////////////////////////////
+package PACKAGE_VALUE;
+
+/**
+ * This class is copied into a directory, fields are changed, it is compiled,
+ * jarred, and then deleted.  It is important that each of the .jar files stores
+ * its version internally and this avoids any headaches with CVS complaining
+ * every time the thing is rebuilt.
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/03/29 21:08:59  cervelli
+ * Made fields final.
+ *
+ * Revision 1.2  2004/10/14 00:08:23  cvs
+ * Auto build versioning script.
+ *
+ * Revision 1.1  2004/10/13 23:19:21  cvs
+ * Initial commit.
+ *
+ * @author Dan Cervelli
+ */
+public class Version
+{
+	public static final String VERSION = "VERSION_VALUE";
+	public static final String BUILD_DATE = "BUILD_DATE_VALUE";
+	
+	public static void main(String[] args)
+	{
+		System.out.println("Version: " + VERSION);
+		System.out.println("Built: " + BUILD_DATE);
+	}
+}
