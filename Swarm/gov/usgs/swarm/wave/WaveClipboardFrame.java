@@ -1,5 +1,7 @@
 package gov.usgs.swarm.wave;
 
+import gov.usgs.swarm.FileSpec;
+import gov.usgs.swarm.FileSpec.Component;
 import gov.usgs.swarm.Icons;
 import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
@@ -8,6 +10,7 @@ import gov.usgs.swarm.SwarmUtil;
 import gov.usgs.swarm.SwingWorker;
 import gov.usgs.swarm.Throbber;
 import gov.usgs.swarm.TimeListener;
+import gov.usgs.swarm.WaveFileSpec;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
@@ -66,12 +69,17 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.xml.bind.JAXBException;
 
 /**
  * The wave clipboard internal frame.
  * 
  * @author Dan Cervelli
  * @version $Id: WaveClipboardFrame.java,v 1.10 2007-05-21 02:46:14 dcervelli
+ *          Exp $
+ 
+ * @author chirag patel
+ * @version $Id: WaveClipboardFrame.java,v 1.10 2014-03-14 02:46:14 cpatel
  *          Exp $
  */
 public class WaveClipboardFrame extends SwarmFrame {
@@ -124,6 +132,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private int waveHeight = -1;
 
 	private int lastClickedIndex = -1;
+	
+	private WaveFileSpec waveFileSpec = new WaveFileSpec();
 
 	public WaveClipboardFrame() {
 		super("Wave Clipboard", true, true, true, false);
@@ -140,6 +150,14 @@ public class WaveClipboardFrame extends SwarmFrame {
 					repositionWaves(st, et);
 			}
 		};
+	}
+	
+	public void saveFileSpec() {
+		try {
+			waveFileSpec.saveFileSpec();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public HelicorderViewPanelListener getLinkListener() {
@@ -474,8 +492,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		});
 
 		selectListener = new WaveViewPanelAdapter() {
-			public void mousePressed(WaveViewPanel src, MouseEvent e,
-					boolean dragging) {
+			public void mousePressed(WaveViewPanel src, MouseEvent e, boolean dragging) {
 				requestFocusInWindow();
 				int thisIndex = getWaveIndex(src);
 				if (!e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
@@ -939,6 +956,17 @@ public class WaveClipboardFrame extends SwarmFrame {
 		doButtonEnables();
 		waveBox.validate();
 	}
+	
+	public FileSpec getFileSpec(String filename) {
+		FileSpec selectedFileSpec = waveFileSpec.getFileSpec(filename);
+		return selectedFileSpec;
+	}
+
+	public ArrayList<FileSpec> getRelatedFileSpecs(int channelCount) {
+		ArrayList<FileSpec> relatedFileSpecs = waveFileSpec
+				.getFileSpecs(channelCount);
+		return relatedFileSpecs;
+	}
 
 	private synchronized void deselect(final WaveViewPanel p) {
 		selectedSet.remove(p);
@@ -1211,5 +1239,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 			g.setColor(Color.black);
 			g.drawString("Clipboard empty.", dim.width / 2 - 40, dim.height / 2);
 		}
+	}
+	
+	public WaveFileSpec getWaveFileSpec() {
+		return waveFileSpec;
 	}
 }

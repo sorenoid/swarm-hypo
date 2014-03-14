@@ -7,16 +7,23 @@ import edu.iris.Fissures.seed.container.SeedObjectContainer;
 import edu.iris.Fissures.seed.container.Waveform;
 import edu.iris.Fissures.seed.director.ImportDirector;
 import edu.iris.Fissures.seed.director.SeedImportDirector;
+import gov.usgs.swarm.FileSpec;
+import gov.usgs.swarm.FileSpec.Component;
 import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.SwarmDialog;
 import gov.usgs.swarm.SwingWorker;
+import gov.usgs.swarm.WaveLabelDialog;
+
 import gov.usgs.util.CodeTimer;
 import gov.usgs.util.CurrentTime;
 import gov.usgs.util.Util;
 import gov.usgs.vdx.data.heli.HelicorderData;
 import gov.usgs.vdx.data.wave.SAC;
+import gov.usgs.vdx.data.wave.SeisanChannel;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
+import gov.usgs.vdx.data.wave.SeisanFile;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.Callable;
+
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -45,15 +54,23 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.xml.bind.JAXBException;
 
 /**
  * 
  * @author Dan Cervelli
  */
+ 
+/**
+ * 
+ * @author Chirag Patel
+ */
 public class FileDataSource extends AbstractCachingDataSource {
 
 	private Map<String, double[]> channelTimes;
 	private Set<String> openFiles;
+	
+	WaveLabelDialog wvd = new WaveLabelDialog();
 
 	public FileDataSource() {
 		super();
@@ -86,21 +103,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 		ct[1] = Math.max(ct[1], t2);
 	}
 
-	private enum FileType {
-		TEXT, SAC, SEED, UNKNOWN;
-
-		public static FileType fromFile(File f) {
-			String fn = f.getPath().toLowerCase();
-			if (fn.endsWith(".sac"))
-				return SAC;
-			else if (fn.endsWith(".txt"))
-				return TEXT;
-			else if (fn.endsWith(".seed"))
-				return SEED;
-			else
-				return UNKNOWN;
-		}
-	}
+	
 
 	private class FileTypeDialog extends SwarmDialog {
 		private static final long serialVersionUID = 1L;
@@ -185,7 +188,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 	public void openFiles(File[] fs) {
 		FileTypeDialog dialog = null;
 		for (int i = 0; i < fs.length; i++) {
-			FileType ft = FileType.fromFile(fs[i]);
+			FileType ft = FileType.fromFileExtension(fs[i]);
 			if (ft == FileType.UNKNOWN) {
 				if (dialog == null)
 					dialog = new FileTypeDialog();
@@ -209,6 +212,9 @@ public class FileDataSource extends AbstractCachingDataSource {
 				break;
 			case SEED:
 				openSeedFile(fs[i].getPath());
+				break;
+			case SEISAN:
+				openSEISANFile(fs[i].getPath(), fs[i].getName());
 				break;
 			case UNKNOWN:
 				Swarm.logger.warning("unknown file type: " + fs[i].getPath());
@@ -254,6 +260,8 @@ public class FileDataSource extends AbstractCachingDataSource {
 				fireChannelsUpdated();
 				return result;
 			}
+			
+			
 
 			public void finished() {
 				if (getValue() != null) {
@@ -265,14 +273,197 @@ public class FileDataSource extends AbstractCachingDataSource {
 		};
 		worker.start();
 	}
+	
+	public void openSEISANFile(final String fn, final String fName) {
+		
+		if (openFiles.contains(fn))
+			return;
+
+		SwingWorker worker = new SwingWorker() {
+			ArrayList<Component> components = new ArrayList<Component>();
+			@Override
+			public Object construct() {
+				wvd = new WaveLabelDialog();
+				Object result = null;
+				fireChannelsProgress(fn, 0);
+				try {
+					String channel = null;
+					Swarm.logger.fine("opening SEISAN file: " + fn);
+					SeisanFile seisan = new SeisanFile();
+					seisan.read(fn);
+					fireChannelsProgress(fn, 0.5);
+					ArrayList<FileSpec> fss = getRelatedFileSpecs(seisan
+							.getChannels().size());
+					
+					String prevStation = "";
+					String prevNetwork = "";
+					String prevComp = "";
+					
+					for (int i = 0; i < seisan.getChannels().size(); i++) {
+						SeisanChannel c = seisan.getChannels().get(i);
+						if (!c.channel.isPopulated()) {
+							
+								String st = c.channel.stationCode;
+								String nt = c.channel.networkName ;
+								String ft = c.channel.firstTwoComponentCode ;
+								
+								if(st == null || st.isEmpty() || st.trim().length() == 0){
+									st = prevStation;
+								}
+								
+								if(nt == null || nt.isEmpty() || nt.trim().length()==0){
+									nt = prevNetwork;
+								}	
+								
+								if(ft == null || ft.isEmpty() || ft.trim().length()==0){
+									ft = prevComp;
+								}	
+
+								SimpleChannel sc = new SimpleChannel(null, nt,st,
+										ft, c.channel.lastComponentCode);
+									if (wvd.getSelectedFileSpec() == null) {
+									editLabels(sc, fss, fName, i + 1);
+									if (wvd.getSelectedFileSpec() == null) {
+										sc = new SimpleChannel(null,
+												wvd.getNetwork(), wvd.getStation(),
+												wvd.getFirstTwoComponent(),
+												wvd.getLastComponentCode());
+										channel = "Channel "+ (i+1)+ " : " + sc.toString;
+									}else{
+										Component comp = wvd.getSelectedFileSpec()
+										.getComponent(i + 1);
+										sc = new SimpleChannel(null,
+												comp.getNetworkCode(),
+												comp.getStationCode(),
+												comp.getComponentCode(),
+												comp.getLastComponentCode());
+										channel =  "Channel "+ (i+1)+ " : " + sc.toString;
+									}
+								}else{
+									Component comp = wvd.getSelectedFileSpec()
+									.getComponent(i + 1);
+									sc = new SimpleChannel(null,
+											comp.getNetworkCode(),
+											comp.getStationCode(),
+											comp.getComponentCode(),
+											comp.getLastComponentCode());
+									channel =  "Channel "+ (i+1)+ " : " + sc.toString;
+								}
+								
+								prevStation = sc.stationCode;
+								prevNetwork = sc.networkName;
+								prevComp = sc.firstTwoComponentCode;
+								
+								
+								Component comp = new Component();
+								comp.setIndex(i+1);
+								comp.setComponentCode(sc.firstTwoComponentCode);
+								comp.setLastComponentCode(sc.lastComponentCode);
+								comp.setNetworkCode(sc.networkName);
+								comp.setStationCode(sc.stationCode);
+								components.add(comp);
+						} else {
+							channel =  "Channel "+ (i+1)+ " : " + c.channel.toString;
+							Component comp = new Component();
+							comp.setIndex(i+1);
+							comp.setComponentCode(c.channel.firstTwoComponentCode);
+							comp.setLastComponentCode(c.channel.lastComponentCode);
+							comp.setNetworkCode(c.channel.networkName);
+							comp.setStationCode(c.channel.stationCode);
+							components.add(comp);
+							
+							
+							prevStation = c.channel.stationCode;
+							prevNetwork = c.channel.networkName;
+							prevComp = c.channel.firstTwoComponentCode;
+						}
+
+						Metadata md = Swarm.config.getMetadata(channel, true);
+						md.addGroup("SEISAN^" + fn);
+
+						// Wave wave = seisan.toWave();
+						Wave wave = c.toWave();
+						updateChannelTimes(channel, wave.getStartTime(),
+								wave.getEndTime());
+						cacheWaveAsHelicorder(channel, wave);
+						putWave(channel, wave);
+						openFiles.add(fn);
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
+					result = t;
+				}
+				fireChannelsProgress(fn, 1);
+				fireChannelsUpdated();
+				return result;
+			}
+
+			@Override
+			public void finished() {
+				if (getValue() != null) {
+					JOptionPane.showMessageDialog(Swarm.getApplication(),
+							"Could not open SEISAN file: " + fn, "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}else{
+					saveDetailstoFileSpec(fName,components);
+				}
+			}
+		};
+		worker.start();
+	}
+	
+	private void editLabels(final SimpleChannel sc, ArrayList<FileSpec> fss, String fileName, int index) {
+		wvd.setWaveViewPanel(sc, fileName, index);
+		wvd.setActionAfterFinish(new Callable<Object>() {
+			@Override
+			public Object call() throws Exception {
+				return null;
+			}
+		});
+		wvd.setFileSpecs(fss);
+		wvd.setVisible(true);
+//		return wvd.isOK;
+	}
+	
+	
+	private void saveDetailstoFileSpec(String fileName, ArrayList<Component> components) {
+        try {
+			FileSpec fileSpec = Swarm.getApplication().getWaveClipboard()
+					.getWaveFileSpec()
+					.getFileSpec(fileName);
+			if (fileSpec == null) {
+				fileSpec = new FileSpec();
+				fileSpec.setFileName(fileName);
+				Swarm.getApplication().getWaveClipboard().getWaveFileSpec()
+						.getSpecs().add(fileSpec);
+				fileSpec.setComponents(components);
+			}else{
+				fileSpec.setComponents(components);
+			}
+			Swarm.getApplication().getWaveClipboard().getWaveFileSpec()
+					.saveFileSpec();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<FileSpec> getRelatedFileSpecs(int channelCount) {
+		ArrayList<FileSpec> relatedFileSpecs = Swarm.getApplication().getWaveClipboard().getWaveFileSpec()
+				.getFileSpecs(channelCount);
+		return relatedFileSpecs;
+	}
 
 	// TODO: can optimize memory usage further by added combined parts as you
 	// go.
+	
+	
+	
 	public void openSeedFile(final String fn) {
 		if (openFiles.contains(fn))
 			return;
 
 		SwingWorker worker = new SwingWorker() {
+			@Override
 			public Object construct() {
 				Object result = null;
 				try {
@@ -354,7 +545,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 						}
 					}
 					ct.mark("insert");
-					ct.stopAndReport();
+					ct.stop();
 					openFiles.add(fn);
 				} catch (Throwable t) {
 					t.printStackTrace();
@@ -365,6 +556,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 				return result;
 			}
 
+			@Override
 			public void finished() {
 				if (getValue() != null) {
 					JOptionPane.showMessageDialog(Swarm.getApplication(),
@@ -392,8 +584,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 		if ((factor * multiplier) != 0.0) { // in the case of log records
 			sampleRate = (float) (java.lang.Math.pow(
 					java.lang.Math.abs(factor),
-					(factor / java.lang.Math.abs(factor))) * java.lang.Math
-					.pow(java.lang.Math.abs(multiplier),
+					(factor / java.lang.Math.abs(factor))) * java.lang.Math.pow(java.lang.Math.abs(multiplier),
 							(multiplier / java.lang.Math.abs(multiplier))));
 		}
 		return sampleRate;
@@ -447,4 +638,43 @@ public class FileDataSource extends AbstractCachingDataSource {
 		return name + ";file:";
 	}
 
+
+
+public enum FileType {
+		TEXT, SAC, SEED, WIN, SEISAN, UNKNOWN;
+
+		public static FileType fromFile(String f) {
+
+			if (f == "SAC")
+				return SAC;
+			else if (f.equalsIgnoreCase("TEXT"))
+				return TEXT;
+			else if (f.equalsIgnoreCase("SEISAN"))
+				return SEISAN;
+			else if (f.equalsIgnoreCase("SEED"))
+				return SEED;
+			else if (f.equalsIgnoreCase("WIN"))
+				return WIN;
+			else
+				return UNKNOWN;
+		}
+
+		public static FileType fromFileExtension(File f) {
+			if (f.getPath().endsWith(".sac"))
+				return SAC;
+			else if (f.getPath().endsWith(".txt"))
+				return TEXT;
+			else if (f.getPath().endsWith(".seed"))
+				return SEED;
+			else if (f.getPath().endsWith(".win"))
+				return WIN;
+			else if (f.getPath().endsWith(".seisan"))
+				return SEISAN;
+			else
+				return UNKNOWN;
+		}
+	}
 }
+
+
+

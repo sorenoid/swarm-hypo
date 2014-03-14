@@ -157,6 +157,7 @@ public class Config
 	public static Config createConfig(String[] args)
 	{
 		Swarm.logger.fine("current directory: " + System.getProperty("user.dir"));
+		
 		Swarm.logger.fine("user.home: " + System.getProperty("user.home"));
 		String configFile = System.getProperty("user.home") + File.separatorChar + DEFAULT_CONFIG_FILE;
 		
