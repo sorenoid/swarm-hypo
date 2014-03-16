@@ -15,6 +15,7 @@ import gov.usgs.util.CurrentTime;
 import gov.usgs.util.Log;
 import gov.usgs.util.Util;
 import gov.usgs.util.ui.GlobalKeyManager;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.Dimension;
@@ -700,7 +701,7 @@ public class Swarm extends JFrame
 	public void loadClipboardWave(final SeismicDataSource source, final String channel)
 	{
 		final WaveViewPanel wvp = new WaveViewPanel();
-		wvp.setChannel(channel);
+		wvp.setChannel(SimpleChannel.parse(channel));
 		wvp.setDataSource(source);
 		WaveViewPanel cwvp = waveClipboard.getSelected();
 		double st = 0;

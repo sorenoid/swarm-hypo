@@ -7,6 +7,7 @@ import gov.usgs.swarm.Throbber;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.util.CurrentTime;
 import gov.usgs.util.Util;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.BorderLayout;
@@ -170,7 +171,7 @@ public class WaveViewerFrame extends JInternalFrame implements Runnable
 //		System.out.println(sw);
 		waveViewPanel.setWorking(true);
 		waveViewPanel.setWave(sw, now - SPANS[spanIndex], now);
-		waveViewPanel.setChannel(channel);
+		waveViewPanel.setChannel(SimpleChannel.parse(channel));
 		waveViewPanel.setDataSource(dataSource);
 		waveViewPanel.setWorking(false);
 		waveViewPanel.repaint();

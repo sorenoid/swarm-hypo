@@ -11,7 +11,9 @@ import gov.usgs.swarm.SwingWorker;
 import gov.usgs.swarm.Throbber;
 import gov.usgs.swarm.TimeListener;
 import gov.usgs.swarm.WaveFileSpec;
+import gov.usgs.swarm.WaveLabelDialog;
 import gov.usgs.swarm.data.CachedDataSource;
+import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
 import gov.usgs.util.Time;
@@ -20,6 +22,10 @@ import gov.usgs.util.png.PngEncoder;
 import gov.usgs.util.png.PngEncoderB;
 import gov.usgs.util.ui.ExtensionFileFilter;
 import gov.usgs.vdx.data.wave.SAC;
+import gov.usgs.vdx.data.wave.SeisanChannel;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
+import gov.usgs.vdx.data.wave.SeisanFile;
+import gov.usgs.vdx.data.wave.WIN;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.BorderLayout;
@@ -49,6 +55,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TimeZone;
+import java.util.concurrent.Callable;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -105,6 +112,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private JButton captureButton;
 	private JButton histButton;
 	private DateFormat saveAllDateFormat;
+	private static boolean isSeisanFile = false;
 
 	private WaveViewPanelListener selectListener;
 	private WaveViewSettingsToolbar waveToolbar;
@@ -118,6 +126,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private JButton forwardButton;
 	private JButton backButton;
 	private JButton gotoButton;
+	private WaveLabelDialog wvd;
 
 	private JPopupMenu popup;
 
@@ -520,8 +529,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 				lastClickedIndex = thisIndex;
 			}
 
-			public void waveZoomed(WaveViewPanel src, double st, double et,
-					double nst, double net) {
+			public void waveZoomed(WaveViewPanel src, double st, double et,	double nst, double net) {
 				double[] t = new double[] { st, et };
 				addHistory(src, t);
 				for (WaveViewPanel wvp : selectedSet) {
@@ -590,8 +598,11 @@ public class WaveClipboardFrame extends SwarmFrame {
 					"Matlab-readable text files");
 			ExtensionFileFilter sacExt = new ExtensionFileFilter(".sac",
 					"SAC files");
+			ExtensionFileFilter seisanExt = new ExtensionFileFilter(".seisan",
+					"SEISAN files");
 			chooser.addChoosableFileFilter(txtExt);
 			chooser.addChoosableFileFilter(sacExt);
+			chooser.addChoosableFileFilter(seisanExt);
 			chooser.setDialogTitle("Open Wave");
 			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
 			File lastPath = new File(Swarm.config.lastPath);
@@ -672,10 +683,10 @@ public class WaveClipboardFrame extends SwarmFrame {
 						String fn = f.getPath().toLowerCase();
 						if (fn.endsWith(".sac")) {
 							SAC sac = selected.getWave().toSAC();
-							String[] scn = selected.getChannel().split(" ");
-							sac.kstnm = scn[0];
-							sac.kcmpnm = scn[1];
-							sac.knetwk = scn[2];
+							SimpleChannel chan = selected.getChannel();
+							sac.kstnm = chan.stationCode;// scn[0];
+							sac.kcmpnm = chan.firstTwoComponentCode + chan.lastComponentCode;// scn[1];
+							sac.knetwk = chan.networkName;// scn[2];
 							sac.write(f);
 						} else
 							selected.getWave().exportToText(f.getPath());
@@ -735,13 +746,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 								dir.mkdir();
 
 							SAC sac = sw.toSAC();
-							String[] scn = wvp.getChannel().split(" ");
-							sac.kstnm = scn[0];
-							sac.kcmpnm = scn[1];
-							sac.knetwk = scn[2];
+							// String[] scn = wvp.getChannel().split(" ");
+							// sac.kstnm = scn[0];
+							// sac.kcmpnm = scn[1];
+							// sac.knetwk = scn[2];
 							sac.write(new File(dir.getPath()
 									+ File.separatorChar
-									+ wvp.getChannel().replace(' ', '.')));
+									+ wvp.getChannel().toString.replace(' ' , '.')) +".sac");
 						}
 					}
 					Swarm.config.lastPath = f.getPath();
@@ -758,18 +769,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		}
 	}
 
-	private enum FileType {
-		TEXT, SAC, UNKNOWN;
-
-		public static FileType fromFile(File f) {
-			if (f.getPath().endsWith(".sac"))
-				return SAC;
-			else if (f.getPath().endsWith(".txt"))
-				return TEXT;
-			else
-				return UNKNOWN;
-		}
-	}
+	
 
 	private SAC readSAC(File f) {
 		SAC sac = new SAC();
@@ -780,15 +780,58 @@ public class WaveClipboardFrame extends SwarmFrame {
 		}
 		return sac;
 	}
+	
+	private WIN readWIN(File f) {
+		WIN win = new WIN();
+		try {
+			win.read(f.getPath());
+		} catch (Exception ex) {
+			win = null;
+		}
+		return win;
+	}
+	
+	private SeisanFile readSEISAN(File f) {
+		SeisanFile seisan = new SeisanFile();
+
+		try {
+			seisan.read(f.getPath());
+			// System.out.println(seisan.toWave());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			seisan = null;
+		}
+		return seisan;
+	}
+	
+	public WaveViewPanel getWave(String filePath, int fileIndex) {
+		for (WaveViewPanel wvp : waves) {
+			if (wvp.getFilePath().equals(filePath)
+					&& wvp.getFileIndex() == fileIndex) {
+				return wvp;
+			}
+		}
+		return null;
+	}
+
 
 	public void openFile(File f) {
+		wvd = new WaveLabelDialog();
 		SAC sac = null;
 		Wave sw = null;
+		SeisanFile seisan = null;
+		WIN win = null;
 		String channel = f.getName();
-		FileType ft = FileType.fromFile(f);
+		FileType ft = FileType.fromFileExtension(f);
 		switch (ft) {
 		case SAC:
 			sac = readSAC(f);
+			break;
+		case WIN:
+			win = readWIN(f);
+			break;
+		case SEISAN:
+			seisan = readSEISAN(f);
 			break;
 		case TEXT:
 			sw = Wave.importFromText(f.getPath());
@@ -802,24 +845,308 @@ public class WaveClipboardFrame extends SwarmFrame {
 			break;
 		}
 
+		ArrayList<Component> components = new ArrayList<Component>();
 		if (sac != null) {
+			isSeisanFile = false;
 			sw = sac.toWave();
-			channel = sac.getWinstonChannel().replace('$', ' ');
+			channel = sac.getWinstonChannel().replace('$', ' ') + "_index_1";
+			WaveViewPanel po = getWave(f.getAbsolutePath(), 1);
+			if (po == null) {
+				ArrayList<FileSpec> fss = getRelatedFileSpecs(1);
+				WaveViewPanel wvp = new WaveViewPanel();
+
+				wvp.setWave(sw, sw.getStartTime(), sw.getEndTime());
+				wvp.setFileName(f.getName());
+				wvp.setFileType(ft.name());
+				wvp.setFileIndex(1);
+				wvp.setFilePath(f.getAbsolutePath());
+				WaveViewPanel p = new WaveViewPanel(wvp);
+				if (!isChannelInfoValid(p)) {
+					editLabels(p, fss);
+					if (wvd.getSelectedFileSpec() == null) {
+						p.setStationInfo(wvd.getStation(),
+								wvd.getFirstTwoComponent(), wvd.getNetwork(),
+								wvd.getLastComponentCode());
+					} else {
+						Component comp = wvd.getSelectedFileSpec()
+								.getComponent(p.getFileIndex());
+
+						p.setStationInfo(comp.getStationCode(),
+								comp.getComponentCode(), comp.getNetworkCode(),
+								comp.getLastComponentCode());
+					}
+
+				}
+				
+				Component comp = new Component();
+				comp.setIndex(1);
+				comp.setComponentCode(p.getChannel().firstTwoComponentCode);
+				comp.setLastComponentCode(p.getChannel().lastComponentCode);
+				comp.setNetworkCode(p.getChannel().networkName);
+				comp.setStationCode(p.getChannel().stationCode);
+				components.add(comp);
+
+				channel = p.getChannel().toString;
+				CachedDataSource cache = CachedDataSource.getInstance();
+				cache.putWave(channel, sw);
+				p.setDataSource(cache);
+				select(p);
+				WaveClipboardFrame.this.addWave(p);
+			}else{
+				Component comp = new Component();
+				comp.setIndex(1);
+				comp.setComponentCode(po.getChannel().firstTwoComponentCode);
+				comp.setLastComponentCode(po.getChannel().lastComponentCode);
+				comp.setNetworkCode(po.getChannel().networkName);
+				comp.setStationCode(po.getChannel().stationCode);
+				components.add(comp);
+			}
+			saveDetailstoFileSpec(f.getName(), components);
+
+		} else if (win != null) {
+			isSeisanFile = false;
+			Wave[] waves = win.toWave();
+			ArrayList<FileSpec> fss = getRelatedFileSpecs(waves.length);
+			
+			String prevStation = "";
+			String prevNetwork = "";
+			String prevComp = "";
+			
+			for (int i = 0; i < waves.length; i++) {
+				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
+				if (po == null) {
+					sw = waves[i];
+					WaveViewPanel wvp = new WaveViewPanel();
+
+					wvp.setWave(sw, sw.getStartTime(), sw.getEndTime());
+					wvp.setFileName(f.getName());
+					wvp.setFileType(ft.name());
+					wvp.setFileIndex(i + 1);
+					wvp.setFilePath(f.getAbsolutePath());
+					WaveViewPanel p = new WaveViewPanel(wvp);
+					if (!isChannelInfoValid(p)) {
+						
+						p.setStationInfo(prevStation,
+								prevComp,
+								prevNetwork,
+								"");
+						
+						if (wvd.getSelectedFileSpec() == null) {
+							editLabels(p, fss);
+							p.setStationInfo(wvd.getStation(),
+									wvd.getFirstTwoComponent(),
+									wvd.getNetwork(),
+									wvd.getLastComponentCode());
+						} else {
+							Component comp = wvd.getSelectedFileSpec()
+									.getComponent(p.getFileIndex());
+
+							p.setStationInfo(comp.getStationCode(),
+									comp.getComponentCode(),
+									comp.getNetworkCode(),
+									comp.getLastComponentCode());
+						}
+					}else{
+						Component comp = wvd.getSelectedFileSpec()
+						.getComponent(p.getFileIndex());
+
+						p.setStationInfo(comp.getStationCode(),
+								comp.getComponentCode(),
+								comp.getNetworkCode(),
+								comp.getLastComponentCode());
+					}
+					
+					
+					prevStation = p.getStationCode();
+					prevNetwork = p.getNetwork();
+					prevComp = p.getFirstComp();
+					
+					Component comp = new Component();
+					comp.setIndex(i + 1);
+					comp.setComponentCode(p.getChannel().firstTwoComponentCode);
+					comp.setLastComponentCode(p.getChannel().lastComponentCode);
+					comp.setNetworkCode(p.getChannel().networkName);
+					comp.setStationCode(p.getChannel().stationCode);
+					components.add(comp);
+
+					channel = p.getChannel().toString;
+					CachedDataSource cache = CachedDataSource.getInstance();
+					cache.putWave(channel, sw);
+					p.setDataSource(cache);
+					select(p);
+					WaveClipboardFrame.this.addWave(p);
+				}
+				else{
+					Component comp = new Component();
+					comp.setIndex(i + 1);
+					comp.setComponentCode(po.getChannel().firstTwoComponentCode);
+					comp.setLastComponentCode(po.getChannel().lastComponentCode);
+					comp.setNetworkCode(po.getChannel().networkName);
+					comp.setStationCode(po.getChannel().stationCode);
+					components.add(comp);
+				}
+			}
+			saveDetailstoFileSpec(f.getName(), components);
 		}
 
-		if (sw != null) {
-			WaveViewPanel wvp = new WaveViewPanel();
-			wvp.setChannel(channel);
-			CachedDataSource cache = CachedDataSource.getInstance();
+		else if (seisan != null) {
+			isSeisanFile = true;
+			sw = new Wave();
+			ArrayList<FileSpec> fss = getRelatedFileSpecs(seisan.getChannels()
+					.size());
+			
+			String prevStation = "";
+			String prevNetwork = "";
+			String prevComp = "";
+			
+			for (int i = 0; i < seisan.getChannels().size(); i++) {
+				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
+				if (po == null) {
+					SeisanChannel c = seisan.getChannels().get(i);
+					
+					sw = c.toWave();
+					WaveViewPanel wvp = new WaveViewPanel();
 
-			cache.putWave(channel, sw);
-			wvp.setDataSource(cache);
-			wvp.setWave(sw, sw.getStartTime(), sw.getEndTime());
-			WaveClipboardFrame.this.addWave(new WaveViewPanel(wvp));
-		} else
+					wvp.setWave(sw, sw.getStartTime(), sw.getEndTime());
+					wvp.setFileName(f.getName());
+					wvp.setFilePath(f.getAbsolutePath());
+					wvp.setFileType(ft.name());
+					wvp.setFileIndex(i + 1);
+					WaveViewPanel p = new WaveViewPanel(wvp);
+					
+					p.setStationInfo(c.channel.stationCode,
+								c.channel.firstTwoComponentCode,
+								c.channel.networkName,
+								c.channel.lastComponentCode);
+					
+					if (!isChannelInfoValid(p)) {
+						
+						String st = c.channel.stationCode;
+						String nt = c.channel.networkName ;
+						String fc = c.channel.firstTwoComponentCode;
+						
+						if(st == null || st.isEmpty() || st.trim().length() == 0){
+							st = prevStation;
+						}
+						
+						if(nt == null || nt.isEmpty() || nt.trim().length()==0){
+							nt = prevNetwork;
+						}	
+						
+						
+						
+						if(fc == null || fc.isEmpty() || fc.trim().length()==0){
+							fc = prevComp;
+						}	
+						
+						p.setStationInfo(st,
+								fc,
+								nt,
+								c.channel.lastComponentCode);
+						
+						if (wvd.getSelectedFileSpec() == null) {
+							editLabels(p, fss);
+							if (wvd.getSelectedFileSpec() == null) {
+								p.setStationInfo(wvd.getStation(),
+										wvd.getFirstTwoComponent(),
+										wvd.getNetwork(),
+										wvd.getLastComponentCode());
+							} else {
+								Component comp = wvd.getSelectedFileSpec()
+										.getComponent(p.getFileIndex());
+
+								p.setStationInfo(comp.getStationCode(),
+										comp.getComponentCode(),
+										comp.getNetworkCode(),
+										comp.getLastComponentCode());
+							}
+						}else{
+							Component comp = wvd.getSelectedFileSpec()
+							.getComponent(p.getFileIndex());
+
+							p.setStationInfo(comp.getStationCode(),
+									comp.getComponentCode(),
+									comp.getNetworkCode(),
+									comp.getLastComponentCode());
+						}
+					}
+
+					prevStation = p.getStationCode();
+					prevNetwork = p.getNetwork();
+					prevComp = p.getFirstComp();
+					
+					
+					Component comp = new Component();
+					comp.setIndex(i + 1);
+					comp.setComponentCode(p.getChannel().firstTwoComponentCode);
+					comp.setLastComponentCode(p.getChannel().lastComponentCode);
+					comp.setNetworkCode(p.getChannel().networkName);
+					comp.setStationCode(p.getChannel().stationCode);
+					components.add(comp);
+
+					channel = p.getChannel().toString;
+					CachedDataSource cache = CachedDataSource.getInstance();
+					cache.putWave(channel, sw);
+					p.setDataSource(cache);
+					select(p);
+					WaveClipboardFrame.this.addWave(p);
+				}
+				else{
+					Component comp = new Component();
+					comp.setIndex(i + 1);
+					comp.setComponentCode(po.getChannel().firstTwoComponentCode);
+					comp.setLastComponentCode(po.getChannel().lastComponentCode);
+					comp.setNetworkCode(po.getChannel().networkName);
+					comp.setStationCode(po.getChannel().stationCode);
+					components.add(comp);
+				}
+			}
+			saveDetailstoFileSpec(f.getName(), components);
+		} else {
 			JOptionPane.showMessageDialog(Swarm.getApplication(),
 					"There was an error opening the file, '" + f.getName()
 							+ "'.", "Error", JOptionPane.ERROR_MESSAGE);
+			isSeisanFile = false;
+		}
+
+	}
+	
+	private void saveDetailstoFileSpec(String fileName,
+			ArrayList<Component> components) {
+		try {
+			FileSpec fileSpec = Swarm.getApplication().getWaveClipboard()
+					.getWaveFileSpec().getFileSpec(fileName);
+			if (fileSpec == null) {
+				fileSpec = new FileSpec();
+				fileSpec.setFileName(fileName);
+				Swarm.getApplication().getWaveClipboard().getWaveFileSpec()
+						.getSpecs().add(fileSpec);
+				fileSpec.setComponents(components);
+			}else{
+				fileSpec.setComponents(components);
+			}
+			Swarm.getApplication().getWaveClipboard().getWaveFileSpec()
+					.saveFileSpec();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private boolean editLabels(final WaveViewPanel wvp, ArrayList<FileSpec> fss) {
+		if (wvd == null) {
+			wvd = new WaveLabelDialog();
+		}
+		wvd.setWaveViewPanel(wvp.getChannel(), wvp.getFileName(),
+				wvp.getFileIndex());
+		wvd.setActionAfterFinish(new Callable<Object>() {
+			@Override
+			public Object call() throws Exception {
+				return null;
+			}
+		});
+		wvd.setFileSpecs(fss);
+		wvd.setVisible(true);
+		return wvd.isOK;
 	}
 
 	private void doButtonEnables() {
@@ -859,16 +1186,16 @@ public class WaveClipboardFrame extends SwarmFrame {
 		for (WaveViewPanel wave : waves)
 			sorted.add(wave);
 
-		final Metadata smd = Swarm.config.getMetadata(p.getChannel());
+		final Metadata smd = Swarm.config.getMetadata(p.getChannel().toString);
 		if (smd == null || Double.isNaN(smd.getLongitude())
 				|| Double.isNaN(smd.getLatitude()))
 			return;
 
 		Collections.sort(sorted, new Comparator<WaveViewPanel>() {
 			public int compare(WaveViewPanel wvp1, WaveViewPanel wvp2) {
-				Metadata md = Swarm.config.getMetadata(wvp1.getChannel());
+				Metadata md = Swarm.config.getMetadata(wvp1.getChannel().toString);
 				double d1 = smd.distanceTo(md);
-				md = Swarm.config.getMetadata(wvp2.getChannel());
+				md = Swarm.config.getMetadata(wvp2.getChannel().toString);
 				double d2 = smd.distanceTo(md);
 				return Double.compare(d1, d2);
 			}
@@ -911,8 +1238,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 						if (wvp.getDataSource() != null) {
 							addHistory(wvp, new double[] { wvp.getStartTime(),
 									wvp.getEndTime() });
-							Wave sw = wvp.getDataSource().getWave(
-									wvp.getChannel(), st, et);
+							Wave sw = wvp.getDataSource().getWave(wvp.getChannel().toString, st, et);
 							wvp.setWave(sw, st, et);
 						}
 					}
@@ -957,6 +1283,14 @@ public class WaveClipboardFrame extends SwarmFrame {
 		waveBox.validate();
 	}
 	
+	public boolean isChannelInfoValid(WaveViewPanel p) {
+		if (p.getChannel() == null || !p.getChannel().isPopulated()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public FileSpec getFileSpec(String filename) {
 		FileSpec selectedFileSpec = waveFileSpec.getFileSpec(filename);
 		return selectedFileSpec;
@@ -989,7 +1323,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		selectedSet.add(p);
 		doButtonEnables();
 		p.setBackgroundColor(SELECT_COLOR);
-		Swarm.getApplication().getDataChooser().setNearest(p.getChannel());
+		Swarm.getApplication().getDataChooser().setNearest(p.getChannel().toString);
 		p.createImage();
 		waveToolbar.addSettings(p.getSettings());
 	}
@@ -1127,7 +1461,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 			}
 
 			double tzo = Time.getTimeZoneOffset(Swarm.config.getTimeZone(wvp
-					.getChannel()));
+					.getChannel().toString));
 			double nst = j2k - tzo - dt / 2;
 			double net = nst + dt;
 
@@ -1198,8 +1532,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	}
 
 	// TODO: This isn't right, this should be a method of waveviewpanel
-	private void fetchNewWave(final WaveViewPanel wvp, final double nst,
-			final double net) {
+	private void fetchNewWave(final WaveViewPanel wvp, final double nst, final double net) {
 		final SwingWorker worker = new SwingWorker() {
 			public Object construct() {
 				throbber.increment();
@@ -1207,10 +1540,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 				// Hacky fix for bug #84
 				Wave sw = null;
 				if (sds instanceof CachedDataSource)
-					sw = ((CachedDataSource) sds).getBestWave(wvp.getChannel(),
-							nst, net);
+					sw = ((CachedDataSource) sds).getBestWave(wvp.getChannel().toString, nst, net);
 				else
-					sw = sds.getWave(wvp.getChannel(), nst, net);
+					sw = sds.getWave(wvp.getChannel().toString, nst, net);
 				wvp.setWave(sw, nst, net);
 				wvp.repaint();
 				return null;

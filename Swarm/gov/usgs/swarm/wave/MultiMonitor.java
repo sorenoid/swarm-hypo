@@ -19,6 +19,7 @@ import gov.usgs.util.ConfigFile;
 import gov.usgs.util.CurrentTime;
 import gov.usgs.util.Time;
 import gov.usgs.util.Util;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.BorderLayout;
@@ -138,7 +139,7 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 		{
 			String p = prefix + ".wave-" + i;
 			WaveViewPanel wvp = panels.get(i);
-			cf.put(p + ".channel", wvp.getChannel());
+			cf.put(p + ".channel", wvp.getChannel().toString);
 			wvp.getSettings().save(cf, p);
 		}
 		cf.put(prefix + ".waves", Integer.toString(panels.size()));
@@ -498,7 +499,7 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 					{
 						if (selectedIndex != -1)
 						{
-							String ch = panels.get(selectedIndex).getChannel();
+							String ch = panels.get(selectedIndex).getChannel().toString;
 							Swarm.getApplication().getDataChooser().setNearest(ch);
 						}
 					}
@@ -554,13 +555,13 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 			RectangleRenderer rr = ar.getFrame();
 			rr.color = Color.GRAY;
 				
-			TextRenderer label = new TextRenderer(fr.getGraphX() + 5, fr.getGraphY() + labelFontSize + 3, panel.getChannel(), Color.BLACK);
+			TextRenderer label = new TextRenderer(fr.getGraphX() + 5, fr.getGraphY() + labelFontSize + 3, panel.getChannel().toString, Color.BLACK);
 			label.font = font;
 			label.color = Color.BLACK;
 			
 			rr = new RectangleRenderer();
 			rr.rect = new Rectangle2D.Double();
-			rr.rect.setFrame(font.getStringBounds(panel.getChannel(), frc));
+			rr.rect.setFrame(font.getStringBounds(panel.getChannel().toString, frc));
 			rr.rect.x = 2;
 			rr.rect.width += 5;
 			rr.rect.y = 3;
@@ -579,7 +580,7 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 	        	String Units = "Counts";
 	        	if (panel.getSettings().useUnits)
 	        	{
-	        		Metadata md = Swarm.config.getMetadata(panel.getChannel(), true);
+	        		Metadata md = Swarm.config.getMetadata(panel.getChannel().toString, true);
 	        		m = md.getMultiplier();
 	        		b = md.getOffset();
 	        		Units = md.getUnit();
@@ -607,7 +608,7 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 	public synchronized WaveViewPanel addChannel(String ch)
 	{
 		final WaveViewPanel panel = new WaveViewPanel();
-		panel.setChannel(ch);
+		panel.setChannel(SimpleChannel.parse(ch));
 		panel.setOffsets(-1, 0, 0, 0);
 		panel.setWorking(true);
 		panel.setDisplayTitle(false);
@@ -646,7 +647,7 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 			if (panel == p)
 			{
 				selectedIndex = i;
-				Swarm.getApplication().getDataChooser().setNearest(panel.getChannel());
+				Swarm.getApplication().getDataChooser().setNearest(panel.getChannel().toString);
 				panel.setBackgroundColor(SELECT_COLOR);
 				panel.createImage();
 				panel.repaint();
@@ -815,7 +816,7 @@ public class MultiMonitor extends SwarmFrame implements Kioskable
 						{
 							WaveViewPanel wvp = panels.get(i);
 							wvp.setWorking(true);
-							channel = wvp.getChannel();
+							channel = wvp.getChannel().toString;
 							try
 							{
 								Wave sw = waveMap.get(channel);

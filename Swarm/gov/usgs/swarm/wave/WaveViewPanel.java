@@ -14,6 +14,7 @@ import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.wave.WaveViewSettings.ViewType;
 import gov.usgs.util.Time;
 import gov.usgs.util.Util;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.SliceWave;
 import gov.usgs.vdx.data.wave.Wave;
 import gov.usgs.vdx.data.wave.plot.SliceWaveRenderer;
@@ -92,7 +93,11 @@ public class WaveViewPanel extends JComponent {
 	private double[] translation;
 
 	private boolean timeSeries;
-	private String channel;
+	private SimpleChannel channel;
+	private String fileName;
+	private String filePath;
+	private String fileType;
+	private int fileIndex;
 
 	/**
 	 * The data source to use for zoom drags. This should probably be moved from
@@ -190,6 +195,51 @@ public class WaveViewPanel extends JComponent {
 		backgroundColor = p.backgroundColor;
 		setupMouseHandler();
 		processSettings();
+	}
+	
+	public void setStationInfo(String code, String comp, String network,
+			String lastComponent) {
+		channel = new SimpleChannel(null, network, code, comp, lastComponent);
+	}
+	
+	public String getStationCode() {
+		return channel != null ? channel.stationCode : null;
+	}
+	
+	public String getNetwork() {
+		return channel != null ? channel.networkName : null;
+	}
+	
+	public String getFirstComp() {
+		return channel != null ? channel.firstTwoComponentCode : null;
+	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+	
+	public int getFileIndex() {
+		return fileIndex;
+	}
+	
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+	
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	
+	public void setFileIndex(int fileIndex) {
+		this.fileIndex = fileIndex;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	public String getFilePath() {
+		return filePath;
 	}
 
 	public void setOffsets(int xo, int yo, int rw, int bh) {
@@ -366,10 +416,10 @@ public class WaveViewPanel extends JComponent {
 			public Object construct() {
 				Wave sw = null;
 				if (source instanceof CachedDataSource)
-					sw = ((CachedDataSource) source).getBestWave(channel, st,
+					sw = ((CachedDataSource) source).getBestWave(channel.toString, st,
 							et);
 				else
-					sw = source.getWave(channel, st, et);
+					sw = source.getWave(channel.toString, st, et);
 				setWave(sw, st, et);
 				return null;
 			}
@@ -437,11 +487,11 @@ public class WaveViewPanel extends JComponent {
 		return settings;
 	}
 
-	public String getChannel() {
+	public SimpleChannel getChannel() {
 		return channel;
 	}
 
-	public void setChannel(String c) {
+	public void setChannel(SimpleChannel c) {
 		channel = c;
 	}
 
@@ -541,7 +591,7 @@ public class WaveViewPanel extends JComponent {
 
 			if (timeSeries) {
 				String utc = Time.format(DATE_FORMAT, Util.j2KToDate(j2k));
-				TimeZone tz = Swarm.config.getTimeZone(channel);
+				TimeZone tz = Swarm.config.getTimeZone(channel.toString);
 				double tzo = Time.getTimeZoneOffset(tz, j2k);
 				if (tzo != 0) {
 					String tza = tz.getDisplayName(
@@ -559,7 +609,7 @@ public class WaveViewPanel extends JComponent {
 				if (settings.viewType == ViewType.SPECTROGRAM)
 					unit = "Frequency (Hz)";
 				else {
-					Metadata md = Swarm.config.getMetadata(channel);
+					Metadata md = Swarm.config.getMetadata(channel.toString);
 					if (md != null) {
 						offset = md.getOffset();
 						multiplier = md.getMultiplier();
@@ -879,7 +929,7 @@ public class WaveViewPanel extends JComponent {
 
 		double offset = 0;
 		double multiplier = 1;
-		Metadata md = Swarm.config.getMetadata(channel);
+		Metadata md = Swarm.config.getMetadata(channel.toString);
 
 		if (settings.useUnits && md != null) {
 			offset = md.getOffset();
@@ -925,7 +975,7 @@ public class WaveViewPanel extends JComponent {
 		waveRenderer.setWave(wv);
 		waveRenderer.setRemoveBias(settings.removeBias);
 		if (channel != null && displayTitle)
-			waveRenderer.setTitle(channel);
+			waveRenderer.setTitle(channel.toString);
 
 		waveRenderer.update();
 		plot.addRenderer(waveRenderer);
@@ -965,7 +1015,7 @@ public class WaveViewPanel extends JComponent {
 		spectraRenderer.setMinFreq(settings.minFreq);
 		spectraRenderer.setYUnitText("Power");
 		if (channel != null && displayTitle)
-			spectraRenderer.setTitle(channel);
+			spectraRenderer.setTitle(channel.toString);
 
 		spectraRenderer.update();
 		if (useFilterLabel && settings.filterOn)
@@ -1017,7 +1067,7 @@ public class WaveViewPanel extends JComponent {
 						/ Math.log(2))));
 
 		if (channel != null && displayTitle)
-			spectrogramRenderer.setTitle(channel);
+			spectrogramRenderer.setTitle(channel.toString);
 
 		spectrogramRenderer.setYUnitText("Frequency (Hz)");
 

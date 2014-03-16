@@ -414,7 +414,7 @@ public class HelicorderViewPanel extends JComponent
 				{
 					double j2k = getMouseJ2K(x, y);
 					status = dateFormat.format(Util.j2KToDate(j2k));
-					TimeZone tz = Swarm.config.getTimeZone(settings.channel);
+					TimeZone tz = Swarm.config.getTimeZone(settings.channel.toString);
 					double tzo = Time.getTimeZoneOffset(tz, j2k);
 					if (tzo != 0)
 					{
@@ -600,7 +600,7 @@ public class HelicorderViewPanel extends JComponent
 			endTime = time2;
 			heliRenderer.setData(heliData);
 			heliRenderer.setTimeChunk(settings.timeChunk);
-			heliRenderer.setTimeZone(Swarm.config.getTimeZone(settings.channel));
+			heliRenderer.setTimeZone(Swarm.config.getTimeZone(settings.channel.toString));
 			heliRenderer.setForceCenter(settings.forceCenter);
 			heliRenderer.setClipBars(settings.clipBars);
 			heliRenderer.setShowClip(settings.showClip);
@@ -655,7 +655,7 @@ public class HelicorderViewPanel extends JComponent
 	    
 		double offset = 0;
 		double multiplier = 1;
-		Metadata md = Swarm.config.getMetadata(settings.channel);
+		Metadata md = Swarm.config.getMetadata(settings.channel.toString);
 		if (md != null)
 		{
 			offset = md.getOffset();
@@ -681,7 +681,7 @@ public class HelicorderViewPanel extends JComponent
 			heliRenderer.setHelicorderExtents(startTime, endTime, -1 * Math.abs((settings.barRange - offset) / multiplier), Math.abs((settings.barRange - offset) / multiplier));
 		}
 		
-		heliRenderer.setTimeZone(Swarm.config.getTimeZone(settings.channel));
+		heliRenderer.setTimeZone(Swarm.config.getTimeZone(settings.channel.toString));
 		heliRenderer.setClipValue(settings.clipValue);
 		if (minimal)
 		{
@@ -693,7 +693,7 @@ public class HelicorderViewPanel extends JComponent
 			heliRenderer.createDefaultAxis();
 		
 		if (md == null || md.getAlias() == null)
-			heliRenderer.setChannel(settings.channel);
+			heliRenderer.setChannel(settings.channel.toString);
 		else
 			heliRenderer.setChannel(md.getAlias());
 		
@@ -755,7 +755,7 @@ public class HelicorderViewPanel extends JComponent
 			timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 			dayFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 			
-			TimeZone timeZone = Swarm.config.getTimeZone(settings.channel);
+			TimeZone timeZone = Swarm.config.getTimeZone(settings.channel.toString);
 			boolean dst = timeZone.inDaylightTime(Util.j2KToDate(hr.getViewEndTime()));
 			double timeOffset = Time.getTimeZoneOffset(timeZone, dst);
 			

@@ -127,7 +127,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 			filename = new JLabel();
 			filename.setFont(Font.decode("dialog-BOLD-12"));
 			filename.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
-			String[] types = new String[] { "SEED/miniSEED volume", "SAC" };
+			String[] types = new String[] { "SEED/miniSEED volume", "SAC" , "SEISAN" ,"WIN" };
 			fileTypes = new JList(types);
 			fileTypes.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
@@ -164,6 +164,11 @@ public class FileDataSource extends AbstractCachingDataSource {
 				return FileType.SEED;
 			case 1:
 				return FileType.SAC;
+			case 2:
+				return FileType.SEISAN;
+			case 3:
+				return FileType.WIN;
+
 			default:
 				return null;
 			}

@@ -22,6 +22,7 @@ import gov.usgs.util.GridBagHelper;
 import gov.usgs.util.Util;
 import gov.usgs.vdx.data.heli.HelicorderData;
 import gov.usgs.vdx.data.heli.plot.HelicorderRenderer;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.BorderLayout;
@@ -140,7 +141,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 		SeismicDataSource sds = Swarm.config.getSource(cf.getString("source"));
 		dataSource = sds.getCopy();
 		setTitle(channel + ", [" + dataSource + "]");
-		settings = new HelicorderViewerSettings(channel);
+		settings = new HelicorderViewerSettings(SimpleChannel.parse(channel));
 		settings.set(cf);
 		waveViewSettings = new WaveViewSettings();
 		waveViewSettings.set(cf.getSubConfig("wave"));
@@ -157,7 +158,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 	public HelicorderViewerFrame(SeismicDataSource sds, String ch, double bt) {
 		super(ch + ", [" + sds + "]", true, true, true, true);
 		Swarm.getApplication().touchUITime();
-		settings = new HelicorderViewerSettings(ch);
+		settings = new HelicorderViewerSettings(SimpleChannel.parse(ch));
 		settings.setBottomTime(bt);
 		waveViewSettings = new WaveViewSettings();
 		dataSource = sds.getCopy();
@@ -441,7 +442,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 			public void internalFrameActivated(InternalFrameEvent e) {
 				if (settings.channel != null)
 					Swarm.getApplication().getDataChooser()
-							.setNearest(settings.channel);
+							.setNearest(settings.channel.toString);
 			}
 
 			public void internalFrameClosing(InternalFrameEvent e) {
@@ -451,7 +452,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 				Swarm.getApplication().removeInternalFrame(
 						HelicorderViewerFrame.this);
 				Swarm.getApplication().removeTimeListener(timeListener);
-				dataSource.notifyDataNotNeeded(settings.channel,
+				dataSource.notifyDataNotNeeded(settings.channel.toString,
 						helicorderViewPanel.getStartTime(),
 						helicorderViewPanel.getEndTime(), gulperListener);
 				dataSource.close();
@@ -555,7 +556,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 	}
 
 	public void createWiggler() {
-		wigglerPanel = new WigglerPanel(dataSource, settings.channel);
+		wigglerPanel = new WigglerPanel(dataSource, settings.channel.toString);
 		heliPanel.add(wigglerPanel, BorderLayout.SOUTH);
 		wigglerPanel.setPreferredSize(new Dimension(this.getSize().width, 75));
 	}
@@ -714,7 +715,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 						tc = settings.timeChunk;
 
 					if (!HelicorderViewerFrame.this.isClosed) {
-						hd = dataSource.getHelicorder(settings.channel, before
+						hd = dataSource.getHelicorder(settings.channel.toString, before
 								- tc, end + tc, gulperListener);
 						success = true;
 					} else {
@@ -754,7 +755,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 	}
 
 	public Wave getWave(double t1, double t2) {
-		return dataSource.getWave(settings.channel, t1, t2);
+		return dataSource.getWave(settings.channel.toString, t1, t2);
 	}
 
 	public SeismicDataSource getDataSource() {
@@ -898,7 +899,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 
 			chooser.setAccessory(imagePanel);
 
-			String fn = settings.channel.replace(' ', '_') + ".png";
+			String fn = settings.channel.toString.replace(' ', '_') + ".png";
 			chooser.setSelectedFile(new File(chooser.getCurrentDirectory()
 					.getAbsoluteFile(), fn));
 
@@ -940,7 +941,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 
 				// TODO: this should use existing data.
 				HelicorderData heliData = dataSource.getHelicorder(
-						settings.channel, before - tc, end + tc, null);
+						settings.channel.toString, before - tc, end + tc, null);
 				HelicorderRenderer heliRenderer = new HelicorderRenderer(
 						heliData, settings.timeChunk);
 				if (Swarm.config.heliColors != null)
@@ -949,7 +950,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 																			// configured
 																			// colors
 
-				heliRenderer.setChannel(settings.channel);
+				heliRenderer.setChannel(settings.channel.toString);
 				heliRenderer.setLocation(HelicorderViewPanel.X_OFFSET,
 						HelicorderViewPanel.Y_OFFSET, width
 								- HelicorderViewPanel.X_OFFSET
@@ -960,12 +961,12 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 						-1 * Math.abs(settings.barRange),
 						Math.abs(settings.barRange));
 				heliRenderer.setTimeZone(Swarm.config
-						.getTimeZone(settings.channel));
+						.getTimeZone(settings.channel.toString));
 				heliRenderer.setForceCenter(settings.forceCenter);
 				heliRenderer.setClipBars(settings.clipBars);
 				heliRenderer.setShowClip(settings.showClip);
 				heliRenderer.setClipValue(settings.clipValue);
-				heliRenderer.setChannel(settings.channel);
+				heliRenderer.setChannel(settings.channel.toString);
 				heliRenderer
 						.setLargeChannelDisplay(includeChannel.isSelected());
 				heliRenderer.createDefaultAxis();

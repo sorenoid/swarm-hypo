@@ -2,6 +2,8 @@ package gov.usgs.swarm.heli;
 
 import gov.usgs.swarm.Swarm;
 import gov.usgs.util.ConfigFile;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
+
 
 /**
  * Settings for a helicorder.
@@ -40,7 +42,7 @@ import gov.usgs.util.ConfigFile;
  */
 public class HelicorderViewerSettings
 {
-	public String channel;
+	public SimpleChannel channel;
 	public int timeChunk; // seconds
 	public int span; // minutes
 	public int waveZoomOffset; // seconds
@@ -61,7 +63,7 @@ public class HelicorderViewerSettings
 	public double barMult;
 	public HelicorderViewPanel view;
 	
-	public HelicorderViewerSettings(String ch)
+	public HelicorderViewerSettings(SimpleChannel ch)
 	{
 		channel = ch;
 		timeChunk = Swarm.config.timeChunk * 60;
@@ -120,7 +122,7 @@ public class HelicorderViewerSettings
 	
 	public void save(ConfigFile cf, String prefix)
 	{
-		cf.put(prefix + ".channel", channel);
+		cf.put(prefix + ".channel", channel.toString);
 		cf.put(prefix + ".timeChunk", Integer.toString(timeChunk));
 		cf.put(prefix + ".span", Integer.toString(span));
 		cf.put(prefix + ".waveZoomOffset", Integer.toString(waveZoomOffset));

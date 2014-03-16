@@ -16,6 +16,7 @@ import gov.usgs.swarm.map.MapPanel.LabelSetting;
 import gov.usgs.swarm.wave.WaveViewPanel;
 import gov.usgs.util.ConfigFile;
 import gov.usgs.util.Util;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.Color;
@@ -261,7 +262,7 @@ public class MapMiniPanel extends JComponent implements MouseListener, MouseMoti
 		wavePanel.setUseFilterLabel(false);
 		wavePanel.setDisplayTitle(false);
 		wavePanel.setDataSource(activeMetadata.source);
-		wavePanel.setChannel(activeMetadata.getChannel());
+		wavePanel.setChannel(SimpleChannel.parse(activeMetadata.getChannel()));
 	}
 	
 	private void createCloseLabel()
@@ -391,7 +392,7 @@ public class MapMiniPanel extends JComponent implements MouseListener, MouseMoti
 						parent.getThrobber().increment();
 						wavePanel.setWorking(true);
 						wavePanel.setDataSource(activeMetadata.source);
-						wavePanel.setChannel(activeMetadata.getChannel());
+						wavePanel.setChannel(SimpleChannel.parse(activeMetadata.getChannel()));
 						Wave cw = wavePanel.getWave();
 						// TODO: unify this and the monitor code
 						if (cw != null && cw.overlaps(st, et))
