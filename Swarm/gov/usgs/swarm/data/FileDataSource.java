@@ -22,6 +22,7 @@ import gov.usgs.vdx.data.heli.HelicorderData;
 import gov.usgs.vdx.data.wave.SAC;
 import gov.usgs.vdx.data.wave.SeisanChannel;
 import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
+import gov.usgs.vdx.data.wave.WIN;
 import gov.usgs.vdx.data.wave.Wave;
 import gov.usgs.vdx.data.wave.SeisanFile;
 
@@ -215,6 +216,9 @@ public class FileDataSource extends AbstractCachingDataSource {
 			case SAC:
 				openSACFile(fs[i].getPath());
 				break;
+			case WIN:
+				openWINFile(fs[i].getPath(), fs[i].getName());
+				break;
 			case SEED:
 				openSeedFile(fs[i].getPath());
 				break;
@@ -231,6 +235,112 @@ public class FileDataSource extends AbstractCachingDataSource {
 			}
 			Swarm.config.lastPath = fs[i].getParent();
 		}
+	}
+	
+		public void openWINFile(final String fn, final String fName) {
+		wvd = new WaveLabelDialog();
+		if (openFiles.contains(fn))
+			return;
+
+		SwingWorker worker = new SwingWorker() {
+			ArrayList<Component> components = new ArrayList<Component>();
+			String channel = null;
+			@Override
+			public Object construct() {
+				Object result = null;
+				fireChannelsProgress(fn, 0);
+				try {
+					WIN win = new WIN();
+					final List<WIN.ChannelData> channelData = win.read(fn);
+					fireChannelsProgress(fn, 0.5);
+					ArrayList<FileSpec> fss = getRelatedFileSpecs(channelData
+							.size());
+					final Wave[] waves = win.toWave();
+					String prevStation = "";
+					String prevNetwork = "";
+					String prevComp = "";
+					
+					for (int i = 0; i < channelData.size(); i++) {
+						int index = (i + 1);
+						SimpleChannel sc = new SimpleChannel(null, prevNetwork,prevStation,
+								prevComp, "");
+						if (wvd.getSelectedFileSpec() == null) {
+							editLabels(sc, fss, fName, i+1);
+							if(wvd.getSelectedFileSpec() == null){
+								sc = new SimpleChannel(null, wvd.getNetwork(),
+										wvd.getStation(),
+										wvd.getFirstTwoComponent(),
+										wvd.getLastComponentCode());
+								channel =  "Channel "+ index+" : "+sc.toString;
+							}else{
+								Component comp = wvd.getSelectedFileSpec()
+								.getComponent(i + 1);
+									sc = new SimpleChannel(null,
+											comp.getNetworkCode(),
+											comp.getStationCode(),
+											comp.getComponentCode(),
+											comp.getLastComponentCode());
+									channel =  "Channel "+ index+" : "+sc.toString;
+							}
+							
+						}else{
+							Component comp = wvd.getSelectedFileSpec()
+							.getComponent(i + 1);
+								sc = new SimpleChannel(null,
+										comp.getNetworkCode(),
+										comp.getStationCode(),
+										comp.getComponentCode(),
+										comp.getLastComponentCode());
+								channel =  "Channel "+ index+" : "+sc.toString;
+							
+							
+						}
+						prevStation = sc.stationCode;
+						prevNetwork = sc.networkName;
+						prevComp = sc.firstTwoComponentCode;
+						
+						Component comp = new Component();
+						comp.setIndex(i+1);
+						comp.setComponentCode(sc.firstTwoComponentCode);
+						comp.setLastComponentCode(sc.lastComponentCode);
+						comp.setNetworkCode(sc.networkName);
+						comp.setStationCode(sc.stationCode);
+						components.add(comp);
+						
+						final Wave wave = waves[i];
+						Metadata md = Swarm.config.getMetadata(channel,
+								true);
+						md.addGroup("WIN^" + fn);
+						updateChannelTimes(channel,
+								wave.getStartTime(), wave.getEndTime());
+						cacheWaveAsHelicorder(channel, wave);
+						putWave(channel, wave);
+						fireChannelsProgress(fn,
+								0.5 + 0.5 * ((float) i / channelData.size()));
+					}
+					openFiles.add(fn);
+				} catch (Throwable t) {
+					t.printStackTrace();
+					result = t;
+				}
+				fireChannelsProgress(fn, 1);
+				fireChannelsUpdated();
+				return result;
+				
+			}
+
+			@Override
+			public void finished() {
+				if (getValue() != null) {
+					JOptionPane.showMessageDialog(Swarm.getApplication(),
+							"Could not open WIN file: " + fn, "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}else{
+					saveDetailstoFileSpec(fName,components);
+				}
+			}
+		};
+		worker.start();
 	}
 
 	public void openSACFile(final String fn) {
