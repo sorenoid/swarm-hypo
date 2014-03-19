@@ -742,11 +742,20 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 						// forcably returned a different time than asked
 						// for -- like in the case of a miniSEED.
 						double dt = end - before;
-						before = hd.getEndTime() - dt / 2;
+						before = hd.getStartTime() - dt / 2;
 						end = hd.getEndTime() + dt / 2;
 						settings.setBottomTime(end);
 					}
-					helicorderViewPanel.setHelicorder(hd, before, end);
+					
+					before = hd.getStartTime();
+					end  = hd.getEndTime();
+					
+					double spanend = end + ((settings.span * 60)/2);
+					double spanbefore = before - ((settings.span * 60)/2);
+					
+					settings.setBottomTime(spanend);
+					
+					helicorderViewPanel.setHelicorder(hd, spanbefore,  spanend);
 					repaintHelicorder();
 				}
 			}
