@@ -1,0 +1,7 @@
+.idea
+*.iml
+*.db
+classes
+.settings
+.metadata
+WaveDefaults.config
