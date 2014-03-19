@@ -16,6 +16,7 @@ import gov.usgs.swarm.WaveLabelDialog;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
+import gov.usgs.swarm.SwarmDialog;
 
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
 import gov.usgs.util.Time;
@@ -33,7 +34,10 @@ import gov.usgs.vdx.data.wave.Wave;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -63,6 +67,7 @@ import java.util.concurrent.Callable;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -71,6 +76,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -933,13 +939,36 @@ public class WaveClipboardFrame extends SwarmFrame {
 
 
 	public void openFile(File f) {
+	
+		FileTypeDialog dialog = null;
 		wvd = new WaveLabelDialog();
 		SAC sac = null;
 		Wave sw = null;
 		SeisanFile seisan = null;
 		WIN win = null;
 		String channel = f.getName();
+		
+		
+		
 		FileType ft = FileType.fromFileExtension(f);
+		if (ft == FileType.UNKNOWN) {
+			if (dialog == null)
+				dialog = new FileTypeDialog();
+			if (!dialog.opened || (dialog.opened && !dialog.isAssumeSame())) {
+				dialog.setFilename(f.getName());
+				dialog.setVisible(true);
+			}
+
+			if (dialog.cancelled)
+				ft = FileType.UNKNOWN;
+			else
+				ft = dialog.getFileType();
+
+			Swarm.logger.warning("user input file type: " + f.getPath()
+					+ " -> " + ft);
+		}
+		
+		
 		switch (ft) {
 		case SAC:
 			sac = readSAC(f);
@@ -1838,5 +1867,85 @@ public class WaveClipboardFrame extends SwarmFrame {
 	
 	public WaveFileSpec getWaveFileSpec() {
 		return waveFileSpec;
+	}
+	
+	private class FileTypeDialog extends SwarmDialog {
+		private static final long serialVersionUID = 1L;
+		private JLabel filename;
+		private JList fileTypes;
+		private JCheckBox assumeSame;
+		private boolean cancelled = true;
+		private boolean opened = false;
+
+		protected FileTypeDialog() {
+			super(Swarm.getApplication(), "Unknown File Type", true);
+			setSizeAndLocation();
+		}
+
+		public void setFilename(String fn) {
+			filename.setText(fn);
+		}
+
+		protected void createUI() {
+			super.createUI();
+			filename = new JLabel();
+			filename.setFont(Font.decode("dialog-BOLD-12"));
+			filename.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
+			String[] types = new String[] { "SEED/miniSEED volume", "SAC" , "SEISAN" ,"WIN" };
+			fileTypes = new JList(types);
+			fileTypes.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if (e.getClickCount() == 2) {
+						if (fileTypes.getSelectedIndex() != -1)
+							okButton.doClick();
+					}
+				}
+			});
+			fileTypes.setSelectedIndex(0);
+			assumeSame = new JCheckBox(
+					"Assume all unknown files are of this type", false);
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.setBorder(BorderFactory.createEmptyBorder(5, 9, 5, 9));
+			panel.setPreferredSize(new Dimension(300, 200));
+			JPanel labelPanel = new JPanel(new GridLayout(3, 1));
+			labelPanel.add(new JLabel("Unknown file type for file: "));
+			labelPanel.add(filename);
+			labelPanel.add(new JLabel(
+					"Choose 'Cancel' to skip this file or select file type:"));
+			panel.add(labelPanel, BorderLayout.NORTH);
+			panel.add(new JScrollPane(fileTypes), BorderLayout.CENTER);
+			panel.add(assumeSame, BorderLayout.SOUTH);
+			mainPanel.add(panel, BorderLayout.CENTER);
+		}
+
+		public boolean isAssumeSame() {
+			return assumeSame.isSelected();
+		}
+
+		public FileType getFileType() {
+			switch (fileTypes.getSelectedIndex()) {
+			case 0:
+				return FileType.SEED;
+			case 1:
+				return FileType.SAC;
+			case 2:
+				return FileType.SEISAN;
+			case 3:
+				return FileType.WIN;
+
+			default:
+				return null;
+			}
+		}
+
+		public void wasOK() {
+			cancelled = false;
+		}
+
+		public void wasCancelled() {
+			cancelled = true;
+			opened = false;
+		}
+
 	}
 }
