@@ -63,6 +63,9 @@ public class SwarmMenu extends JMenuBar
 	private JCheckBoxMenuItem map;
 	private JMenuItem mapToFront;
 	private JMenuItem closeAll;
+	public static boolean eventPropertiesDialogOpened = false;
+	public static ArrayList<File> file1 = new ArrayList<File>();
+	public static boolean empltyDataChooser = true;
 	
 	private JMenu helpMenu;
 	private JMenuItem about;
@@ -71,6 +74,17 @@ public class SwarmMenu extends JMenuBar
 	
 	private Map<JInternalFrame, InternalFrameMenuItem> windows;
 	private Map<SwarmLayout, JMenuItem> layouts;
+	
+	
+	
+	public static boolean DataRecordState() {
+		return eventPropertiesDialogOpened;
+	}
+	public static File[] getFile() {
+		return file1.toArray(new File[0]);
+	}
+	
+	
 	
 	public SwarmMenu()
 	{

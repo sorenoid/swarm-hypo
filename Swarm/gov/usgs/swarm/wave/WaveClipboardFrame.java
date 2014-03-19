@@ -6,6 +6,7 @@ import gov.usgs.swarm.Icons;
 import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.SwarmFrame;
+import gov.usgs.swarm.SwarmMenu;
 import gov.usgs.swarm.SwarmUtil;
 import gov.usgs.swarm.SwingWorker;
 import gov.usgs.swarm.Throbber;
@@ -15,6 +16,7 @@ import gov.usgs.swarm.WaveLabelDialog;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
+
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
 import gov.usgs.util.Time;
 import gov.usgs.util.Util;
@@ -50,6 +52,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +67,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -93,6 +98,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 	public static final long serialVersionUID = -1;
 	private static final Color SELECT_COLOR = new Color(200, 220, 241);
 	private static final Color BACKGROUND_COLOR = new Color(0xf7, 0xf7, 0xf7);
+	
+	private File[] file;
 
 	private JScrollPane scrollPane;
 	private Box waveBox;
@@ -107,10 +114,15 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private JButton sortButton;
 	private JButton removeAllButton;
 	private JButton saveButton;
+	private JButton loadFiles;
+	private JButton selecWaves;
 	private JButton saveAllButton;
 	private JButton openButton;
 	private JButton captureButton;
 	private JButton histButton;
+	private JButton locationmodeButton;
+	private JButton editLabelButton;
+	
 	private DateFormat saveAllDateFormat;
 	private static boolean isSeisanFile = false;
 
@@ -131,6 +143,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private JPopupMenu popup;
 
 	private Map<WaveViewPanel, Stack<double[]>> histories;
+	
+	private HashMap<String, ArrayList<WaveViewPanel>> stationComponentMap = new HashMap<String, ArrayList<WaveViewPanel>>();
 
 	private HelicorderViewPanelListener linkListener;
 
@@ -153,6 +167,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		waves = new ArrayList<WaveViewPanel>();
 		histories = new HashMap<WaveViewPanel, Stack<double[]>>();
 		createUI();
+		loadOpenedFiles();
 		linkListener = new HelicorderViewPanelListener() {
 			public void insetCreated(double st, double et) {
 				if (heliLinked)
@@ -167,6 +182,10 @@ public class WaveClipboardFrame extends SwarmFrame {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static boolean isSeisanFile() {
+		return isSeisanFile;
 	}
 
 	public HelicorderViewPanelListener getLinkListener() {
@@ -206,11 +225,41 @@ public class WaveClipboardFrame extends SwarmFrame {
 		createListeners();
 		doButtonEnables();
 	}
+	
+	private int getIndexOfWave(WaveViewPanel vp) {
+		int index = -1;
+		for (int i = 0; i < waves.size(); i++) {
+			if (vp.equals(waves.get(i))) {
+				index = i + 1;
+				break;
+			}
+		}
+		return index;
+	}
+
 
 	private void createMainButtons() {
 		openButton = SwarmUtil.createToolBarButton(Icons.open,
 				"Open a saved wave", new OpenActionListener());
 		toolbar.add(openButton);
+		
+		editLabelButton = SwarmUtil.createToolBarButton(Icons.edit_server,
+				"Edit location, station and component legend for each wave",
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// WaveClipboardFrame.this.getSingleSelected();
+						// WaveViewPanel vp =
+						// WaveClipboardFrame.this.getSingleSelected();
+
+						WaveViewPanel vp = selectedSet.iterator().next();
+						int index = getIndexOfWave(vp);
+						if (index != -1) {
+							editLabels(vp, null);
+						}
+					}
+				});
+		// editLabelButton.setEnabled(false);
+		toolbar.add(editLabelButton);
 
 		saveButton = SwarmUtil.createToolBarButton(Icons.save,
 				"Save selected wave", new SaveActionListener());
@@ -421,6 +470,19 @@ public class WaveClipboardFrame extends SwarmFrame {
 		Util.mapKeyStrokeToButton(this, "C", "clipboard1", copyButton);
 		Util.mapKeyStrokeToButton(this, "control C", "clipboard2", copyButton);
 		toolbar.add(copyButton);
+		
+		locationmodeButton = SwarmUtil.createToolBarButton(Icons.locationMode, "location Mode", new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+
+						System.out.println("in");
+
+						WaveTable wt = new WaveTable();
+						wt.setSize(400, 150);
+						wt.setLocationRelativeTo(null);
+						wt.setVisible(true);
+
+					}
+		});
 
 		toolbar.addSeparator();
 
@@ -451,23 +513,77 @@ public class WaveClipboardFrame extends SwarmFrame {
 				});
 		Util.mapKeyStrokeToButton(this, "DELETE", "remove", removeButton);
 		toolbar.add(removeButton);
+		
+		// added button
+		loadFiles = SwarmUtil.createToolBarButton(Icons.loadFiles,"show loaded files ", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					file = new File[0];
+					file = SwarmMenu.getFile();
+					if (!SwarmMenu.empltyDataChooser) {
+						for (int i = 0; i < file.length; i++) {
+							openFile(file[i]);
+						}
+					}
+
+				}
+		});
+		Util.mapKeyStrokeToButton(this, "DELETE", "remove", loadFiles);
+		toolbar.add(loadFiles);
+
+		selecWaves = SwarmUtil.createToolBarButton(Icons.selectWaves,"show selected waves ", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					// selectedSet
+
+					// WaveViewPanel p = getSingleSelected();
+					// int i = waves.indexOf(p);
+					// if (i == waves.size() - 1)
+					// return;
+					//
+					// waves.remove(i);
+					// waves.add(i + 1, p);
+					// waveBox.remove(p);
+					// waveBox.add(p, i + 1);
+					// waveBox.validate();
+					// repaint();
+
+					Iterator<WaveViewPanel> iterator = waves.iterator();
+					ArrayList<WaveViewPanel> ps = new ArrayList<WaveViewPanel>();
+					while (iterator.hasNext()) {
+						WaveViewPanel p = iterator.next();
+						// int i = waves.indexOf(p);
+						if (!selectedSet.contains(p)) {
+							ps.add(p);
+						}
+					}
+
+					for (WaveViewPanel p : ps) {
+						remove(p);
+					}
+
+				}
+		});
+		
+		Util.mapKeyStrokeToButton(this, "DELETE", "remove", loadFiles);
+		toolbar.add(selecWaves);
 
 		toolbar.add(Box.createHorizontalGlue());
 
 		throbber = new Throbber();
 		toolbar.add(throbber);
 
-		Util.mapKeyStrokeToAction(this, "control A", "selectAll",
-				new AbstractAction() {
-					private static final long serialVersionUID = 1L;
+		Util.mapKeyStrokeToAction(this, "control A", "selectAll", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
-					public void actionPerformed(ActionEvent e) {
-						for (WaveViewPanel wave : waves)
-							select(wave);
-					}
-				});
+			public void actionPerformed(ActionEvent e) {
+				for (WaveViewPanel wave : waves)
+					select(wave);
+			}
+		});
 	}
-
+	
+	
 	private void createListeners() {
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			public void internalFrameActivated(InternalFrameEvent e) {
@@ -806,6 +922,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	
 	public WaveViewPanel getWave(String filePath, int fileIndex) {
 		for (WaveViewPanel wvp : waves) {
+			
 			if (wvp.getFilePath().equals(filePath)
 					&& wvp.getFileIndex() == fileIndex) {
 				return wvp;
@@ -1000,11 +1117,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 			String prevComp = "";
 			
 			for (int i = 0; i < seisan.getChannels().size(); i++) {
+				System.out.println("file path "+f.getAbsolutePath());
 				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
 				if (po == null) {
 					SeisanChannel c = seisan.getChannels().get(i);
 					
 					sw = c.toWave();
+					
 					WaveViewPanel wvp = new WaveViewPanel();
 
 					wvp.setWave(sw, sw.getStartTime(), sw.getEndTime());
@@ -1208,9 +1327,17 @@ public class WaveClipboardFrame extends SwarmFrame {
 	}
 
 	public synchronized WaveViewPanel getSingleSelected() {
-		if (selectedSet.size() != 1)
-			return null;
+		if (selectedSet.size() != 1) {
 
+			ArrayList<WaveViewPanel> selectedWaves = new ArrayList<WaveViewPanel>(
+					waves.size());
+			for (WaveViewPanel wave : selectedSet)
+				selectedWaves.add(wave);
+			removeWaves();
+			for (WaveViewPanel wave : selectedWaves)
+				addWave(wave);
+
+		}
 		WaveViewPanel p = null;
 		for (WaveViewPanel panel : selectedSet)
 			p = panel;
@@ -1279,6 +1406,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		p.createImage();
 		waveBox.add(p);
 		waves.add(p);
+		addComponentToStation(p);
 		doButtonEnables();
 		waveBox.validate();
 	}
@@ -1301,6 +1429,106 @@ public class WaveClipboardFrame extends SwarmFrame {
 				.getFileSpecs(channelCount);
 		return relatedFileSpecs;
 	}
+	
+	public double[] getWaveData(Wave wave) {
+		double[] data = new double[wave.numSamples()];
+		for (int i = 0; i < wave.numSamples(); i++) {
+			data[i] = wave.buffer[i];
+		}
+		return data;
+	}
+
+	public double[][] generateDataMatrix(ArrayList<Wave> waves) {
+		int dataLength = waves.get(0).numSamples();
+		double[][] matrix = new double[3][waves.get(0).numSamples()];
+		for (int i = 0; i < waves.size(); i++) {
+			for (int j = 0; j < dataLength; j++) {
+				matrix[i][j] = waves.get(i).buffer[j];
+			}
+		}
+		return matrix;
+	}
+	
+	public void addComponentToStation(WaveViewPanel p) {
+		if (p.getStationCode() != null && (!p.getStationCode().isEmpty())) {
+			if (stationComponentMap.keySet().contains(p.getStationCode())) {
+				stationComponentMap.get(p.getStationCode()).add(p);
+			} else {
+				ArrayList<WaveViewPanel> waves = new ArrayList<WaveViewPanel>();
+				waves.add(p);
+				stationComponentMap.put(p.getStationCode(), waves);
+			}
+		}
+	}
+	
+	
+
+	public LinkedHashMap<String, Wave> getWaveDataSectionFromStationComponents(	String stationCode, double t1, double t2) {
+		LinkedHashMap<String, Wave> waveData = new LinkedHashMap<String, Wave>();
+		if (waves != null) {
+			for (int i = 0; i < waves.size(); i++) {
+				// System.out.println(i + " : " + waves.get(i).component);
+				WaveViewPanel wvp = waves.get(i);
+				if (wvp.getStationCode().equalsIgnoreCase(stationCode)) {
+					if (t1 < wvp.getWave().getStartTime()
+							|| t2 > wvp.getWave().getEndTime() || t2 < t1) {
+						System.out.println("out of bounds");
+						return null;
+					}
+					Wave waveSectionFromTimeBoundaries = wvp.getWave().subset(
+							t1, t2);
+					waveData.put(wvp.getChannel().fullComponent(),// wvp.component
+																	// +
+																	// wvp.lastComponentCode,
+							waveSectionFromTimeBoundaries);
+				}
+			}
+		}
+		return waveData;
+	}
+	
+	public ArrayList<WaveViewPanel> getStationComponents(String stationCode) {
+		ArrayList<WaveViewPanel> waveData = new ArrayList<WaveViewPanel>();
+		if (waves != null) {
+			for (int i = 0; i < waves.size(); i++) {
+				WaveViewPanel wvp = waves.get(i);
+				if (wvp.getStationCode().equalsIgnoreCase(stationCode)) {
+					waveData.add(wvp);
+				}
+			}
+		}
+		return waveData;
+	}
+
+	public int getStationComponentCount(String stationCode, String phase) {
+		if (stationComponentMap.keySet().contains(stationCode)) {
+			return stationComponentMap.get(stationCode).size();
+		} else {
+			return 0;
+		}
+	}
+
+	public int getStationComponentCount(String stationCode) {
+		if (stationComponentMap.keySet().contains(stationCode)) {
+			return stationComponentMap.get(stationCode).size();
+		} else {
+			return 0;
+		}
+	}
+	
+	public void removeComponentFromStation(WaveViewPanel p) {
+		if (p.getStationCode() != null && (!p.getStationCode().isEmpty())) {
+			if (stationComponentMap.keySet().contains(p.getStationCode())) {
+				if (stationComponentMap.get(p.getStationCode()).contains(p)) {
+					stationComponentMap.get(p.getStationCode()).remove(p);
+				}
+			}
+		}
+	}
+
+	
+	
+
 
 	private synchronized void deselect(final WaveViewPanel p) {
 		selectedSet.remove(p);
@@ -1340,13 +1568,18 @@ public class WaveClipboardFrame extends SwarmFrame {
 		setStatusText(" ");
 		waveBox.remove(i);
 		waves.remove(p);
+		
+		removeComponentFromStation(p);
+		
 		histories.remove(p);
-		doButtonEnables();
+		
 		waveBox.validate();
 		selectedSet.remove(p);
+		
 		lastClickedIndex = Math.min(lastClickedIndex,
 				waveBox.getComponentCount() - 1);
 		waveToolbar.removeSettings(p.getSettings());
+		doButtonEnables();
 		repaint();
 	}
 
@@ -1364,6 +1597,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 		for (WaveViewPanel p : panels)
 			remove(p);
 	}
+	
+	public synchronized void chooseWaves() {
+		WaveViewPanel[] panels = selectedSet.toArray(new WaveViewPanel[0]);
+
+		for (WaveViewPanel p : panels)
+			remove(p);
+	}
 
 	public synchronized void moveDown() {
 		WaveViewPanel p = getSingleSelected();
@@ -1377,6 +1617,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		waves.remove(i);
 		waves.add(i + 1, p);
 		waveBox.remove(p);
+		
 		waveBox.add(p, i + 1);
 		waveBox.validate();
 		repaint();
@@ -1571,6 +1812,28 @@ public class WaveClipboardFrame extends SwarmFrame {
 			g.setColor(Color.black);
 			g.drawString("Clipboard empty.", dim.width / 2 - 40, dim.height / 2);
 		}
+	}
+	public void loadOpenedFiles() {
+		Runnable r = new Runnable() {
+			public void run() {
+				file = SwarmMenu.getFile();
+				if (file != null) {
+					for (int i = 0; i < file.length; i++) {
+						if (file[i].isDirectory()) {
+							File[] dfs = file[i].listFiles();
+							for (int j = 0; j < dfs.length; j++)
+								openFile(dfs[j]);
+							Swarm.config.lastPath = file[i].getParent();
+						} else {
+							openFile(file[i]);
+							Swarm.config.lastPath = file[i].getParent();
+						}
+					}
+				}
+			}
+		};
+
+		r.run();
 	}
 	
 	public WaveFileSpec getWaveFileSpec() {

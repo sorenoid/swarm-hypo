@@ -36,6 +36,7 @@ public class Icons
 	public static final ImageIcon settings = getIcon("images/settings.gif");
 	public static final ImageIcon spectra = getIcon("images/spectra.gif");
 	public static final ImageIcon spectrogram = getIcon("images/spectrogram.png");
+	public static final ImageIcon locationMode = getIcon("images/test-icon.png");
 	public static final ImageIcon up = getIcon("images/up.gif");
 	public static final ImageIcon wave = getIcon("images/wave.gif");
 	public static final ImageIcon waveclip = getIcon("images/waveclip.gif");
@@ -75,6 +76,8 @@ public class Icons
 	public static final ImageIcon bluebullet = getIcon("images/bluebullet.gif");
 	public static final ImageIcon graybullet = getIcon("images/graybullet.gif");
 	public static final ImageIcon pause = getIcon("images/pause.gif");
+	public static final ImageIcon loadFiles = getIcon("images/loadfiles.jpg");
+	public static final ImageIcon selectWaves = getIcon("images/selectWaves.PNG");
 	public static final ImageIcon throbber_off = getIcon("images/throbber_off.gif");
 	public static final ImageIcon throbber_0 = getIcon("images/throbber_0.gif");
 	public static final ImageIcon throbber_1 = getIcon("images/throbber_1.gif");
