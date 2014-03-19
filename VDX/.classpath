@@ -11,7 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Plot"/>
 	<classpathentry kind="lib" path="/USGS/contrib/jtransforms-2.4.jar"/>
-	<classpathentry kind="var" path="ECLIPSE_HOME"/>
 	<classpathentry kind="lib" path="/USGS/contrib/JavaSeedLite.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

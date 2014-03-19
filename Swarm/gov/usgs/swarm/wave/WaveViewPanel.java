@@ -193,6 +193,10 @@ public class WaveViewPanel extends JComponent {
 		wave = p.wave;
 		displayTitle = p.displayTitle;
 		backgroundColor = p.backgroundColor;
+		fileName = p.fileName;
+		filePath = p.filePath;
+		fileType = p.fileType;
+		fileIndex = p.fileIndex;
 		setupMouseHandler();
 		processSettings();
 	}
