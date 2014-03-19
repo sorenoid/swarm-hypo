@@ -38,7 +38,7 @@ import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
  * Revision 1.2  2005/03/24 20:39:25  cervelli
  * Gets default timeChunk and span from config file.
  *
- * @author Dan Cervelli
+ * @author Chirag patel
  */
 public class HelicorderViewerSettings
 {

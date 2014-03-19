@@ -72,7 +72,7 @@ import javax.swing.event.InternalFrameEvent;
  * TODO: up/down arrows
  * 
  *
- * @author Dan Cervelli
+ * @author Chirag Patel
  */
 public class MultiMonitor extends SwarmFrame implements Kioskable
 {

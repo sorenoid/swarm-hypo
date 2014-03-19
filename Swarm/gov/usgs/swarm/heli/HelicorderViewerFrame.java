@@ -65,7 +65,7 @@ import javax.swing.event.InternalFrameEvent;
 /**
  * <code>JInternalFrame</code> that holds a helicorder.
  * 
- * @author Dan Cervelli
+ * @author Chirag Patel
  */
 public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 	public static final long serialVersionUID = -1;

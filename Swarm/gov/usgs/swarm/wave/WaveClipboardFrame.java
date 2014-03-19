@@ -92,9 +92,7 @@ import javax.xml.bind.JAXBException;
 /**
  * The wave clipboard internal frame.
  * 
- * @author Dan Cervelli
- * @version $Id: WaveClipboardFrame.java,v 1.10 2007-05-21 02:46:14 dcervelli
- *          Exp $
+ 
  
  * @author chirag patel
  * @version $Id: WaveClipboardFrame.java,v 1.10 2014-03-14 02:46:14 cpatel
@@ -1146,7 +1144,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 			String prevComp = "";
 			
 			for (int i = 0; i < seisan.getChannels().size(); i++) {
-				System.out.println("file path "+f.getAbsolutePath());
+				
 				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
 				if (po == null) {
 					SeisanChannel c = seisan.getChannels().get(i);

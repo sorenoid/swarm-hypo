@@ -49,7 +49,7 @@ import javax.swing.event.EventListenerList;
  * TODO: move filter method
  * 
  * 
- * @author Dan Cervelli
+ * @author Chirag Patel
  */
 public class WaveViewPanel extends JComponent {
 	public static final long serialVersionUID = -1;

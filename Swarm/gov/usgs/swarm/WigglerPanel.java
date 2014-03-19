@@ -24,13 +24,8 @@ import javax.swing.JComponent;
 
 /**
  * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/08/26 20:40:28  dcervelli
- * Initial avosouth commit.
- *
- * Revision 1.2  2005/05/02 16:22:11  cervelli
- * Moved data classes to separate package.
- *
- * @author Dan Cervelli
+ 
+ * @author Chirag Patel
  */
 public class WigglerPanel extends JComponent implements Runnable
 {

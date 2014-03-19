@@ -37,7 +37,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 /**
  * 
- * @author Dan Cervelli
+ * @author Chirag Patel
  */
 public class HelicorderViewerSettingsDialog extends SwarmDialog
 {
