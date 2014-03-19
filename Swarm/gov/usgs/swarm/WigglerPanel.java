@@ -8,6 +8,7 @@ import gov.usgs.plot.PlotException;
 import gov.usgs.plot.Spectrum;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.util.CurrentTime;
+import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.BasicStroke;
@@ -59,14 +60,14 @@ public class WigglerPanel extends JComponent implements Runnable
 	
 	private Plot plot;
 	private SeismicDataSource dataSource;
-	private String channel;
+	private SimpleChannel channel;
 	private BasicStroke boldStroke = new BasicStroke(2.0f);
 	private Line2D.Double line = new Line2D.Double();
 	private Rectangle rectangle = new Rectangle();
 	
 	private static int wigglers = 0;
 	
-	public WigglerPanel(SeismicDataSource sds, String c)
+	public WigglerPanel(SeismicDataSource sds, SimpleChannel c)
 	{
 		wigglers++;
 		plot = new Plot();
@@ -104,7 +105,7 @@ public class WigglerPanel extends JComponent implements Runnable
 			{
 				Thread.sleep(100 * wigglers);
 				double now = CurrentTime.getInstance().nowJ2K();
-				setWave(dataSource.getWave(channel, now - 20, now - 10));
+				setWave(dataSource.getWave(channel.toString, now - 20, now - 10));
 				waveRenderer.setWave(wave);
 				repaint();
 			}

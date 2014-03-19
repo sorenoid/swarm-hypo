@@ -556,7 +556,7 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 	}
 
 	public void createWiggler() {
-		wigglerPanel = new WigglerPanel(dataSource, settings.channel.toString);
+		wigglerPanel = new WigglerPanel(dataSource, settings.channel);
 		heliPanel.add(wigglerPanel, BorderLayout.SOUTH);
 		wigglerPanel.setPreferredSize(new Dimension(this.getSize().width, 75));
 	}

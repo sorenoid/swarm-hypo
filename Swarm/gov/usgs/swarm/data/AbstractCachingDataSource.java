@@ -6,6 +6,7 @@ import gov.usgs.vdx.data.wave.Wave;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,13 +27,13 @@ public abstract class AbstractCachingDataSource extends SeismicDataSource {
 	private static final int MAX_WAVE_SIZE = 1000000;
 
 	protected long maxSize;
-	protected Map<String, List<CachedHelicorder>> helicorderCache;
-	protected Map<String, List<CachedWave>> waveCache;
+	protected LinkedHashMap<String, List<CachedHelicorder>> helicorderCache;
+	protected LinkedHashMap<String, List<CachedWave>> waveCache;
 	protected CachePurgeAction[] purgeActions;
 
 	public AbstractCachingDataSource() {
-		helicorderCache = new HashMap<String, List<CachedHelicorder>>();
-		waveCache = new HashMap<String, List<CachedWave>>();
+		helicorderCache = new LinkedHashMap<String, List<CachedHelicorder>>();
+		waveCache = new LinkedHashMap<String, List<CachedWave>>();
 		maxSize = Runtime.getRuntime().maxMemory() / 6;
 		createPurgeActions();
 	}
