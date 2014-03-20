@@ -45,6 +45,14 @@ dist    -- generates new binary distribution
 			<property name="srcpath" value="${source}"/>
 			<property name="destpath" value="${destination}"/>
 		</ant>
+		<copy todir="classes">
+			<fileset dir="${source}" includes="META-INF/persistence.xml"/>
+			<fileset dir="${source}" includes="**/**.properties"/>
+			<fileset dir="${source}"  includes="images/**"/>
+			<fileset dir="${source}"  includes="layouts/**"/>
+			<fileset dir="${source}"  includes="manual/**"/>
+			<fileset dir="${source}"  includes="mapdata/**"/>
+		</copy>
 	</target>
 
 	<target name="jar" depends="compile" description="generates new jarfile">
@@ -71,6 +79,7 @@ dist    -- generates new binary distribution
 		<mkdir dir="${dist-tempdir}/${dist-appdir}/mapdata/nasa_240m_D2" />
 		<mkdir dir="${dist-tempdir}/${dist-appdir}/mapdata/world" />
 		<mkdir dir="${dist-tempdir}/${dist-appdir}/lib" />
+		<mkdir dir="${dist-tempdir}/${dist-appdir}/images" />
 		
 		<jar destfile="${dist-tempdir}/${dist-appdir}/lib/${dist-jarfile-bin}">
 			<fileset dir="${source}/../VDX/${classdir}">
@@ -155,6 +164,7 @@ dist    -- generates new binary distribution
 			</fileset>
 		</copy>
 		
+		
 		<copy todir="${dist-tempdir}/${dist-appdir}/layouts">
 			<fileset dir="${source}/layouts" />
 		</copy>
@@ -170,6 +180,9 @@ dist    -- generates new binary distribution
 		</copy>
 		<copy todir="${dist-tempdir}/${dist-appdir}/mapdata/world">
 			<fileset dir="${source}/mapdata/world" />
+		</copy>
+		<copy todir="${dist-tempdir}/${dist-appdir}/images">
+			<fileset dir="${source}/images" />
 		</copy>
 		
 		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${source}/swarm_console.bat" />
