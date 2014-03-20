@@ -77,7 +77,7 @@ public class Icons
 	public static final ImageIcon graybullet = getIcon("images/graybullet.gif");
 	public static final ImageIcon pause = getIcon("images/pause.gif");
 	public static final ImageIcon loadFiles = getIcon("images/loadfiles.jpg");
-	public static final ImageIcon selectWaves = getIcon("images/selectWaves.PNG");
+	public static final ImageIcon selectWaves = getIcon("images/selectWaves.png");
 	public static final ImageIcon throbber_off = getIcon("images/throbber_off.gif");
 	public static final ImageIcon throbber_0 = getIcon("images/throbber_0.gif");
 	public static final ImageIcon throbber_1 = getIcon("images/throbber_1.gif");

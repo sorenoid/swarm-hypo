@@ -210,7 +210,12 @@ public class WIN
 	
 			bytesRead += 8;
             if (c.data_size == 0) {
-                throw new RuntimeException("sample size of 0 is unimplemented");
+            	for (int ix = 0; ix < ((int) c.sampling_rate - 1); ix++)
+				{
+					accum += dis.readByte();
+					c.in_buf.add(accum);
+					
+				}
             }
 			else if (c.data_size == 1)
 			{
@@ -301,7 +306,7 @@ public class WIN
 			e.printStackTrace();
 		}
 		return d;
-	}
+	 }
 
 //	/** just for testing. Reads the filename given as the argument,
 //	 *  writes out some header variables and then
