@@ -5,7 +5,7 @@ import java.util.Calendar;
 /**
  * This class holds meta data for a Seisan channel
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 public class SeisanChannel {

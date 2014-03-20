@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Class that represents an xml representation of file spec saved for a wave file with complete station-component info that have been loaded before that can then be 
  * reused when loading files with the same number of channels as with the saved wave file spec
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 @XmlRootElement

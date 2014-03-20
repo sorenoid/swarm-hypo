@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * This class is used to load/save wavefile specs for waves that have been loaded to the wave clipboard frame
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 @XmlRootElement

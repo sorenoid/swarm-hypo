@@ -16,7 +16,7 @@ import java.util.Calendar;
  * 
  * Holds data representing a Seisan file. This includes channel headers and channel data
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 public class SeisanFile {

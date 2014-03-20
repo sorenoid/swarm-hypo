@@ -22,7 +22,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * A dialog that is used to reset the station, network and component of a wave
  * view
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  * 
  */
 @SuppressWarnings("serial")
