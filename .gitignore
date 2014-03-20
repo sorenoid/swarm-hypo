@@ -5,3 +5,5 @@ classes
 .settings
 .metadata
 WaveDefaults.config
+dist
+/USGS/lib
