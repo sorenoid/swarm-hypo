@@ -10,8 +10,8 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * @author richersoon
  * Customization in UI should be put here 
+ * @author Chirag Patel
  */
 public class ComponentCustomization {
 	
