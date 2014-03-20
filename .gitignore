@@ -1,6 +1,7 @@
 .idea
 *.iml
 *.db
+*.class
 classes
 .settings
 .metadata
