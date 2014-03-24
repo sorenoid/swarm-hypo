@@ -2,6 +2,11 @@ package gov.usgs.vdx.calc.data;
 
 import java.io.Serializable;
 
+/**
+ * Data structure used in Hypo71 algorithm.
+ * 
+ * @author Oleg Shepelev
+ */
 public class AdjustmentIteration  implements Serializable{
 	private int NI;
 	private double SEC;

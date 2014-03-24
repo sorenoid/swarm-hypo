@@ -1,14 +1,16 @@
 package gov.usgs.vdx.calc.data;
 
-
-
-
 import java.util.LinkedList;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Data structure used to persist all the input for a Hypo71 run.
+ * 
+ * @author Chirag Patel
+ */
 @XmlRootElement
 public class HypoArchiveOutput {
 
@@ -48,9 +50,4 @@ public class HypoArchiveOutput {
 	public void setCrustalModel(LinkedList<CrustalModel> crustalModel) {
 		this.crustalModel = crustalModel;
 	}
-	
-	
-	
-
-	
 }

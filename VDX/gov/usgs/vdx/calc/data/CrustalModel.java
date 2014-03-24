@@ -3,6 +3,11 @@ package gov.usgs.vdx.calc.data;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Data structure used in Hypo71 algorithm.
+ * 
+ * @author Oleg Shepelev
+ */
 @XmlRootElement
 public class CrustalModel {
 	private double V;
