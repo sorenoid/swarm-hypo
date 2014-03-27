@@ -40,7 +40,9 @@ import java.text.ParseException;
 import java.util.*;
 
 /**
- * The Class FortranFormat.
+ * Handles the way fortran formats data.
+ * 
+ * @author Oleg Shepelev
  */
 public class FortranFormat {
 

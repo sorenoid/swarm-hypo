@@ -21,6 +21,11 @@ import java.util.Queue;
 
 import static java.lang.Math.*;
 
+/**
+ * Runs the hypo71 algorithm. This is a direct port of the fortran version.
+ * 
+ * @author Oleg Shepelev
+ */
 @SuppressWarnings("all")
 public class Hypo71 {
 
@@ -771,7 +776,6 @@ public class Hypo71 {
 					data(MSTA[K], DELTA[K], (int) IAZ, (int) IAIN, PRMK[K], JHR, JMIN[K], P[K], TPK, T[K], DLYK, X4KOUT, WRK[K], WT[K], (int) IAMX, (int) IPRX, CAL[K], KLAS[KJI - 1], XMAGOU, RMK3, RMK[K], FMPOUT, FMAGOU, RMK4, SRMK[K], SKOUT, TSKOUT, SRESOU, RMK5, SWTOUT,
 							DTKOUT, IW[KJI - 1]), "(1X,A4,F6.1,2I4,1X,A4,1X,2I2,4F6.2,A6,A2,F4.2,I4,I3,F6.2,I2,A4,A1,1X,A3,A4,A4,A1,1X,A4,3A6,A2,A4,A6,T6,A1)");
 
-			// TODO check here
 			results.addStationToTheResultList(new Station(MSTA[K], DELTA[K], (int) IAZ, (int) IAIN, PRMK[K], JHR, JMIN[K], P[K], TPK, T[K], DLYK, X4KOUT, WRK[K], WT[K], (int) IAMX, (int) IPRX, CAL[K], KLAS[KJI - 1], XMAGOU, RMK3, RMK[K], FMPOUT, FMAGOU, RMK4, SRMK[K], SKOUT,
 					TSKOUT, SRESOU, RMK5, SWTOUT, DTKOUT, IW[KJI - 1]));
 
@@ -4016,14 +4020,14 @@ public class Hypo71 {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-//		System.out.println("FILE INPUT");
         if (args.length < 1) {
             System.out.println("Specify input file on command line");
             return;
         }
 		runWithFileInput(args[0]);
         if (true) return;
-		System.out.println("DATA INPUT");
+
+        System.out.println("DATA INPUT");
 		Hypo71 hypoCalculator = new Hypo71();
 		Queue<Station> stationsList = new LinkedList<Station>();
 		Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
@@ -4087,20 +4091,13 @@ public class Hypo71 {
 		try {
 			hypoCalculator.calculateHypo71("SOME SANTA ROSA QUAKES FOR TESTING HYPO71", null, stationsList, crustalModelList, controlCard, phaseRecordsList, null);
 			System.out.println(hypoCalculator.getResults().getOutput());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
 	public static void runWithFileInput(String finputName) {
-		// Setting default filenames
-//		String finputName = "C:\\data\\Mentics\\Projects\\Swarm\\test files\\hypo\\950923A0.INP";
-System.out.println(finputName);
 		try {
 			Queue<Station> stationsList = new LinkedList<Station>();
 			Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
@@ -4108,14 +4105,7 @@ System.out.println(finputName);
 			Hypo71 hypoCalculator = new Hypo71();
 			hypoCalculator.calculateHypo71("", null, stationsList, crustalModelList, null, phaseRecordsList, finputName);
 			System.out.println(hypoCalculator.getResults().getOutput());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -4123,11 +4113,8 @@ System.out.println(finputName);
 					FINPUT_READER.close();
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 }

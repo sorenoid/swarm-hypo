@@ -5,6 +5,11 @@ import java.util.Properties;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Data structure used in Hypo71 algorithm.
+ * 
+ * @author Oleg Shepelev
+ */
 @XmlRootElement
 public class ControlCard {
 	private int KSING;
