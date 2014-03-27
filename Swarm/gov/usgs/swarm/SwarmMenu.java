@@ -1,12 +1,16 @@
 package gov.usgs.swarm;
 
 import gov.usgs.swarm.data.CachedDataSource;
+import gov.usgs.swarm.database.model.Attempt;
+import gov.usgs.swarm.database.model.Event;
+import gov.usgs.swarm.database.view.DataSearchDialog;
 import gov.usgs.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -59,11 +63,16 @@ public class SwarmMenu extends JMenuBar
 	private JMenuItem tileHelicorders;
 	private JMenuItem fullScreen;
 	private JCheckBoxMenuItem clipboard;
+	private JMenuItem dataQuery;
+	private JMenuItem eventProperties;
+	private JMenuItem newEvent;
 	private JCheckBoxMenuItem chooser;
 	private JCheckBoxMenuItem map;
 	private JMenuItem mapToFront;
 	private JMenuItem closeAll;
+	public static DataRecord eventPropertiesDialog = null;
 	public static boolean eventPropertiesDialogOpened = false;
+	public static boolean dataQueryOpened = false;
 	public static ArrayList<File> file1 = new ArrayList<File>();
 	public static boolean empltyDataChooser = true;
 	
@@ -84,7 +93,17 @@ public class SwarmMenu extends JMenuBar
 		return file1.toArray(new File[0]);
 	}
 	
+	public static void setDataQueryState(boolean dataQueryState) {
+		dataQueryOpened = dataQueryState;
+	}
 	
+	public static void setDataRecordState(boolean dataRecordState) {
+		eventPropertiesDialogOpened = dataRecordState;
+	}
+	
+	public static DataRecord getDataRecord() {
+		return eventPropertiesDialog;
+	}
 	
 	public SwarmMenu()
 	{
@@ -165,6 +184,45 @@ public class SwarmMenu extends JMenuBar
 				});
 		fileMenu.add(options);
 		
+		fileMenu.addSeparator();
+		
+		newEvent = new JMenuItem("New Event");
+		newEvent.setMnemonic('E');
+		newEvent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				Event event = new Event();
+				event.setEventLabel("event");
+				event.setEventType("event type");
+				event.persist();
+				
+				Swarm.setSelectedEvent(event);
+				
+				Attempt attempt = new Attempt();
+				attempt.setEvent(event.getId());
+				attempt.persist();
+				Swarm.setSelectedAttempt(attempt);
+				eventProperties.setEnabled(true);
+				Swarm.getApplication().getWaveClipboard().enableMarkerGeneration();
+				
+				if (!eventPropertiesDialogOpened) {
+					eventPropertiesDialogOpened = true;
+					
+					if(eventPropertiesDialog == null){
+						eventPropertiesDialog = new DataRecord();
+					}
+					eventPropertiesDialog.setVisible(true);
+				}else{
+					eventPropertiesDialog.doInitialise();
+				}
+					
+			}
+		});
+		newEvent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+				InputEvent.CTRL_DOWN_MASK));
+		fileMenu.add(newEvent);
+
 		fileMenu.addSeparator();
 		
 		exit = new JMenuItem("Exit");
@@ -302,6 +360,57 @@ public class SwarmMenu extends JMenuBar
 				});
 		chooser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
 		windowMenu.add(chooser);
+		
+		// code added
+		dataQuery = new JMenuItem("Event Search");
+		dataQuery.setMnemonic('S');
+		dataQuery.addActionListener(new ActionListener() {
+			private DataSearchDialog dataSearchDialog;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!dataQueryOpened) {
+					dataQueryOpened = true;
+					dataSearchDialog = dataSearchDialog != null ? dataSearchDialog
+							: new DataSearchDialog();
+					dataSearchDialog.setAlwaysOnTop(true);
+					dataSearchDialog.centerOnScreen();
+					// dataQuery.setLocationByPlatform(true);
+					// dataQuery.setBounds(40, 40, 350, 200);
+					// dataQuery.setSize(350, 200);
+					// dataQuery.setLocationRelativeTo(null);
+					dataSearchDialog.setVisible(true);
+				}
+
+			}
+		});
+		dataQuery.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_DOWN_MASK));
+
+		windowMenu.add(dataQuery);
+
+		// code added data Record
+
+		eventProperties = new JMenuItem("Event Properties");
+		eventProperties.setMnemonic('R');
+		eventProperties.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+				InputEvent.CTRL_DOWN_MASK));
+		eventProperties.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!eventPropertiesDialogOpened) {
+					if(eventPropertiesDialog == null){
+						eventPropertiesDialog = new DataRecord();
+					}
+					eventPropertiesDialogOpened = true;
+					eventPropertiesDialog.setVisible(true);
+				}
+
+			}
+		});
+		eventProperties.setEnabled(false);
+		windowMenu.add(eventProperties);
+
 		
 		clipboard = new JCheckBoxMenuItem("Wave Clipboard");
 		clipboard.setMnemonic('W');
@@ -515,5 +624,13 @@ public class SwarmMenu extends JMenuBar
 				}				
 			}
 		}
+	}
+	
+	public void enableEventProperties(){
+		eventProperties.setEnabled(true);
+	}
+	
+	public void disableEventProperties(){
+		eventProperties.setEnabled(false);
 	}
 }

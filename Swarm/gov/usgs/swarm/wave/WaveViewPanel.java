@@ -8,9 +8,12 @@ import gov.usgs.plot.TextRenderer;
 import gov.usgs.swarm.Icons;
 import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
+import gov.usgs.swarm.SwarmMenu;
 import gov.usgs.swarm.SwingWorker;
+import gov.usgs.swarm.calculation.ThreeComponentParametersCalculator;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.SeismicDataSource;
+import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.wave.WaveViewSettings.ViewType;
 import gov.usgs.util.Time;
 import gov.usgs.util.Util;
@@ -34,7 +37,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 import javax.swing.JComponent;
@@ -98,6 +104,10 @@ public class WaveViewPanel extends JComponent {
 	private String filePath;
 	private String fileType;
 	private int fileIndex;
+	public boolean paintnow = false;
+	
+	private ArrayList<Marker> markers = new ArrayList<Marker>();
+	private Marker selectedMarker;
 
 	/**
 	 * The data source to use for zoom drags. This should probably be moved from
@@ -295,6 +305,134 @@ public class WaveViewPanel extends JComponent {
 
 	public void setAllowClose(boolean b) {
 		allowClose = b;
+	}
+	
+	/**
+	 * Gets the time boundaries for only markers that are placed twiced on this
+	 * wave panel. Such markers include Azimuth and Particle Motion markers.
+	 * 
+	 * 
+	 * @param markerType
+	 *            : Specified Marker types
+	 * @return
+	 */
+	public double[] getMarkerTimeBoundaries(String markerType) {
+		ArrayList<Marker> markers = getMarkersByType(markerType);
+		if (markers != null && markers.size() == 2) {
+			Marker marker1 = markers.get(0);
+			Marker marker2 = markers.get(1);
+
+			double marker1Time = Util.dateToJ2K(marker1.getMarkerTime());
+			double marker2Time = Util.dateToJ2K(marker2.getMarkerTime());
+
+			double t1 = marker1Time > marker2Time ? marker2Time : marker1Time;
+			double t2 = marker1Time < marker2Time ? marker2Time : marker1Time;
+
+			double[] t = { t1, t2 };
+			return t;
+		} else {
+			return null;
+		}
+	}
+
+	
+	public void setEventCalculations() {
+		if (SwarmMenu.DataRecordState()) {
+			if (channel.stationCode != null && (!channel.stationCode.isEmpty())) {
+
+				SwarmMenu.getDataRecord().getEventCalculationPanel()
+						.clearUIFields();
+				Marker sMarker = getMarkerByType(Marker.S_MARKER_LABEL);
+				Marker pMarker = getMarkerByType(Marker.P_MARKER_LABEL);
+				Marker codaMarker = getMarkerByType(Marker.CODA_MARKER_LABEL);
+
+				int stationCount = Swarm.getApplication().getWaveClipboard()
+						.getStationComponentCount(channel.stationCode);
+
+				SwarmMenu.getDataRecord().getEventCalculationPanel()
+						.setStationValue(channel.stationCode);
+
+				if (sMarker != null && pMarker != null) {
+					long sMarkerTime = sMarker.getMarkerTime().getTime();
+					long pMarkerTime = pMarker.getMarkerTime().getTime();
+					long timeDiffFromSToP = Math.abs(sMarkerTime - pMarkerTime);
+					long timeDiffFromSToPInSec = timeDiffFromSToP / 1000;
+					SwarmMenu
+							.getDataRecord()
+							.getEventCalculationPanel()
+							.setPToSTimeValue(
+									Long.toString(timeDiffFromSToPInSec) + " s");
+
+					double ansv = Swarm.config.ansv;
+					if (ansv != 0 && ansv != Double.NaN) {
+						double distanceFromPToS = 1.366 * ansv
+								* timeDiffFromSToPInSec;
+						SwarmMenu
+								.getDataRecord()
+								.getEventCalculationPanel()
+								.setPToSDistanceValue(
+										Double.toString(distanceFromPToS)
+												+ " m");
+					}
+				}
+				if (pMarker != null && stationCount == 3) {
+					double[] markerBoundaries = getMarkerTimeBoundaries(Marker.AZIMUTH_MARKER_LABEL);
+					if (markerBoundaries != null) {
+
+						HashMap<String, Wave> wavesComponentMap = Swarm
+								.getApplication()
+								.getWaveClipboard()
+								.getWaveDataSectionFromStationComponents(
+										channel.stationCode,
+										markerBoundaries[0],
+										markerBoundaries[1]);
+
+						if (wavesComponentMap != null) {
+							ArrayList<Wave> waves = new ArrayList<Wave>();
+							waves.addAll(wavesComponentMap.values());
+
+							ThreeComponentParametersCalculator azimuthCalculator = new ThreeComponentParametersCalculator();
+							double[][] dataMatrix = Swarm.getApplication()
+									.getWaveClipboard()
+									.generateDataMatrix(waves);
+
+							double azimuth = azimuthCalculator.calculate(
+									dataMatrix, 0, dataMatrix[0].length,
+									Swarm.config.ansv);
+							SwarmMenu.getDataRecord()
+									.getEventCalculationPanel()
+									.setAzimuthValue(Double.toString(azimuth));
+						} else {
+							System.out.println("cannot ger boundaries");
+						}
+					}
+				}
+
+				if (codaMarker != null && pMarker != null) {
+					long codaMarkerTime = codaMarker.getMarkerTime().getTime();
+					long pMarkerTime = pMarker.getMarkerTime().getTime();
+					long timeDiffFromCodaToP = Math.abs(codaMarkerTime
+							- pMarkerTime);
+					long timeDiffFromCodaToPInSec = timeDiffFromCodaToP / 1000;
+					SwarmMenu
+							.getDataRecord()
+							.getEventCalculationPanel()
+							.setCodaValue(
+									Long.toString(timeDiffFromCodaToPInSec)
+											+ " s");
+
+					double durationMagnitude = Swarm.config
+							.getDurationMagnitude(timeDiffFromCodaToPInSec);
+
+					SwarmMenu
+							.getDataRecord()
+							.getEventCalculationPanel()
+							.setDurationMagnitudeValue(
+									Double.toString(durationMagnitude));
+				}
+
+			}
+		}
 	}
 
 	private void setupMouseHandler() {
@@ -1180,5 +1318,132 @@ public class WaveViewPanel extends JComponent {
 	public void setMarks(double m1, double m2) {
 		mark1 = m1;
 		mark2 = m2;
+	}
+	
+	/**
+	 * Add a Marker at a particular time to thie WavePanel
+	 * 
+	 * @param key
+	 *            : timestamp that marker is to be placed on the WavePanel
+	 * @param marker
+	 *            : Marker to be placed on this WavePanel
+	 */
+	public void addMarker(Timestamp key, Marker marker) {
+		markers.add(marker);
+	}
+	
+	/**
+	 * Get Marker of specified type placed on this WavePanel
+	 * 
+	 * @param markerType
+	 *            : type of Marker needed to be returned
+	 * @return
+	 */
+	public Marker getMarkerByType(String markerType) {
+		for (Marker m : markers) {
+			if (m.getMarkerType().equalsIgnoreCase(markerType)) {
+				return m;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * Get all markers of a specified type placed on this WavePanel. This is
+	 * only used to return Azimuth and Particle motion markers as they are the
+	 * only markers that can be placed twice on a WavePanel
+	 * 
+	 * @param markerType
+	 *            : type of Marker needed to be returned(Mainly Azimuth and
+	 *            Particle Motion markers)
+	 * @return
+	 */
+	public ArrayList<Marker> getMarkersByType(String markerType) {
+		ArrayList<Marker> selectedMarkers = new ArrayList<Marker>();
+		for (Marker m : markers) {
+			if (m.getMarkerType().equalsIgnoreCase(markerType)) {
+				selectedMarkers.add(m);
+			}
+		}
+		return selectedMarkers;
+	}
+	
+	/**
+	 * Removes marker from the WavePanel that has been placed at specified
+	 * timestamp
+	 * 
+	 * @param key
+	 *            : timestamp of Marker
+	 */
+	public void removeMarker(Timestamp key) {
+		for (Marker m : markers) {
+			if (m.getMarkerTime().equals(key)) {
+
+				markers.remove(m);
+				break;
+			}
+		}
+	}
+	
+	
+	/**
+	 * Remove Specified marker from this WavePanel
+	 * 
+	 * @param marker
+	 *            : Specified {@link Marker} object
+	 */
+	public void removeMarker(Marker marker) {
+		if (markers.contains(marker)) {
+			markers.remove(marker);
+		}
+
+	}
+
+	/**
+	 * Remove Marker with specified Id from the WavePanel
+	 * 
+	 * @param id
+	 *            : ID of {@link Marker} object
+	 * @return
+	 */
+	public boolean removeMarker(Integer id) {
+		boolean removed = false;
+		for (Marker m : markers) {
+			if (m.getId().equals(id)) {
+				markers.remove(m);
+				break;
+			}
+		}
+		return removed;
+	}
+
+	
+	/**
+	 * Remove all {@link Marker} objects from this wave panel
+	 * 
+	 */
+	public void removeAllMarkersFromView() {
+		markers.clear();
+	}
+	
+	/**
+	 * Gets the selected {@link Marker} object in use for this wave panel
+	 * 
+	 * @return Selected Marker object
+	 */
+	public Marker getSelectedMarker() {
+		return selectedMarker;
+	}
+
+	/**
+	 * Sets the specified {@link Marker} object as the current selected marker
+	 * in use for this wave panel
+	 * 
+	 * @param marker
+	 *            : Specified {@link Marker} object
+	 */
+	public void setSelectedMarker(Marker marker) {
+		selectedMarker = marker;
 	}
 }

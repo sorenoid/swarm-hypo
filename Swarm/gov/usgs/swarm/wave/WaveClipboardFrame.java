@@ -16,6 +16,7 @@ import gov.usgs.swarm.WaveLabelDialog;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
+import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.SwarmDialog;
 
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
@@ -103,6 +104,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private static final Color SELECT_COLOR = new Color(200, 220, 241);
 	private static final Color BACKGROUND_COLOR = new Color(0xf7, 0xf7, 0xf7);
 	
+	public ParticleMotionFrame pmf = new ParticleMotionFrame();
+	
 	private File[] file;
 
 	private JScrollPane scrollPane;
@@ -118,6 +121,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private JButton sortButton;
 	private JButton removeAllButton;
 	private JButton saveButton;
+	private JComboBox markerTypesCombo;
 	private JButton loadFiles;
 	private JButton selecWaves;
 	private JButton saveAllButton;
@@ -161,6 +165,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private int lastClickedIndex = -1;
 	
 	private WaveFileSpec waveFileSpec = new WaveFileSpec();
+	
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	public WaveClipboardFrame() {
 		super("Wave Clipboard", true, true, true, false);
@@ -207,6 +213,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 
 		createMainButtons();
 		createWaveButtons();
+		createEventToolbarItems();
 
 		mainPanel.add(toolbar, BorderLayout.NORTH);
 
@@ -588,6 +595,24 @@ public class WaveClipboardFrame extends SwarmFrame {
 	}
 	
 	
+	public void disableMarkerGeneration() {
+		markerTypesCombo.setEnabled(false);
+	}
+	
+	public void enableMarkerGeneration() {
+		markerTypesCombo.setEnabled(true);
+	}
+	
+	private void createEventToolbarItems() {
+		String[] markerTypes = { Marker.P_MARKER_LABEL,
+				Marker.S_MARKER_LABEL, Marker.CODA_MARKER_LABEL,
+				Marker.AZIMUTH_MARKER_LABEL,
+				Marker.PARTICLE_MARKER_LABEL };
+		markerTypesCombo = new JComboBox(markerTypes);
+		toolbar.add(markerTypesCombo);
+		markerTypesCombo.setEnabled(false);
+	}
+	
 	private void createListeners() {
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			public void internalFrameActivated(InternalFrameEvent e) {
@@ -922,6 +947,38 @@ public class WaveClipboardFrame extends SwarmFrame {
 			seisan = null;
 		}
 		return seisan;
+	}
+	
+	public void clearAndLoadMarkersForFileOnWave(String fileName, Integer id) {
+		for (WaveViewPanel wvp : waves) {
+			if (wvp.getFilePath().equals(fileName)) {
+				List<Marker> markers = Marker.listByFileAndIndexAndAttempt(
+						wvp.getFileIndex(), wvp.getFilePath(), id);
+				if (markers.size() > 0) {
+					wvp.removeAllMarkersFromView();
+					for (Marker marker : markers) {
+						System.out.println(marker.getId() + " =========================== " + Time.format(DATE_FORMAT,marker.getMarkerTime()));
+						wvp.addMarker(marker.getMarkerTime(), marker);
+					}
+					wvp.paintnow = true;
+					wvp.createImage();
+					wvp.repaint();
+				}
+			}
+		}
+	}
+	
+	public void clearAndLoadMarkerOnWave(Marker marker) {
+		for (WaveViewPanel wvp : waves) {
+			if (wvp.getFileIndex() == marker.getFileIndex()
+					&& wvp.getFilePath().equalsIgnoreCase(marker.getFilePath())) {
+				wvp.removeMarker(marker.getMarkerTime());
+				wvp.addMarker(marker.getMarkerTime(), marker);
+				wvp.paintnow = true;
+				wvp.createImage();
+				wvp.repaint();
+			}
+		}
 	}
 	
 	public WaveViewPanel getWave(String filePath, int fileIndex) {
@@ -1294,6 +1351,24 @@ public class WaveClipboardFrame extends SwarmFrame {
 		wvd.setVisible(true);
 		return wvd.isOK;
 	}
+	
+	public void removeMarkersFromView(List<Marker> markers) {
+		for (Marker marker : markers) {
+			if (waves.size() > 0) {
+				for (WaveViewPanel wvp : waves) {
+					if (wvp.removeMarker(marker.getId())) {
+						wvp.createImage();
+					}
+					if (wvp.getSelectedMarker() != null
+							&& marker.getId().equals(
+									wvp.getSelectedMarker().getId())) {
+						wvp.setSelectedMarker(null);
+					}
+				}
+			}
+			marker.delete();
+		}
+	}
 
 	private void doButtonEnables() {
 		boolean enable = (waves == null || waves.size() == 0);
@@ -1457,6 +1532,73 @@ public class WaveClipboardFrame extends SwarmFrame {
 		return relatedFileSpecs;
 	}
 	
+	public double[] getMarkerTimeBoundaries(String stationCode,
+			String markerType) {
+		ArrayList<Marker> markers = getMarkersByType(stationCode, markerType);
+		if (markers != null && markers.size() == 2) {
+			Marker marker1 = markers.get(0);
+			Marker marker2 = markers.get(1);
+
+			double marker1Time = Util.dateToJ2K(marker1.getMarkerTime());
+			double marker2Time = Util.dateToJ2K(marker2.getMarkerTime());
+
+			double t1 = marker1Time > marker2Time ? marker2Time : marker1Time;
+			double t2 = marker1Time < marker2Time ? marker2Time : marker1Time;
+
+			double[] t = { t1, t2 };
+			return t;
+		} else {
+			return null;
+		}
+	}
+	
+	public void plotParticleMotion(String stationCode) {
+
+		double[] t = getMarkerTimeBoundaries(stationCode,
+				Marker.PARTICLE_MARKER_LABEL);
+		ArrayList<WaveViewPanel> views = getStationComponents(stationCode);
+		if (t != null && t.length == 2 && views.size() == 3) {
+			double[] data1 = getWaveData(views.get(0).getWave()
+					.subset(t[0], t[1]));
+			double[] data2 = getWaveData(views.get(1).getWave()
+					.subset(t[0], t[1]));
+			double[] data3 = getWaveData(views.get(2).getWave()
+					.subset(t[0], t[1]));
+
+			pmf.getComponent1().setxLabel(
+					views.get(0).getChannel().fullComponent());
+			pmf.getComponent1().setxData(data1);
+			pmf.getComponent1().setyLabel(
+					views.get(1).getChannel().fullComponent());
+			pmf.getComponent1().setyData(data2);
+
+			pmf.getComponent2().setxLabel(
+					views.get(1).getChannel().fullComponent());
+			pmf.getComponent2().setxData(data2);
+			pmf.getComponent2().setyLabel(
+					views.get(2).getChannel().fullComponent());
+			pmf.getComponent2().setyData(data3);
+
+			pmf.getComponent3().setxLabel(
+					views.get(2).getChannel().fullComponent());
+			pmf.getComponent3().setxData(data3);
+			pmf.getComponent3().setyLabel(
+					views.get(0).getChannel().fullComponent());
+			pmf.getComponent3().setyData(data1);
+			pmf.setAlwaysOnTop(true);
+
+			if (!pmf.isVisible()) {
+				pmf.setLocation(100, 100);
+				pmf.setVisible(true);
+			} else {
+				pmf.paintComponents(pmf.getGraphics());
+			}
+
+		}
+
+	}
+
+	
 	public double[] getWaveData(Wave wave) {
 		double[] data = new double[wave.numSamples()];
 		for (int i = 0; i < wave.numSamples(); i++) {
@@ -1488,7 +1630,33 @@ public class WaveClipboardFrame extends SwarmFrame {
 		}
 	}
 	
-	
+	public Marker getMarkerByType(String stationCode, String markerType) {
+		ArrayList<WaveViewPanel> waves = stationComponentMap.get(stationCode);
+		if (waves != null) {
+			for (WaveViewPanel wvp : waves) {
+				Marker marker = wvp.getMarkerByType(markerType);
+				if (marker != null) {
+					return marker;
+				}
+			}
+		}
+		return null;
+	}
+
+	public ArrayList<Marker> getMarkersByType(String stationCode,
+			String markerType) {
+		ArrayList<WaveViewPanel> waves = stationComponentMap.get(stationCode);
+		if (waves != null) {
+			for (WaveViewPanel wvp : waves) {
+				ArrayList<Marker> selectedMarkers = wvp
+						.getMarkersByType(markerType);
+				if (selectedMarkers.size() == 2) {
+					return selectedMarkers;
+				}
+			}
+		}
+		return null;
+	}
 
 	public LinkedHashMap<String, Wave> getWaveDataSectionFromStationComponents(	String stationCode, double t1, double t2) {
 		LinkedHashMap<String, Wave> waveData = new LinkedHashMap<String, Wave>();

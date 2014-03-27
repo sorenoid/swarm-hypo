@@ -4,7 +4,11 @@ import gov.usgs.swarm.chooser.DataChooser;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.FileDataSource;
 import gov.usgs.swarm.data.SeismicDataSource;
+import gov.usgs.swarm.database.model.Attempt;
+import gov.usgs.swarm.database.model.Event;
 import gov.usgs.swarm.heli.HelicorderViewerFrame;
+import gov.usgs.swarm.map.HypoOuputMapFrame;
+import gov.usgs.swarm.map.LocationPickerMapFrame;
 import gov.usgs.swarm.map.MapFrame;
 import gov.usgs.swarm.wave.MultiMonitor;
 import gov.usgs.swarm.wave.WaveClipboardFrame;
@@ -40,6 +44,9 @@ import java.util.logging.Logger;
 
 import javax.jnlp.BasicService;
 import javax.jnlp.ServiceManager;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -76,6 +83,9 @@ public class Swarm extends JFrame
 	private SwarmMenu swarmMenu;
 	private CachedDataSource cache;
 	private int frameCount = 0;
+	
+	private HypoOuputMapFrame hypoOuputMapFrame;
+	private LocationPickerMapFrame locationMapFrame;
 	
 	private WaveClipboardFrame waveClipboard;
 	private MapFrame mapFrame;
@@ -128,6 +138,19 @@ public class Swarm extends JFrame
 	public static Logger logger;
 	
 	public FileDataSource fileSource;
+	
+	private static Event selectedEvent;
+	
+	private static Attempt selectedAttempt;
+	
+	private static final String PERSISTENCE_UNIT_NAME = "swarm-wave";
+	
+	public static EntityManagerFactory factory;
+	public static EntityManager em;
+	
+	public SwarmMenu getSwarmMenu() {
+		return swarmMenu;
+	}
 	
 	public Swarm(String[] args)
 	{
@@ -389,6 +412,23 @@ public class Swarm extends JFrame
 	{
 		return chooser;
 	}
+	
+	public void setHypoOuputMapFrame(HypoOuputMapFrame hypoOuputMapFrame) {
+		this.hypoOuputMapFrame = hypoOuputMapFrame;
+	}
+	
+	public HypoOuputMapFrame getHypoOuputMapFrame() {
+		return hypoOuputMapFrame;
+	}
+	
+	public LocationPickerMapFrame getLocationMapFrame() {
+		return locationMapFrame;
+	}
+	
+	public void setLocationMapFrame(LocationPickerMapFrame locationMapFrame) {
+		this.locationMapFrame = locationMapFrame;
+	}
+
 	
 	public static Swarm getApplication()
 	{
@@ -1271,6 +1311,9 @@ public class Swarm extends JFrame
 	
 	public static void main(String[] args)
 	{
+		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		em = factory.createEntityManager();
+		
 		try 
 		{
 			UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
@@ -1282,5 +1325,25 @@ public class Swarm extends JFrame
 
 		if (Swarm.config.isKiosk())
 			swarm.parseKiosk();
+	}
+	
+	public static Event getSelectedEvent()
+	{
+		return selectedEvent;
+	}
+	
+	public static void setSelectedEvent(Event se)
+	{
+		selectedEvent = se;
+	}
+	
+	public static Attempt getSelectedAttempt()
+	{
+		return selectedAttempt;
+	}
+	
+	public static void setSelectedAttempt(Attempt se)
+	{
+		selectedAttempt = se;
 	}
 }

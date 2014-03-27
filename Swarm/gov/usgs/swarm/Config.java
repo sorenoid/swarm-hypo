@@ -101,6 +101,8 @@ public class Config
 	public double durationA;
 	public double durationB;
 	
+	public double ansv;
+	
 	public int span;
 	public int timeChunk;
 	public boolean showClip;
@@ -313,6 +315,7 @@ public class Config
 		
 		durationEnabled = Util.stringToBoolean(config.getString("durationEnabled"), false);
 		durationA = Util.stringToDouble(config.getString("durationA"), 1.86);
+		ansv = Util.stringToDouble(config.getString("ansv"), 1.86);
 		durationB = Util.stringToDouble(config.getString("durationB"), -0.85);
 		
 		showClip = Util.stringToBoolean(config.getString("showClip"), true);
