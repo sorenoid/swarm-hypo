@@ -28,8 +28,9 @@ import javax.swing.plaf.SplitPaneUI;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
+ * Frame for picking a location.
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  */
 public class LocationPickerMapFrame extends JDialog {
 

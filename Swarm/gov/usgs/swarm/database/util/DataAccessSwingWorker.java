@@ -10,6 +10,14 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
+/**
+ * GUI help for running database tasks.
+ * 
+ * @author Chirag Patel
+ *
+ * @param <T> result type for the task
+ * @param <V> type for intermediate results
+ */
 public class DataAccessSwingWorker<T, V> extends SwingWorker<T, V> implements PropertyChangeListener
 {
 	private LongRunningTaskDialog taskDialog;

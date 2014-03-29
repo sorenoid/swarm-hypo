@@ -10,11 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 
  * This class represents the results of an hypo calculation
  *  
- * @author Olufemi Thompson
- *
+ * @author Chirag Patel
  */
 @SuppressWarnings("serial")
 public class HypoResults implements Serializable{

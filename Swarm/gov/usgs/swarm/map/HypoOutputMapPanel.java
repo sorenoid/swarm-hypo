@@ -73,12 +73,9 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 /**
- * 
- * 
- * @author Olufemi Thompson
- * 
  * A map panel that displays the output of an hypo calculation
- *
+ * 
+ * @author Chirag Patel
  */
 public class HypoOutputMapPanel extends JPanel{
 	public enum DragMode

@@ -46,6 +46,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+/**
+ * Panel for the results of a search for events/attempts.
+ * 
+ * @author Chirag Patel
+ */
 public class DataSearchResultPanel extends JPanel {
 	private JTable dataSearchResultTable;
 	private boolean selectRow = false;

@@ -17,7 +17,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * This Window holds all the Panels({@link HypoPanel}, {@link EventPanel}, {@link MarkerPanel} and {@link EventCalculationPanel} related to showing the selected event properties
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 @SuppressWarnings("serial")

@@ -21,7 +21,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Panel that shows  Event label and type
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 public class EventPanel extends JPanel{

@@ -42,10 +42,9 @@ import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * 
- * @author Olufemi Thompson
  * A Jframe that holds the Hypooutput Map panel
  * 
+ * @author Chirag Patel
  */
 public class HypoOuputMapFrame extends JFrame{
 	

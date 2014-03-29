@@ -9,18 +9,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 /**
- * 
  * Event object that holds information about an event.
  * 
- * @author Olufemi Thompson
- *
+ * @author Chirag Patel
  */
 @Entity
 public class Event
 {
-
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Integer id;

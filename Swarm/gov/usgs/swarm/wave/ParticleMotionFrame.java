@@ -4,13 +4,10 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
-
 /**
+ * A window that holds the three particle motion plots
  * 
- * @author Olufemi Thompson
- *
- * A window that holds the three paritcle motion plots
- *
+ * @author Chirag Patel
  */
 @SuppressWarnings("serial")
 public class ParticleMotionFrame extends JFrame {

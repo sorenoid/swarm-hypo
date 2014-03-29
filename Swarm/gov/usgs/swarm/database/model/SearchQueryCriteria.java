@@ -2,6 +2,11 @@ package gov.usgs.swarm.database.model;
 
 import java.sql.Timestamp;
 
+/**
+ * Represents a query for events/attempts.
+ * 
+ * @author Chirag Patel
+ */
 public class SearchQueryCriteria
 {
 	private String userLabel = null;

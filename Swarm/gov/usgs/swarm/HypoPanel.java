@@ -45,7 +45,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Panel that is used to do hypo calculation
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 public class HypoPanel extends JPanel {

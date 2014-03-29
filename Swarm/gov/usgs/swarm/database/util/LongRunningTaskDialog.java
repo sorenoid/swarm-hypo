@@ -13,6 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+/**
+ * Dialog for long running tasks.
+ * 
+ * @author Chirag Patel
+ */
 public class LongRunningTaskDialog extends JDialog implements ActionListener
 {
 	private JProgressBar progressBar;

@@ -11,6 +11,11 @@ import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Model for data search.
+ * 
+ * @author Chirag Patel
+ */
 public class DataSearchTableModel extends DefaultTableModel
 {
 	private ResultSetModel resultSetModel;

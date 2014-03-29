@@ -16,6 +16,11 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+/**
+ * Handle searching for events in the database.
+ * 
+ * @author Chirag Patel
+ */
 public class DataSearchManager extends AbstractDataAccessManager
 {
 	private ApplicationConnection appConnection = null;

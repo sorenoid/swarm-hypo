@@ -19,8 +19,7 @@ import org.eclipse.persistence.internal.helper.SerializationHelper;
  * A Attempt object that holds information about markers(p and s components, coda's, azimuths, particle motion) placed on wave component as well 
  * as calculated location to events
  * 
- * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  */
 @Entity
 public class Attempt {

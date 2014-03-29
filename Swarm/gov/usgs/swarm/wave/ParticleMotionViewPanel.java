@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import javax.swing.JPanel;
+
 /**
- * 
  * A Panel that holds a single particle motion plot between two sets of component data
  * <br />
  * Component data could be any of the following :
@@ -22,8 +22,7 @@ import javax.swing.JPanel;
  * <li>N component</li>
  * </ul>
  * 
- * @author Olufemi Thompson
- *
+ * @author Chirag Patel
  */
 @SuppressWarnings("serial")
 public class ParticleMotionViewPanel extends JPanel {

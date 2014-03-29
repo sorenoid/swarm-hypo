@@ -19,7 +19,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Panel that shows all information about a selected marker on a selected WaveView Panel
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 public class MarkerPanel extends JPanel{

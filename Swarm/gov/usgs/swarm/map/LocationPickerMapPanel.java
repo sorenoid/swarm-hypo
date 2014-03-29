@@ -71,6 +71,11 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+/**
+ * Panel for choosing a location.
+ * 
+ * @author Chirag Patel
+ */
 public class LocationPickerMapPanel extends JPanel{
 	public enum DragMode
 	{

@@ -76,7 +76,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  * to touch mouse at all.</li>
  * </ul>
  * 
- * @author volodiaL
+ * @author Chirag Patel
  */
 public class DataSearchDialog extends JDialog
 {

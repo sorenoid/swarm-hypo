@@ -21,8 +21,7 @@ import javax.persistence.TypedQuery;
  * A Marker object that holds information about markers(p and s components,
  * coda's, azimuths, particle motion) placed on wave component
  * 
- * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  */
 @Entity
 public class Marker implements Serializable {

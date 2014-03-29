@@ -11,7 +11,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Panel that displays all calculations(Coda, Azimuth, Duration magnitude) required in an attempt to find an event
  * 
- * @author Olufemi Thompson
+ * @author Chirag Patel
  *
  */
 public class EventCalculationPanel extends JPanel{

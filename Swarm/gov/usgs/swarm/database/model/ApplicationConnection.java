@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Holds database connection configuration information.
+ * 
+ * @author Chirag Patel
+ */
 public final class ApplicationConnection
 {
 	private String dbUrl;

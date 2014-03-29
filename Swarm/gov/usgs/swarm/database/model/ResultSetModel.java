@@ -1,5 +1,10 @@
 package gov.usgs.swarm.database.model;
 
+/**
+ * Handles results of searches for events.
+ * 
+ * @author Chirag Patel
+ */
 public final class ResultSetModel
 {
 	private String[] columnNames;

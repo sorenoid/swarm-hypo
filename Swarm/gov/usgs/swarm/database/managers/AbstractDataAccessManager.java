@@ -3,6 +3,11 @@ package gov.usgs.swarm.database.managers;
 import gov.usgs.swarm.database.util.DataAccessSwingWorker;
 import gov.usgs.swarm.database.util.DataAccessTask;
 
+/**
+ * Helps run potentially long operations for the database.
+ * 
+ * @author Chirag Patel
+ */
 public class AbstractDataAccessManager
 {
 	protected <T, V> void executeLongOperation(DataAccessTask<T, V> dataAccessTask)
