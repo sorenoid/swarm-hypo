@@ -179,7 +179,9 @@ dist    -- generates new binary distribution
 			</fileset>
 		</jar>
 		
-		<jar manifest="Manifest.txt" destfile="${dist-tempdir}/${dist-appdir}/lib/${dist-jarfile}" />
+		<jar manifest="MANIFEST.MF" destfile="${dist-tempdir}/${dist-appdir}/lib/${dist-jarfile}">
+			<metainf file="${source}/persistence.xml"/>
+		</jar>
 		
 		<!-- Copy the distribution files -->
 		<copy todir="${dist-tempdir}/${dist-appdir}/lib">
