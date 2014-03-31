@@ -4,7 +4,7 @@
 	<property name="package" value="gov.usgs.swarm"/>
 	<property name="version" value="2.3.3"/>
 	<property name="jarfile" value="swarm.jar" />
-	<property name="classpath" location="../USGS/contrib/seisFile-1.5.2.jar;../USGS/contrib/slf4j-api-1.7.1.jar;../USGS/contrib/slf4j-log4j12-1.7.1.jar;../USGS/contrib/jtransforms-2.4.jar;../USGS/contrib/log4j-1.2.13.jar;../USGS/contrib/seedCodec-1.0.6.jar;../USGS/contrib/fissuresImpl-1.1.13.jar;../USGS/contrib/fissuresUtil-1.0.18.jar;../USGS/contrib/fissuresIDL-1.0.jar;../USGS/lib/winston.jar;../USGS/lib/vdx.jar;../USGS/lib/earthworm.jar;../USGS/lib/math.jar;../USGS/lib/net.jar;../USGS/lib/plot.jar;../USGS/lib/util.jar;../USGS/contrib/colt.jar;../USGS/contrib/JavaSeedLite.jar;../USGS/contrib/looks-2.0.4.jar;../USGS/contrib/forms-1.0.7.jar;../USGS/contrib/jnlp.jar;../USGS/contrib/oscache-2.1-mod2.jar;../USGS/contrib/seedlink_lite_1.2.1.jar" />
+	<property name="classpath" location="../USGS/contrib/seisFile-1.5.2.jar;../USGS/contrib/slf4j-api-1.7.1.jar;../USGS/contrib/slf4j-log4j12-1.7.1.jar;../USGS/contrib/jtransforms-2.4.jar;../USGS/contrib/log4j-1.2.13.jar;../USGS/contrib/seedCodec-1.0.6.jar;../USGS/contrib/fissuresImpl-1.1.13.jar;../USGS/contrib/fissuresUtil-1.0.18.jar;../USGS/contrib/fissuresIDL-1.0.jar;../USGS/lib/winston.jar;../USGS/lib/vdx.jar;../USGS/lib/earthworm.jar;../USGS/lib/math.jar;../USGS/lib/net.jar;../USGS/lib/plot.jar;../USGS/lib/util.jar;../USGS/contrib/colt.jar;../USGS/contrib/JavaSeedLite.jar;../USGS/contrib/looks-2.0.4.jar;../USGS/contrib/forms-1.0.7.jar;../USGS/contrib/jnlp.jar;../USGS/contrib/oscache-2.1-mod2.jar;../USGS/contrib/seedlink_lite_1.2.1.jar;../USGS/contrib/javax.persistence_2.1.0.v201304241213.jar;../USGS/contrib/h2.jar;../USGS/contrib/eclipselink.jar" />
 	<property name="source" location="." />
 	<property name="destination" location="./classes"/>	
 
@@ -14,6 +14,15 @@
 	<property name="dist-jarfile" value="swarm.jar"/>
 	<property name="dist-jarfile-bin" value="swarm-bin.jar"/>
 	<property name="classdir" value="classes"/>
+	
+	<!--hypo-->
+	<property name="hypo-classpath" value="${source}/../USGS/contrib"/>
+	<property name="hypo-source" value="${source}/../VDX/"/>
+	<property name="hypo-destination" value="${source}/hypo-classes"/>
+	<property name="hypo-dist" value="${hypo-source}/dist"/>
+	<property name="hypo-dist-lib" value="${hypo-dist}/lib"/>
+	<property name="hypo-jarfile" value="hypo.jar"/>
+	<!--end of hypo-->
 	
 	<property name="jnlp-dir" location="./swarm-jnlp" />
 
@@ -35,10 +44,33 @@ dist    -- generates new binary distribution
 	<target name="clean" description="remove the classes directory">
 		<delete dir="${destination}"/>
 		<mkdir  dir="${destination}"/>
+		
+		<delete dir="${hypo-destination}"/>
+		<mkdir  dir="${hypo-destination}"/>
 	</target>
 
 	<target name="compile" depends="clean" description="compile the source">
 		<javac srcdir="${source}" destdir="${destination}" classpath="${classpath}" target="1.5" debug="on" includeantruntime="false"/>
+		
+		<javac destdir="${hypo-destination}"  source="1.5" target="1.5" debug="on" includeantruntime="false">
+			<src path="${source}/../Math/"/>
+			<src path="${source}/../Net/"/>
+			<src path="${source}/../Pinnacle/"/>
+			<src path="${source}/../Plot/"/>
+			<src path="${source}/../Util/" />
+			<src path="${source}/../VDX/" />
+			<classpath>
+				<fileset dir="${source}/../USGS/contrib">
+					<include name="colt.jar" />
+					<include name="comm.jar" />
+					<include name="commons-collections-3.2.1.jar" />
+					<include name="JavaSeedLite.jar" />
+					<include name="jtransforms-2.4.jar" />
+					<include name="mysql.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		
 		<ant antfile="${source}/../USGS/buildversion.xml" target="version" dir="${source}/../USGS" inheritAll="true">
 			<property name="package" value="${package}"/>
 			<property name="version" value="${version}"/>
@@ -58,6 +90,9 @@ dist    -- generates new binary distribution
 	<target name="jar" depends="compile" description="generates new jarfile">
 		<mkdir dir="${source}/../USGS/lib"/>
 		<jar destfile="${source}/../USGS/lib/${jarfile}" basedir="${destination}" includes="**/*.class"/>
+		
+		<!--create hypo jars-->
+		<jar destfile="${dist-tempdir}/${dist-appdir}/lib/${hypo-jarfile}" basedir="${hypo-destination}" includes="**/*.class"/>
 	</target>
 	
 	<target name="deploy">
@@ -164,6 +199,9 @@ dist    -- generates new binary distribution
 				<include name="slf4j-log4j12-1.7.1.jar" />
 				<include name="oscache-2.1-mod2.jar" />			
 				<include name="seedlink_lite_1.2.1.jar" />
+				<include name="h2.jar" />
+				<include name="eclipselink.jar" />
+				<include name="javax.persistence_2.1.0.v201304241213.jar" />
 			</fileset>
 		</copy>
 		
@@ -192,6 +230,8 @@ dist    -- generates new binary distribution
 		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${source}/clip.wav" />
 		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${source}/IRIS_networks.txt" />
 		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${source}/swarm.sh" />
+		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${hypo-source}/runHypo.sh" />
+		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${hypo-source}/runHypo.bat" />
 		<copy todir="${dist-tempdir}/${dist-appdir}/" file="${source}/NTP.config" />
 		
 		<!-- <tar destfile="${dist-basedir}/swarm-${version}.tar.gz" basedir="${dist-tempdir}" compression="gzip" /> -->
