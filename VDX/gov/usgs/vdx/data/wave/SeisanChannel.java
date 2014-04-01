@@ -121,18 +121,19 @@ public class SeisanChannel {
         // TODO: should do generateString for display only. Should see how SCNL does parsing and follow that convention
         // for toString and parse
         public String generateString() {
-            return (((networkName == null || networkName.trim().length() == 0) ? "--"
-                    : networkName)
+            return (((stationCode == null || stationCode.trim().length() == 0) ? "--": stationCode)
                     + "  "
-                    + ((stationCode == null || stationCode.trim().length() == 0) ? "--"
-                    : stationCode)
-                    + "  "
-                    + ((firstTwoComponentCode == null || firstTwoComponentCode.trim().length() == 0) ? ((lastComponentCode == null || lastComponentCode
+					+ ((firstTwoComponentCode == null || firstTwoComponentCode.trim().length() == 0) ? ((lastComponentCode == null || lastComponentCode
                     .trim().length() == 0) ? "--"
-                    : lastComponentCode)
+                    : lastComponentCode+"///")
                     : ((lastComponentCode == null || lastComponentCode
                     .trim().length() == 0) ? firstTwoComponentCode
-                    : firstTwoComponentCode + lastComponentCode)));
+                    : firstTwoComponentCode))
+					+" "
+					+((networkName == null || networkName.trim().length() == 0) ? "--": networkName+"//")
+					+" "
+					+lastComponentCode);
+					
         }
 
         public static SimpleChannel parse(String channel) {
