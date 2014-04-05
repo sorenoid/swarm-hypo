@@ -723,24 +723,24 @@ public class WaveViewPanel extends JComponent {
 			waveInfo = String
 					.format("[%s - %s (UTC), %d samples (%.2f s), %d samples/s, %d, %d]",
 							Time.format(DATE_FORMAT,
-									Util.j2KToDate(wave.getStartTime())),
+									Util.j2KToDate(wave.getStartTime()/1000)),
 							Time.format(DATE_FORMAT,
-									Util.j2KToDate(wave.getEndTime())),
+									Util.j2KToDate(wave.getEndTime()/1000)),
 							wave.numSamples(),
 							wave.numSamples() / wave.getSamplingRate(),
 							(int) wave.getSamplingRate(), dataRange[0],
 							dataRange[1]);
 
 			if (timeSeries) {
-				String utc = Time.format(DATE_FORMAT, Util.j2KToDate(j2k));
+				String utc = Time.format(DATE_FORMAT, Util.j2KToDate(j2k/1000));
 				TimeZone tz = Swarm.config.getTimeZone(channel.toString);
-				double tzo = Time.getTimeZoneOffset(tz, j2k);
+				double tzo = Time.getTimeZoneOffset(tz, j2k/1000);
 				if (tzo != 0) {
 					String tza = tz.getDisplayName(
-							tz.inDaylightTime(Util.j2KToDate(j2k)),
+							tz.inDaylightTime(Util.j2KToDate(j2k/1000)),
 							TimeZone.SHORT);
 					status = Time
-							.format(DATE_FORMAT, Util.j2KToDate(j2k + tzo))
+							.format(DATE_FORMAT, Util.j2KToDate(j2k/1000 + tzo))
 							+ " (" + tza + "), " + utc + " (UTC)";
 				} else
 					status = utc;

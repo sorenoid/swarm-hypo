@@ -384,8 +384,8 @@ public class HelicorderViewPanel extends JComponent
 			WaveViewPanel p =  new WaveViewPanel(insetWavePanel);
 			p.setDataSource(insetWavePanel.getDataSource().getCopy());
 			WaveClipboardFrame cb = Swarm.getApplication().getWaveClipboard();
-			cb.setVisible(true);
 			cb.addWave(p);
+			cb.setVisible(true);			
 			requestFocus();
 		}
 	}
@@ -412,14 +412,14 @@ public class HelicorderViewPanel extends JComponent
 						x > heliRenderer.getGraphX() + heliRenderer.getGraphWidth() - 1 ||
 						y > heliRenderer.getGraphY() + heliRenderer.getGraphHeight() - 1))
 				{
-					double j2k = getMouseJ2K(x, y);
-					status = dateFormat.format(Util.j2KToDate(j2k));
-					TimeZone tz = Swarm.config.getTimeZone(settings.channel.toString);
-					double tzo = Time.getTimeZoneOffset(tz, j2k);
+					double j2k = getMouseJ2K(x, y);					
+					status = dateFormat.format(Util.j2KToDate(j2k/1000));
+					TimeZone tz = Swarm.config.getTimeZone(settings.channel.toString);					
+					double tzo = Time.getTimeZoneOffset(tz, j2k);					
 					if (tzo != 0)
 					{
-						String tza = tz.getDisplayName(tz.inDaylightTime(Util.j2KToDate(j2k)), TimeZone.SHORT);
-						status = dateFormat.format(Util.j2KToDate(j2k + tzo)) + " (" + tza + "), " +
+						String tza = tz.getDisplayName(tz.inDaylightTime(Util.j2KToDate(j2k/1000)), TimeZone.SHORT);
+						status = dateFormat.format(Util.j2KToDate((j2k/1000) + tzo)) + " (" + tza + "), " +
 								status + " (UTC)";
 					}
 				}
