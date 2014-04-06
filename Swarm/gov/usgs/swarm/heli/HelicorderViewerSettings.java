@@ -122,7 +122,7 @@ public class HelicorderViewerSettings
 	
 	public void save(ConfigFile cf, String prefix)
 	{
-		cf.put(prefix + ".channel", channel.toString);
+		cf.put(prefix + ".channel", channel.toString());
 		cf.put(prefix + ".timeChunk", Integer.toString(timeChunk));
 		cf.put(prefix + ".span", Integer.toString(span));
 		cf.put(prefix + ".waveZoomOffset", Integer.toString(waveZoomOffset));

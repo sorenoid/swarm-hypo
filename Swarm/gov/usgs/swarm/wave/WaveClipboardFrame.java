@@ -599,8 +599,16 @@ public class WaveClipboardFrame extends SwarmFrame {
 		markerTypesCombo.setEnabled(false);
 	}
 	
+	public boolean isMakerPlacementEnabled() {
+		return markerTypesCombo.isEnabled();
+	}
+	
 	public void enableMarkerGeneration() {
 		markerTypesCombo.setEnabled(true);
+	}
+	
+	public String getSelectedMarkerType() {
+		return markerTypesCombo.getSelectedItem().toString();
 	}
 	
 	private void createEventToolbarItems() {
@@ -1718,6 +1726,42 @@ public class WaveClipboardFrame extends SwarmFrame {
 					stationComponentMap.get(p.getStationCode()).remove(p);
 				}
 			}
+		}
+	}
+	
+	public void applyConstraints(String stationCode, String markerType,
+			WaveViewPanel wv) {
+		ArrayList<WaveViewPanel> waves = stationComponentMap.get(stationCode);
+		if (waves != null) {
+			for (WaveViewPanel wvp : waves) {
+				if (!wvp.equals(wv)) {
+					if (markerType
+							.equalsIgnoreCase(Marker.P_MARKER_LABEL)
+							|| markerType
+									.equalsIgnoreCase(Marker.S_MARKER_LABEL)
+							|| markerType
+									.equalsIgnoreCase(Marker.CODA_MARKER_LABEL)) {
+						Marker marker = wvp.getMarkerByType(markerType);
+						if (marker != null) {
+							marker.delete();
+							wvp.removeMarker(marker.getId());
+						}
+					}
+
+					if (markerType
+							.equalsIgnoreCase(Marker.AZIMUTH_MARKER_LABEL)
+							|| markerType
+									.equalsIgnoreCase(Marker.PARTICLE_MARKER_LABEL)) {
+						ArrayList<Marker> existingMarkers = wvp
+								.getMarkersByType(markerType);
+						for (Marker m : existingMarkers) {
+							m.delete();
+							wvp.removeMarker(m);
+						}
+					}
+				}
+			}
+
 		}
 	}
 

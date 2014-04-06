@@ -27,6 +27,8 @@ import gov.usgs.vdx.data.wave.plot.SpectrogramRenderer;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -36,10 +38,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -105,6 +109,8 @@ public class WaveViewPanel extends JComponent {
 	private String fileType;
 	private int fileIndex;
 	public boolean paintnow = false;
+	private double lineX;
+	private int plotHeight;
 	
 	private ArrayList<Marker> markers = new ArrayList<Marker>();
 	private Marker selectedMarker;
@@ -127,6 +133,7 @@ public class WaveViewPanel extends JComponent {
 
 	private boolean allowDragging;
 	private boolean dragging;
+	private boolean draggingMarker;
 	private double j2k1;
 	private double j2k2;
 	private int highlightX1;
@@ -307,6 +314,186 @@ public class WaveViewPanel extends JComponent {
 		allowClose = b;
 	}
 	
+	// added code
+	public void drawMarker(Graphics g, double xPoint) {
+		super.paintComponent(g);
+		double[] t = getTranslation();
+		new Color(0);
+		g.setColor(Color.green);
+		if (t != null) {
+			int x = (int) ((xPoint - t[1]) / t[0]);
+			g.drawLine(x, plotHeight, x, -plotHeight);
+		}
+	}
+	
+	/**
+	 * Draw all markers that have been placed on this WavePanel
+	 * 
+	 * @param g
+	 *            : {@link Graphics} Object
+	 */
+	public void paintMarker(Graphics g) {
+		super.paintComponent(g);
+		double[] t = getTranslation();
+		Collection<Marker> markerCollection = markers;
+		for (Marker marker : markerCollection) {
+			if (t != null) {
+				double j2k = marker.getMarkerTime().getTime();
+				int x = (int) ((j2k - t[1]) / t[0]);
+				
+				if (marker.getMarkerType().equalsIgnoreCase(
+						Marker.P_MARKER_LABEL)) {
+					g.setColor(Marker.P_MARKER_COLOR);
+				} else if (marker.getMarkerType().equalsIgnoreCase(
+						Marker.S_MARKER_LABEL)) {
+					g.setColor(Marker.S_MARKER_COLOR);
+				} else if (marker.getMarkerType().equalsIgnoreCase(
+						Marker.CODA_MARKER_LABEL)) {
+					g.setColor(Marker.CODA_MARKER_COLOR);
+				} else if (marker.getMarkerType().equalsIgnoreCase(
+						Marker.AZIMUTH_MARKER_LABEL)) {
+					g.setColor(Marker.AZIMUTH_MARKER_COLOR);
+				} else if (marker.getMarkerType().equalsIgnoreCase(
+						Marker.PARTICLE_MARKER_LABEL)) {
+					g.setColor(Marker.PARTICLE_MARKER_COLOR);
+				}
+				g.drawLine(x, plotHeight, x, -plotHeight);
+				paintMarkerLabel(g, marker, x);
+
+			}
+		}
+
+	}
+	
+		/**
+	 * Draw marker label next to marker line for easy identification of markers
+	 * as well as making dragging of markers easy also
+	 * 
+	 * 
+	 * @param g
+	 *            : {@link Graphics} object
+	 * @param marker
+	 *            : {@link Marker} object
+	 * @param x
+	 *            : x-Position Marker label should be drawn
+	 */
+	private void paintMarkerLabel(Graphics g, Marker marker, int x) {
+		// setting marker label and background color
+		String information = "";
+		Color backgroundColor = null;
+		if (marker.getMarkerType().equalsIgnoreCase(Marker.S_MARKER_LABEL)) {
+			information = marker.getIs_es();
+			backgroundColor = Marker.S_MARKER_COLOR;
+		} else if (marker.getMarkerType().equalsIgnoreCase(
+				Marker.P_MARKER_LABEL)) {
+			information = marker.getIp_ep();
+			backgroundColor = Marker.P_MARKER_COLOR;
+		} else if (marker.getMarkerType().equalsIgnoreCase(
+				Marker.CODA_MARKER_LABEL)) {
+			information = "C";
+			backgroundColor = Marker.CODA_MARKER_COLOR;
+		} else if (marker.getMarkerType().equalsIgnoreCase(
+				Marker.AZIMUTH_MARKER_LABEL)) {
+			information = "A";
+			backgroundColor = Marker.AZIMUTH_MARKER_COLOR;
+		} else if (marker.getMarkerType().equalsIgnoreCase(
+				Marker.PARTICLE_MARKER_LABEL)) {
+			information = "P";
+			backgroundColor = Marker.PARTICLE_MARKER_COLOR;
+		}
+
+		int dim = 15;
+		// initialise rectangle.
+		g.setColor(backgroundColor);
+		g.fillRect(x, 9, dim, dim);
+
+		Font font = g.getFont();
+		Rectangle2D fontRec = font.getStringBounds(information, g
+				.getFontMetrics().getFontRenderContext());
+
+		while (fontRec.getWidth() >= dim * 0.95f
+				|| fontRec.getHeight() >= dim * 0.95f) {
+			Font smallerFont = font.deriveFont((float) (font.getSize() - 2));
+			font = smallerFont;
+			g.setFont(smallerFont);
+			fontRec = smallerFont.getStringBounds(information, g
+					.getFontMetrics().getFontRenderContext());
+		}
+
+		new Color(0);
+		// center string and draw text
+		g.setColor(Color.white);
+		FontMetrics fm = g.getFontMetrics();
+		float stringWidth = fm.stringWidth(information);
+		int fontX = (int) (x + dim / 2 - stringWidth / 2);
+		int fontY = (int) (9 + dim / 2);
+		g.drawString(information, fontX, fontY);
+
+	}
+	
+	/**
+	 * Gets A Marker at the specified position on the WavePanel. Returns null if
+	 * none exist. Since markers are distinguished by their RGB values on the
+	 * WavePanel, The RGB value at the specified location is used to check if a
+	 * marker exist at that point
+	 * 
+	 * 
+	 * @param x
+	 *            : X-position
+	 * @param y
+	 *            : Y-position
+	 * @return
+	 */
+	private Marker getMarkerAtPosition(int x, int y) {
+		double[] t = getTranslation();
+		double j2k = x * t[0] + t[1];
+		Timestamp time = new Timestamp((long)j2k);
+
+		BufferedImage bi = new BufferedImage(getWidth(), getHeight(),
+				BufferedImage.TYPE_INT_ARGB);
+		paint(bi.getGraphics());
+
+		int rgb = bi.getRGB(x, y);
+		Color c = new Color(rgb);
+		if (c.equals(Marker.P_MARKER_COLOR)) {
+			return this.getMarkerByType(Marker.P_MARKER_LABEL);
+		} else if (c.equals(Marker.S_MARKER_COLOR)) {
+			return this.getMarkerByType(Marker.S_MARKER_LABEL);
+		} else if (c.equals(Marker.CODA_MARKER_COLOR)) {
+			return this.getMarkerByType(Marker.CODA_MARKER_LABEL);
+		} else if (c.equals(Marker.AZIMUTH_MARKER_COLOR)) {
+			ArrayList<Marker> markers = getMarkersByType(Marker.AZIMUTH_MARKER_LABEL);
+			if (markers.size() == 2) {
+				long diff1 = Math.abs(markers.get(0).getMarkerTime().getTime()
+						- time.getTime());
+				long diff2 = Math.abs(markers.get(1).getMarkerTime().getTime()
+						- time.getTime());
+				return diff1 < diff2 ? markers.get(0) : markers.get(1);
+			} else if (markers.size() == 1) {
+				return markers.get(0);
+			} else {
+				return null;
+			}
+		} else if (c.equals(Marker.PARTICLE_MARKER_COLOR)) {
+			ArrayList<Marker> markers = getMarkersByType(Marker.PARTICLE_MARKER_LABEL);
+			if (markers.size() == 2) {
+				long diff1 = Math.abs(markers.get(0).getMarkerTime().getTime()
+						- time.getTime());
+				long diff2 = Math.abs(markers.get(1).getMarkerTime().getTime()
+						- time.getTime());
+				return diff1 < diff2 ? markers.get(0) : markers.get(1);
+			} else if (markers.size() == 1) {
+				return markers.get(0);
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+
+	
 	/**
 	 * Gets the time boundaries for only markers that are placed twiced on this
 	 * wave panel. Such markers include Azimuth and Particle Motion markers.
@@ -441,16 +628,132 @@ public class WaveViewPanel extends JComponent {
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				Swarm.getApplication().touchUITime();
-
+				
 				double[] t = getTranslation();
-				if (t != null) {
-					int x = e.getX();
-					double j2k = x * t[0] + t[1];
+				Dimension size = getSize();
+				if (wave != null && t != null && e.getY() > yOffset
+						&& e.getY() < (size.height - bottomHeight)
+						&& e.getX() > xOffset
+						&& e.getX() < size.width - rightWidth) {
+
+					String markerType = Swarm.getApplication()
+							.getWaveClipboard().getSelectedMarkerType();
+
+					if (t != null) {
+						boolean placeMarker = true;
+						// Applying constraints for placement of CODA and
+						// Particle
+						// Motion Markers.(They can only be placed on a station
+						// that
+						// has three component)
+
+						if (Swarm.getApplication().getWaveClipboard()
+								.isMakerPlacementEnabled()) {
+							int componentCount = Swarm
+									.getApplication()
+									.getWaveClipboard()
+									.getStationComponentCount(
+											channel.stationCode);
+
+							if (markerType
+									.equalsIgnoreCase(Marker.AZIMUTH_MARKER_LABEL)
+									|| markerType
+											.equalsIgnoreCase(Marker.PARTICLE_MARKER_LABEL)) {
+								if (componentCount < 3) {
+									placeMarker = false;
+								}
+
+							}
+
+						} else {
+							placeMarker = false;
+						}
+
+						int x = e.getX();
+						double j2k = x * t[0] + t[1];
+//						Timestamp time = new Timestamp(Util.j2KToDate(j2k)
+//								.getTime());
+						
+						Timestamp time = new Timestamp((long)j2k);
+
+						// Try to get a marker at the specified location
+						Marker marker = getMarkerAtPosition(e.getX(), e.getY());
+
+						if (marker != null) {
+							selectedMarker = marker;
+							selectedMarker
+									.setFileIndex(WaveViewPanel.this.fileIndex);
+							selectedMarker.setStation(channel.stationCode);
+							draggingMarker = true;
+							if (lineX == j2k) {
+								lineX = Double.NaN;
+							}
+						} else {
+							lineX = j2k;
+							if (placeMarker) {
+								selectedMarker = new Marker();
+								selectedMarker.setStation(channel.stationCode);
+								selectedMarker
+										.setFileIndex(WaveViewPanel.this.fileIndex);
+								selectedMarker
+										.setFilePath(WaveViewPanel.this.filePath);
+								selectedMarker
+										.setFileType(WaveViewPanel.this.fileType);
+								selectedMarker.setMarkerTime(time);
+								selectedMarker.setMarkerType(markerType);
+
+								if (selectedMarker
+										.getMarkerType()
+										.equalsIgnoreCase(Marker.S_MARKER_LABEL)) {
+									selectedMarker.setIs_es("IS");
+									selectedMarker.setUpDownUnknown("Up");
+								}
+								if (selectedMarker
+										.getMarkerType()
+										.equalsIgnoreCase(Marker.P_MARKER_LABEL)) {
+									selectedMarker.setIp_ep("IP");
+									selectedMarker.setUpDownUnknown("Up");
+								}
+								if (Swarm.getApplication().getWaveClipboard()
+										.isMakerPlacementEnabled()) {
+
+									Swarm.getApplication()
+											.getWaveClipboard()
+											.applyConstraints(
+													channel.stationCode,
+													selectedMarker
+															.getMarkerType(),
+													WaveViewPanel.this);
+
+									applyConstraints(selectedMarker);
+									// markers.put(time, selectedMarker);
+									markers.add(selectedMarker);
+								}
+							} else {
+								selectedMarker = null;
+							}
+
+						}
+
+						if (placeMarker) {
+							selectedMarker.setAttempt(Swarm
+									.getSelectedAttempt().getId());
+							setEventCalculations();
+							selectedMarker.setFileName(channel.toString());
+							selectedMarker.persist();
+							System.out.println("maker id : " + selectedMarker.getId() + " , marker time : " + Time.format(DATE_FORMAT,selectedMarker.getMarkerTime()));
+						}
+
+						if (SwarmMenu.DataRecordState()) {
+							SwarmMenu.getDataRecord().getMarkerPanel()
+									.setViewPanel(WaveViewPanel.this);
+						}
+
 					if (timeSeries)
-						System.out.printf("%s UTC: %s j2k: %.3f ew: %.3f\n",
+						/* System.out.printf("%s UTC: %s j2k: %.3f ew: %.3f\n",
 								channel,
 								Time.format(DATE_FORMAT, Util.j2KToDate(j2k)),
-								j2k, Util.j2KToEW(j2k));
+								j2k, Util.j2KToEW(j2k)); */
 
 					if (SwingUtilities.isRightMouseButton(e)) {
 						settings.cycleType();
@@ -461,7 +764,7 @@ public class WaveViewPanel extends JComponent {
 
 					if (timeSeries && allowDragging
 							&& SwingUtilities.isLeftMouseButton(e)) {
-						Dimension size = getSize();
+						//Dimension size = getSize();
 						int y = e.getY();
 						if (t != null && y > yOffset
 								&& y < (size.height - bottomHeight)
@@ -479,15 +782,16 @@ public class WaveViewPanel extends JComponent {
 						}
 					}
 				}
-
+				paintnow = true;
 				fireMousePressed(e);
-			}
+			}	
+		}
 
 			public void mouseReleased(MouseEvent e) {
 				Swarm.getApplication().touchUITime();
 				if (SwingUtilities.isLeftMouseButton(e) && dragging) {
 					dragging = false;
-					if (j2k1 != j2k2 && source != null) {
+					if (j2k1 != j2k2 && source != null && (!draggingMarker)) {
 						double st = Math.min(j2k1, j2k2);
 						double et = Math.max(j2k1, j2k2);
 						zoom(st, et);
@@ -503,6 +807,11 @@ public class WaveViewPanel extends JComponent {
 						&& mx < WaveViewPanel.this.getWidth() - 3 && my > 2
 						&& my < 17) {
 					fireClose();
+				}
+				
+				draggingMarker = false;
+				if (selectedMarker != null) {
+					selectedMarker.persist();
 				}
 			}
 
@@ -545,7 +854,48 @@ public class WaveViewPanel extends JComponent {
 							&& y < (size.height - bottomHeight) && x > xOffset
 							&& x < size.width - rightWidth) {
 						j2k2 = x * t[0] + t[1];
-						highlightX2 = x;
+						if (draggingMarker) {
+							
+							
+//							Timestamp time = new Timestamp(Util.j2KToDate(j2k2)
+//									.getTime());
+							
+							Timestamp time = new Timestamp((long)j2k2);
+							// markers.remove(time);
+							selectedMarker.setMarkerTime(time);
+
+							lineX = Double.NaN;
+
+							if (Swarm.getApplication().getWaveClipboard()
+									.isMakerPlacementEnabled()) {
+								// Set<Timestamp> keys = markers.keySet();
+								//
+								// for (Timestamp key : keys) {
+								// if (markers.get(key).equals(selectedMarker))
+								// {
+								// System.out.println(markers.get(key).getMarkerType()
+								// + "   " + selectedMarker.getMarkerType());
+								// markers.remove(key);
+								// markers.put(time, selectedMarker);
+								// break;
+								// }
+								// }
+
+							}
+							// selectedMarker.persist();
+							WaveViewPanel.this.setCursor(new Cursor(
+									Cursor.E_RESIZE_CURSOR));
+
+							if (SwarmMenu.DataRecordState()) {
+								SwarmMenu.getDataRecord().getMarkerPanel()
+										.setViewPanel(WaveViewPanel.this);
+							}
+							setEventCalculations();
+						} else {
+							WaveViewPanel.this.setCursor(new Cursor(
+									Cursor.CROSSHAIR_CURSOR));
+							highlightX2 = x;
+						}
 						repaint();
 					}
 				}
@@ -992,6 +1342,13 @@ public class WaveViewPanel extends JComponent {
 			g2.setColor(borderColor);
 			g2.drawRect(0, 0, dim.width - 1, dim.height - 2);
 		}
+		
+		if (paintnow) {
+			if (lineX != Double.NaN) {
+				drawMarker(g2, lineX);
+			}
+			paintMarker(g2);
+		}
 	}
 
 	public void setUseFilterLabel(boolean b) {
@@ -1040,6 +1397,7 @@ public class WaveViewPanel extends JComponent {
 		switch (settings.viewType) {
 		case WAVE:
 			plotWave(plot, renderWave);
+			plotHeight = plot.getHeight();
 			break;
 		case SPECTRA:
 			plotSpectra(plot, renderWave);
@@ -1063,6 +1421,7 @@ public class WaveViewPanel extends JComponent {
 	 *            the wave to plot
 	 */
 	private void plotWave(Plot plot, Wave renderWave) {
+		plot.getRenderers().clear();
 		if (renderWave == null || renderWave.numSamples() == 0)
 			return;
 
@@ -1321,6 +1680,63 @@ public class WaveViewPanel extends JComponent {
 	}
 	
 	/**
+	 * Apply Constraints for placing markers at the time a marker is to be
+	 * placed on the Wave Panel <br />
+	 * <ul>
+	 * <li><b>Phase (p)</b> : Only one can be placed</li>
+	 * <li><b>Phase (s)</b> : Only one can be placed</li>
+	 * <li><b>Coda</b> : Only one can be placed</li>
+	 * <li><b>Azimuth</b> : Only Two can be placed</li>
+	 * <li><b>Particle Motion</b> : Only Two can be placed</li>
+	 * </ul>
+	 * 
+	 * @param marker
+	 *            : {@link Marker} object that needs to be placed on this
+	 *            WavePanel
+	 */
+	public void applyConstraints(Marker marker) {
+		ArrayList<Timestamp> existingMarkers = getMarkerKeys(marker
+				.getMarkerType());
+		if (marker.getMarkerType().equalsIgnoreCase(Marker.P_MARKER_LABEL)) {
+			if (existingMarkers.size() == 1) {
+				Marker m = getMarker(existingMarkers.get(0));
+				removeMarker(existingMarkers.get(0));
+				if (m != null) {
+					m.delete();
+				}
+			}
+
+		} else if (marker.getMarkerType().equalsIgnoreCase(
+				Marker.S_MARKER_LABEL)) {
+			if (existingMarkers.size() == 1) {
+				Marker m = getMarker(existingMarkers.get(0));
+				removeMarker(existingMarkers.get(0));
+				if (m != null) {
+					m.delete();
+				}
+			}
+
+		} else if (marker.getMarkerType().equalsIgnoreCase(
+				Marker.CODA_MARKER_LABEL)) {
+			if (existingMarkers.size() == 1) {
+				Marker m = getMarker(existingMarkers.get(0));
+				removeMarker(existingMarkers.get(0));
+				if (m != null) {
+					m.delete();
+				}
+			}
+		} else {
+			if (existingMarkers.size() == 2) {
+				Marker m = getMarker(existingMarkers.get(1));
+				removeMarker(existingMarkers.get(1));
+				if (m != null) {
+					m.delete();
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Add a Marker at a particular time to thie WavePanel
 	 * 
 	 * @param key
@@ -1330,6 +1746,24 @@ public class WaveViewPanel extends JComponent {
 	 */
 	public void addMarker(Timestamp key, Marker marker) {
 		markers.add(marker);
+	}
+	
+	/**
+	 * Get the timestamp that markers of a paticular type was placed on this
+	 * WavePanel
+	 * 
+	 * @param markerType
+	 *            : type of Marker
+	 * @return
+	 */
+	public ArrayList<Timestamp> getMarkerKeys(String markerType) {
+		ArrayList<Timestamp> markerKeys = new ArrayList<Timestamp>();
+		for (Marker m : markers) {
+			if (m.getMarkerType().equalsIgnoreCase(markerType)) {
+				markerKeys.add(m.getMarkerTime());
+			}
+		}
+		return markerKeys;
 	}
 	
 	/**
@@ -1386,6 +1820,22 @@ public class WaveViewPanel extends JComponent {
 		}
 	}
 	
+	
+	/**
+	 * Get Marker on the WavePanel placed at the specified time stamp
+	 * 
+	 * @param key
+	 *            : timestamp of Marker
+	 * @return
+	 */
+	public Marker getMarker(Timestamp key) {
+		for (Marker m : markers) {
+			if (m.getMarkerTime().equals(key)) {
+				return m;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Remove Specified marker from this WavePanel
