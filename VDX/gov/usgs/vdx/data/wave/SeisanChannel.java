@@ -135,11 +135,10 @@ public class SeisanChannel {
                     : lastComponentCode+"///")
                     : ((lastComponentCode == null || lastComponentCode
                     .trim().length() == 0) ? firstTwoComponentCode
-                    : firstTwoComponentCode))
+                    : firstTwoComponentCode+lastComponentCode))
 					+" "
 					+((networkName == null || networkName.trim().length() == 0) ? "--": networkName+"//")
-					+" "
-					+lastComponentCode);
+					+" ");
 					
         }
 
