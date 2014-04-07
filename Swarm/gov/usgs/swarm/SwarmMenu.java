@@ -3,6 +3,7 @@ package gov.usgs.swarm;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.database.model.Attempt;
 import gov.usgs.swarm.database.model.Event;
+import gov.usgs.swarm.database.util.DatabaseConnection;
 import gov.usgs.swarm.database.view.DataSearchDialog;
 import gov.usgs.util.Util;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Persistence;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
@@ -191,7 +193,11 @@ public class SwarmMenu extends JMenuBar
 		newEvent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				if(null == Swarm.factory){
+					//DatabaseConnection.loadProperties();
+					Swarm.factory = Persistence.createEntityManagerFactory(Swarm.PERSISTENCE_UNIT_NAME);
+					Swarm.em = Swarm.factory.createEntityManager();					
+				}
 				Event event = new Event();
 				event.setEventLabel("event");
 				event.setEventType("event type");
@@ -369,6 +375,11 @@ public class SwarmMenu extends JMenuBar
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(null == Swarm.factory){
+					//DatabaseConnection.loadProperties();
+					Swarm.factory = Persistence.createEntityManagerFactory(Swarm.PERSISTENCE_UNIT_NAME);
+					Swarm.em = Swarm.factory.createEntityManager();				
+				}
 				if (!dataQueryOpened) {
 					dataQueryOpened = true;
 					dataSearchDialog = dataSearchDialog != null ? dataSearchDialog

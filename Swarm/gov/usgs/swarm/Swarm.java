@@ -102,6 +102,8 @@ public class Swarm extends JFrame
 	private static final int BOTTOM_RIGHT = 6;
 	private static final int TOP_LEFT = 7;
 	private static final int TOP_RIGHT = 8;
+	public static final String USER = "admin";
+	public static final String PASSWORD = "password";
 	
 	static
 	{
@@ -143,7 +145,7 @@ public class Swarm extends JFrame
 	
 	private static Attempt selectedAttempt;
 	
-	private static final String PERSISTENCE_UNIT_NAME = "swarm-wave";
+	public static final String PERSISTENCE_UNIT_NAME = "swarm-wave";
 	
 	public static EntityManagerFactory factory;
 	public static EntityManager em;
@@ -1311,8 +1313,8 @@ public class Swarm extends JFrame
 	
 	public static void main(String[] args)
 	{
-		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-		em = factory.createEntityManager();
+		/*factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		em = factory.createEntityManager();*/
 		
 		try 
 		{
