@@ -159,7 +159,6 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 		super(ch + ", [" + sds + "]", true, true, true, true);
 		Swarm.getApplication().touchUITime();
 		settings = new HelicorderViewerSettings(SimpleChannel.parse(ch));
-		System.out.println("parsing channel : " + ch); 
 		settings.setBottomTime(bt);
 		waveViewSettings = new WaveViewSettings();
 		dataSource = sds.getCopy();
