@@ -35,11 +35,11 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 /**
- * 
+ * A set of utility classes for the USGS codebase.
  *
+ * TODO: this is starting to get unruly, decompose a bit.
  * 
- * 
- * @author Chirag Patel
+ * @author Dan Cervelli
  */
 public class Util
 {
@@ -107,8 +107,7 @@ public class Util
 	 */	
 	public static java.util.Date j2KToDate(double in)
 	{
-	//	return new java.util.Date((long)(1000 * (in + 946728000)));
-		return new java.util.Date((long)(in * 1000));
+		return new java.util.Date((long)(1000 * (in + 946728000)));
 	}
 	
 	/** Converts a <CODE>Date</CODE> object to a j2ksec.
@@ -117,8 +116,7 @@ public class Util
 	 */	
 	public static double dateToJ2K(java.util.Date in)
 	{
-	//	return (((double)in.getTime() / (double)1000) - 946728000);
-		return ((double)(in.getTime() /1000)); 
+		return (((double)in.getTime() / (double)1000) - 946728000);
 	}
 	
 	/** Gets the time now as a j2ksec
