@@ -1,6 +1,7 @@
 package gov.usgs.vdx.data.wave;
 
 
+import gov.usgs.util.Util;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -11,6 +12,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+
 
 /**
  * 
@@ -31,6 +34,7 @@ public class SeisanFile {
 	private Float second;
 	private String fileName;
 	private double startTime; 
+	private Date startDate;
 	
 	
 	
@@ -60,13 +64,14 @@ public class SeisanFile {
 		second  = data.substring(53,59).trim().length() == 0?null:Float.parseFloat(data.substring(53,59).trim());
 
 		Calendar c  = Calendar.getInstance();
-		c.set(Calendar.YEAR, (year + 1900));
+		c.set(Calendar.YEAR, (year));
 		c.set(Calendar.MONTH, month-1);
 		c.set(Calendar.DAY_OF_MONTH, day);
 		c.set(Calendar.HOUR_OF_DAY, hour);
 		c.set(Calendar.MINUTE, minute);
 		c.set(Calendar.SECOND, second.intValue());
-		startTime  = c.getTimeInMillis();		
+		startTime  = c.getTimeInMillis();
+		startDate= c.getTime();
 		
 	    
 	    int number_of_lines = (noOfChannels/ 3) + (noOfChannels % 3 + 1);
@@ -178,7 +183,7 @@ public class SeisanFile {
 			}
 			size += c.getData().length;
 		}
-		sw.setStartTime(startTime);
+		sw.setStartTime(Util.dateToJ2K(startDate));
 		sw.setSamplingRate(sampleRate);
 		sw.buffer = new int[size];
 		int index = 0;

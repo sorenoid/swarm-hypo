@@ -1,6 +1,11 @@
 package gov.usgs.vdx.data.wave;
 
+import gov.usgs.util.Util;
+
 import java.util.Calendar;
+import java.util.Date;
+
+
 
 /**
  * This class holds meta data for a Seisan channel
@@ -24,6 +29,7 @@ public class SeisanChannel {
 	private Integer numberOfSamples;
 	private int[] data;
 	private double startTime; 
+	private Date startDate;
 	
 	/**
 	 * parses and generates channel info from a String
@@ -57,6 +63,7 @@ public class SeisanChannel {
 		c.set(Calendar.MINUTE, minute);
 		c.set(Calendar.SECOND, second.intValue());
 		startTime  = c.getTimeInMillis();
+		startDate= c.getTime();
 		
 		
 		System.out.println(c.getTime().toGMTString());
@@ -87,7 +94,7 @@ public class SeisanChannel {
 	{
 		Wave sw = new Wave();
 		sw.setSamplingRate(sampleRate);
-		sw.setStartTime(startTime);
+		sw.setStartTime(Util.dateToJ2K(startDate));
 		sw.buffer = data;
 		return sw;
 	}
