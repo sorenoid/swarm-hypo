@@ -533,7 +533,8 @@ public class FileDataSource extends AbstractCachingDataSource {
 			}
 		});
 		wvd.setFileSpecs(fss);
-		wvd.setVisible(true);
+		if(!Swarm.isCancelled)
+			wvd.setVisible(true);
 //		return wvd.isOK;
 	}
 	

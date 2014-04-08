@@ -83,6 +83,7 @@ public class SwarmDialog extends JDialog
 						{
 							dispose();
 							wasCancelled();
+							Swarm.isCancelled = true;
 						}
 					}
 				});

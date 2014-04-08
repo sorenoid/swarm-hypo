@@ -104,6 +104,7 @@ public class Swarm extends JFrame
 	private static final int TOP_RIGHT = 8;
 	public static final String USER = "admin";
 	public static final String PASSWORD = "password";
+	public static boolean isCancelled = false;
 	
 	static
 	{

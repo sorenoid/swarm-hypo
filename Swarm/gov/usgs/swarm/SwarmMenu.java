@@ -129,6 +129,7 @@ public class SwarmMenu extends JMenuBar
 				{
 					public void actionPerformed(ActionEvent e)
 					{
+						Swarm.isCancelled = false;
 						JFileChooser chooser = Swarm.getApplication().getFileChooser();
 						chooser.resetChoosableFileFilters();
 						chooser.setFileFilter(chooser.getAcceptAllFileFilter());

@@ -172,6 +172,7 @@ public class WaveLabelDialog extends SwarmDialog {
 	public void wasCancelled(){
 		selectedFileSpec = null;
 		isOK = false;
+		//this.setVisible(false);
 		hide();
 	}
 	
