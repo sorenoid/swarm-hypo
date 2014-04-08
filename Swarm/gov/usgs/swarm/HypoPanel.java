@@ -88,7 +88,7 @@ public class HypoPanel extends JPanel {
 		builder.add(hypoInputPath, "1,5,1,1,FILL,FILL");
 
 		browseHypoInputButton = new JButton("Browse");
-		builder.add(browseHypoInputButton, "3,5,1,1,FILL,FILL");
+		builder.add(browseHypoInputButton, "3,5,1,1,LEFT,FILL");
 		
 		
 
@@ -99,13 +99,13 @@ public class HypoPanel extends JPanel {
 		builder.add(hypoTotalInputPath, "1,9,1,1,FILL,FILL");
 
 		browseHypoTotalInputButton = new JButton("Browse");
-		builder.add(browseHypoTotalInputButton, "3,9,1,1,FILL,FILL");
+		builder.add(browseHypoTotalInputButton, "3,9,1,1,LEFT,FILL");
 
 		
 		
 		
 		runHypoButton = new JButton("Run Hypo");
-		builder.add(runHypoButton, "3,11,1,1");
+		builder.add(runHypoButton, "3,11,1,1,LEFT,FILL");
 
 		this.add(builder.getPanel(), BorderLayout.CENTER);
 
