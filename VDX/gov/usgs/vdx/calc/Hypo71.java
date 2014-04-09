@@ -3958,7 +3958,8 @@ public class Hypo71 {
 						SINGLE(true);
 					}
 					if (O1.KKF != 0) {
-						return " *** INSUFFICIENT DATA FOR LOCATING THIS QUAKE ***";
+						//return " *** INSUFFICIENT DATA FOR LOCATING THIS QUAKE ***";
+						break;
 					}
 					// C------- COMPUTE SUMMARY OF MAGNITUDE RESIDUALS
 					// -----------------------
@@ -4027,7 +4028,7 @@ public class Hypo71 {
 		runWithFileInput(args[0]);
         if (true) return;
 
-        System.out.println("DATA INPUT");
+        //System.out.println("DATA INPUT");
 		Hypo71 hypoCalculator = new Hypo71();
 		Queue<Station> stationsList = new LinkedList<Station>();
 		Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
