@@ -79,7 +79,6 @@ public class SwarmUtil
 	private static void fixButton(AbstractButton button, String toolTip)
 	{
 		button.setFocusable(false);
-		System.out.println(button.getIcon().toString());
 		button.setMargin(ZERO_INSETS);
 		//button.setSize(null);
 		button.setToolTipText(toolTip);
