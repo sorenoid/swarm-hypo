@@ -620,7 +620,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		markerTypesCombo = new JComboBox(markerTypes);
 		markerTypesCombo.setMaximumSize(markerTypesCombo.getPreferredSize());
 		toolbar.add(markerTypesCombo);
-		markerTypesCombo.setEnabled(true);
+		markerTypesCombo.setEnabled(false);
 	}
 	
 	private void createListeners() {
