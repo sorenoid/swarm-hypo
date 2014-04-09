@@ -213,7 +213,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 
 		createMainButtons();
 		createWaveButtons();
-		createEventToolbarItems();
 
 		mainPanel.add(toolbar, BorderLayout.NORTH);
 
@@ -579,7 +578,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 		Util.mapKeyStrokeToButton(this, "DELETE", "remove", loadFiles);
 		toolbar.add(selecWaves);
 
-		toolbar.add(Box.createHorizontalGlue());
+		toolbar.add(Box.createHorizontalGlue());		
+
+		createEventToolbarItems();
 
 		throbber = new Throbber();
 		toolbar.add(throbber);
@@ -617,8 +618,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 				Marker.AZIMUTH_MARKER_LABEL,
 				Marker.PARTICLE_MARKER_LABEL };
 		markerTypesCombo = new JComboBox(markerTypes);
+		markerTypesCombo.setMaximumSize(markerTypesCombo.getPreferredSize());
 		toolbar.add(markerTypesCombo);
-		markerTypesCombo.setEnabled(false);
+		markerTypesCombo.setEnabled(true);
 	}
 	
 	private void createListeners() {
