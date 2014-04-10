@@ -226,8 +226,10 @@ public class WaveLabelDialog extends SwarmDialog {
 		fileSpecCombo.setEnabled(false);
 
 		if (fileSpecs == null || fileSpecs.size() == 0) {
-			fileSpecCombo.setVisible(false);
-			fileSpecCheckBox.setVisible(false);
+			fileSpecCombo.setVisible(true);
+			fileSpecCheckBox.setVisible(true);
+			fileSpecCombo.setEnabled(false);
+			fileSpecCheckBox.setEnabled(false);
 		} else {
 			DefaultComboBoxModel model = (DefaultComboBoxModel) fileSpecCombo
 					.getModel();

@@ -197,7 +197,11 @@ public class SwarmMenu extends JMenuBar
 				if(null == Swarm.factory){
 					//DatabaseConnection.loadProperties();
 					Swarm.factory = Persistence.createEntityManagerFactory(Swarm.PERSISTENCE_UNIT_NAME);
-					Swarm.em = Swarm.factory.createEntityManager();					
+					try{
+					Swarm.em = Swarm.factory.createEntityManager();
+					}catch(Exception e1){
+						Swarm.factory = null;
+					}
 				}
 				Event event = new Event();
 				event.setEventLabel("event");

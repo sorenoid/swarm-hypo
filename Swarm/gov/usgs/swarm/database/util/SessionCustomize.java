@@ -13,7 +13,10 @@ import org.h2.jdbcx.JdbcDataSource;
 
 public class SessionCustomize implements SessionCustomizer {
 	  public void customize(Session session) {
-	    session.getLogin().setConnector(new JNDIConnector(getDataSource()));
+		  DataSource ds = getDataSource();
+		  if(null == ds)
+			  return;
+	    session.getLogin().setConnector(new JNDIConnector(ds));
 	 
 	    for (ClassDescriptor descriptor : session.getDescriptors().values()) {
 	      descriptor.getCachePolicy().setIdentityMapSize(1000);
@@ -21,9 +24,11 @@ public class SessionCustomize implements SessionCustomizer {
 	  }
 	  public static DataSource getDataSource() {
 		  	String dbName = null;
-		  	do{
-		  		dbName = JOptionPane.showInputDialog("Please enter the database name:");
-		  	}while(null == dbName || "".equalsIgnoreCase(dbName.trim()));
+		  	dbName = JOptionPane.showInputDialog("Please enter the database name:");
+		  	
+		  	if(null == dbName || "".equalsIgnoreCase(dbName.trim())){
+		  		return null;
+		  	}
 		  	
 	  		JdbcDataSource dataSource = new JdbcDataSource();	
 			dataSource.setURL("jdbc:h2:"+dbName);
