@@ -3,10 +3,10 @@ package gov.usgs.swarm;
 
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -61,6 +61,12 @@ public class DataRecord extends JFrame
 		builder.add(hypoPanel,"1,7,1,1,FILL,FILL");
 		
 		mainPanel.add(builder.getPanel(), BorderLayout.CENTER);
+		
+		/*Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		double width = screenSize.getWidth();
+		double height = screenSize.getHeight();*/
+		
+		//setSize((int)width, (int)height);
 		pack();
 
 
@@ -70,7 +76,7 @@ public class DataRecord extends JFrame
 			}
 		});
 		
-		setSize(360, 690);
+		//setSize(360, 690);
 	}
 	
 	public MarkerPanel getMarkerPanel() {
