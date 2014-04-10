@@ -201,31 +201,34 @@ public class SwarmMenu extends JMenuBar
 					Swarm.em = Swarm.factory.createEntityManager();
 					}catch(Exception e1){
 						Swarm.factory = null;
+						return;
 					}
 				}
-				Event event = new Event();
-				event.setEventLabel("event");
-				event.setEventType("event type");
-				event.persist();
-				
-				Swarm.setSelectedEvent(event);
-				
-				Attempt attempt = new Attempt();
-				attempt.setEvent(event.getId());
-				attempt.persist();
-				Swarm.setSelectedAttempt(attempt);
-				eventProperties.setEnabled(true);
-				Swarm.getApplication().getWaveClipboard().enableMarkerGeneration();
-				
-				if (!eventPropertiesDialogOpened) {
-					eventPropertiesDialogOpened = true;
+				if(null != Swarm.factory){
+					Event event = new Event();
+					event.setEventLabel("event");
+					event.setEventType("event type");
+					event.persist();
 					
-					if(eventPropertiesDialog == null){
-						eventPropertiesDialog = new DataRecord();
+					Swarm.setSelectedEvent(event);
+					
+					Attempt attempt = new Attempt();
+					attempt.setEvent(event.getId());
+					attempt.persist();
+					Swarm.setSelectedAttempt(attempt);
+					eventProperties.setEnabled(true);
+					Swarm.getApplication().getWaveClipboard().enableMarkerGeneration();
+					
+					if (!eventPropertiesDialogOpened) {
+						eventPropertiesDialogOpened = true;
+						
+						if(eventPropertiesDialog == null){
+							eventPropertiesDialog = new DataRecord();
+						}
+						eventPropertiesDialog.setVisible(true);
+					}else{
+						eventPropertiesDialog.doInitialise();
 					}
-					eventPropertiesDialog.setVisible(true);
-				}else{
-					eventPropertiesDialog.doInitialise();
 				}
 					
 			}
@@ -387,19 +390,22 @@ public class SwarmMenu extends JMenuBar
 					Swarm.em = Swarm.factory.createEntityManager();
 					}catch(Exception e1){
 						Swarm.factory = null;
+						//return;
 					}				
 				}
-				if (!dataQueryOpened) {
-					dataQueryOpened = true;
-					dataSearchDialog = dataSearchDialog != null ? dataSearchDialog
-							: new DataSearchDialog();
-					dataSearchDialog.setAlwaysOnTop(true);
-					dataSearchDialog.centerOnScreen();
-					// dataQuery.setLocationByPlatform(true);
-					// dataQuery.setBounds(40, 40, 350, 200);
-					// dataQuery.setSize(350, 200);
-					// dataQuery.setLocationRelativeTo(null);
-					dataSearchDialog.setVisible(true);
+				if(null != Swarm.factory){
+					if (!dataQueryOpened) {
+						dataQueryOpened = true;
+						dataSearchDialog = dataSearchDialog != null ? dataSearchDialog
+								: new DataSearchDialog();
+						dataSearchDialog.setAlwaysOnTop(true);
+						dataSearchDialog.centerOnScreen();
+						// dataQuery.setLocationByPlatform(true);
+						// dataQuery.setBounds(40, 40, 350, 200);
+						// dataQuery.setSize(350, 200);
+						// dataQuery.setLocationRelativeTo(null);
+						dataSearchDialog.setVisible(true);
+					}
 				}
 
 			}
