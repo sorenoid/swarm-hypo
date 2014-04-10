@@ -33,7 +33,6 @@ public class SeisanFile {
 	private Integer minute;
 	private Float second;
 	private String fileName;
-	private double startTime; 
 	private Date startDate;
 	
 	
@@ -70,7 +69,6 @@ public class SeisanFile {
 		c.set(Calendar.HOUR_OF_DAY, hour);
 		c.set(Calendar.MINUTE, minute);
 		c.set(Calendar.SECOND, second.intValue());
-		startTime  = c.getTimeInMillis();
 		startDate= c.getTime();
 		
 	    

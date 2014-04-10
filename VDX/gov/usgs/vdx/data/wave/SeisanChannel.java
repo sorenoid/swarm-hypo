@@ -28,7 +28,6 @@ public class SeisanChannel {
 	private Float sampleRate;
 	private Integer numberOfSamples;
 	private int[] data;
-	private double startTime; 
 	private Date startDate;
 	
 	/**
@@ -62,7 +61,6 @@ public class SeisanChannel {
 		c.set(Calendar.HOUR_OF_DAY, hour);
 		c.set(Calendar.MINUTE, minute);
 		c.set(Calendar.SECOND, second.intValue());
-		startTime  = c.getTimeInMillis();
 		startDate= c.getTime();
 		
 		
