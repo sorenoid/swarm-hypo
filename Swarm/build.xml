@@ -50,9 +50,6 @@ dist    -- generates new binary distribution
 	</target>
 
 	<target name="compile" depends="clean" description="compile the source">
-		<echo>${source}</echo>
-		<echo>${destination}</echo>
-		<echo>${classpath}</echo>
 		<javac srcdir="${source}" destdir="${destination}" classpath="${classpath}" target="1.5" debug="on" includeantruntime="false"/>
 		
 		<javac destdir="${hypo-destination}"  source="1.5" target="1.5" debug="on" includeantruntime="false">
@@ -184,7 +181,7 @@ dist    -- generates new binary distribution
 		</jar>
 		
 		<jar manifest="MANIFEST.MF" destfile="${dist-tempdir}/${dist-appdir}/lib/${dist-jarfile}">
-			<metainf file="${source}/persistence.xml"/>
+			<metainf file="${source}/META-INF/persistence.xml"/>
 		</jar>
 		
 		<!-- Copy the distribution files -->
