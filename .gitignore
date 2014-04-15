@@ -1,0 +1,10 @@
+.idea
+*.iml
+*.db
+*.class
+classes
+.settings
+.metadata
+WaveDefaults.config
+dist
+/USGS/lib
