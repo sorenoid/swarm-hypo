@@ -86,7 +86,7 @@ public class WaveFileSpec {
 		}
 		if(specs != null && specs.size() > 0){
 			for(FileSpec spec : specs){
-				if(spec.getFileName().equals(fileName)){
+				if(fileName != null && fileName.equals(spec.getFileName())){
 					return spec;
 				}
 			}
