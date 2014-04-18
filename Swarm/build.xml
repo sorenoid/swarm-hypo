@@ -136,6 +136,8 @@ dist    -- generates new binary distribution
 				<include name="gov/usgs/vdx/data/wave/plot/SpectraRenderer*.class" />
 				<include name="gov/usgs/vdx/data/wave/plot/SpectrogramRenderer*.class" />
 				<include name="gov/usgs/vdx/calc/Hypo71*.class" />
+				<include name="gov/usgs/vdx/calc/data/*.class" />
+				<include name="gov/usgs/vdx/calc/util/*.class" />
 			</fileset>
 			<fileset dir="${source}/../Earthworm/${classdir}">
 				<include name="gov/usgs/earthworm/Menu*.class" />
