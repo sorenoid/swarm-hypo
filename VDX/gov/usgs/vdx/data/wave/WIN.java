@@ -59,7 +59,8 @@ public class WIN
         public Vector<Integer> in_buf;
     }
 
-    List<ChannelData> channelData = new ArrayList<ChannelData>();
+    List<ChannelData> channelData = null;
+    Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
 
 //	public float[] y;
 //	int yLen;
@@ -101,9 +102,10 @@ public class WIN
             cur.in_buf = new Vector<Integer>();
             readHeader(cur, dis);
 			readData(cur, dis);
-            channelData.add(cur);
+            //channelData.add(cur);
 		}
 		dis.close();
+		channelData = new ArrayList<ChannelData>(channelMap.values());
         return channelData;
 	}
 
@@ -194,7 +196,6 @@ public class WIN
 		
 			dis.readFully(oneByte);
 			c.channel_num = intFromSingleByte(oneByte[0]);
-		
 			dis.readFully(oneByte);
 			c.data_size = intFromSingleByte(oneByte[0])>>4;
 		
@@ -213,7 +214,9 @@ public class WIN
             	for (int ix = 0; ix < ((int) c.sampling_rate - 1); ix++)
 				{
 					accum += dis.readByte();
-					c.in_buf.add(accum);
+					if(null != channelMap.get(c.channel_num)){
+						channelMap.get(c.channel_num).in_buf.add(accum);
+					}
 					
 				}
             }
@@ -222,7 +225,9 @@ public class WIN
 				for (int ix = 0; ix < ((int) c.sampling_rate - 1); ix++)
 				{
 					accum += dis.readByte();
-					c.in_buf.add(accum);
+					if(null != channelMap.get(c.channel_num)){
+						channelMap.get(c.channel_num).in_buf.add(accum);
+					}
 					bytesRead ++;
 				}	
 			}
@@ -234,7 +239,9 @@ public class WIN
 					dis.readFully(twoBytes);
 					accum += shortFromTwoBytes (twoBytes);
 					d[ix] = accum;
-					c.in_buf.add (accum);
+					if(null != channelMap.get(c.channel_num)){
+						channelMap.get(c.channel_num).in_buf.add (accum);
+					}
 //					System.out.println ("data bytes: " + d[ix]);
 					bytesRead += 2;
 				}	
@@ -261,6 +268,8 @@ public class WIN
 					bytesRead += 4;
 				}	
 			}
+			//System.out.println("Channel Num: "+c.channel_num);			
+			channelMap.put(c.channel_num, c);
 		} while (bytesRead < c.packetSize);
 	}
 
