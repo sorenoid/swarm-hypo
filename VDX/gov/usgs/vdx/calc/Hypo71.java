@@ -1785,13 +1785,13 @@ public class Hypo71 {
 
 					if (readFromFile) {
 						final ArrayList<Object> ar = read(FINPUT_READER, "(F5.0,F5.2,I5,F5.2,I5,2F5.2)");
-						ORG1 = ((Double) (ar.get(0) == null ? 0d : ar.get(0)));
-						ORG2 = ((Double) (ar.get(1) == null ? 0d : ar.get(1)));
-						LAT1 = (Integer) (ar.get(2) != null ? ar.get(2) : 0);
-						LAT2 = ((Double) (ar.get(3) != null ? ar.get(3) : 0d));
-						LON1 = (Integer) (ar.get(4) != null ? ar.get(4) : 0);
-						LON2 = ((Double) (ar.get(5) != null ? ar.get(5) : 0d));
-						O2.Z = ((Double) (ar.get(6) != null ? ar.get(6) : 0d));
+						ORG1 = toDouble((ar.get(0) == null ? 0d : ar.get(0)));
+						ORG2 = toDouble((ar.get(1) == null ? 0d : ar.get(1)));
+						LAT1 = toInt(ar.get(2) != null ? ar.get(2) : 0);
+						LAT2 = toDouble((ar.get(3) != null ? ar.get(3) : 0d));
+						LON1 = toInt(ar.get(4) != null ? ar.get(4) : 0);
+						LON2 = toDouble((ar.get(5) != null ? ar.get(5) : 0d));
+						O2.Z = toDouble((ar.get(6) != null ? ar.get(6) : 0d));
 					}
 					/*
 					 * final ArrayList<Object> ar = read(FINPUT_READER,
@@ -2546,13 +2546,13 @@ public class Hypo71 {
 			final ArrayList<Object> ar = read(FINPUT_READER, "(2A4,9X,2I1,F5.2,1X,2(I4,F6.2),T21,A)");
 			CHECK = ((String) (ar.get(0) == null ? "" : ar.get(0)));
 			IPRO = ((String) (ar.get(1) == null ? "" : ar.get(1)));
-			O1.KNST = ((Integer) (ar.get(2) == null ? 0d : ar.get(2)));
-			O1.INST = ((Integer) (ar.get(3) == null ? 0d : ar.get(3)));
-			ZRES = ((Double) (ar.get(3) != null ? ar.get(3) : 0d));
-			LAT1 = (Integer) (ar.get(4) != null ? ar.get(4) : 0);
-			LAT2 = ((Double) (ar.get(5) != null ? ar.get(5) : 0d));
-			LON1 = (Integer) (ar.get(6) != null ? ar.get(6) : 0);
-			LON2 = ((Double) (ar.get(7) != null ? ar.get(7) : 0d));
+			O1.KNST = toInt(ar.get(2) == null ? 0d : ar.get(2));
+			O1.INST = toInt(ar.get(3) == null ? 0d : ar.get(3));
+			ZRES = toDouble (ar.get(3) != null ? ar.get(3) : 0d);
+			LAT1 = toInt(ar.get(4) != null ? ar.get(4) : 0);
+			LAT2 = toDouble(ar.get(5) != null ? ar.get(5) : 0d);
+			LON1 = toInt(ar.get(6) != null ? ar.get(6) : 0);
+			LON2 = toDouble(ar.get(7) != null ? ar.get(7) : 0d);
 			AZRES[NRP1 - 1] = ((String) (ar.get(8) == null ? "" : ar.get(8)));
 
 			/*
@@ -3199,11 +3199,11 @@ public class Hypo71 {
 						break;
 					}
 					String temp = ((String) (ar.get(17) != null ? ar.get(17) : " "));
-					phaseRecordsList.add(new PhaseRecord((String) (ar.get(0) != null ? ar.get(0) : ""), (String) (ar.get(1) != null ? ar.get(1) : ""), ((Double) (ar.get(2) != null ? ar.get(2) : 0d)), (Integer) (ar.get(3) != null ? ar.get(3) : 0),
-							(Integer) (ar.get(4) != null ? ar.get(4) : 0), ((Double) (ar.get(5) != null ? ar.get(5) : 0d)), ((Double) (ar.get(6) != null ? ar.get(6) : 0d)), (String) (ar.get(7) != null ? ar.get(7) : 0), ((Double) (ar.get(8) != null ? ar.get(8) : 0d)),
-							((Double) (ar.get(9) != null ? ar.get(9) : 0d)), ((Double) (ar.get(10) != null ? ar.get(10) : 0d)), ((Double) (ar.get(11) != null ? ar.get(11) : 0d)), ((Double) (ar.get(12) != null ? ar.get(12) : 0d)), (String) (ar.get(13) != null ? ar.get(13) : 0),
-							((Double) (ar.get(14) != null ? ar.get(14) : 0d)), ((Double) (ar.get(15) != null ? ar.get(15) : 0d)), (String) (ar.get(16) != null ? ar.get(16) : 0), temp.length() != 0 ? temp.charAt(0) : ' ', (String) (ar.get(18) != null ? ar.get(18) : 0),
-							(String) (ar.get(19) != null ? ar.get(19) : 0), ((String) (ar.get(20) != null ? ar.get(20) : " ")).length() != 0 ? ((String) (ar.get(20) != null ? ar.get(20) : " ")).charAt(0) : ' ', (String) (ar.get(21) != null ? ar.get(21) : 0)));
+					phaseRecordsList.add(new PhaseRecord((String) (ar.get(0) != null ? ar.get(0) : ""), (String) (ar.get(1) != null ? ar.get(1) : ""), toDouble(ar.get(2) != null ? ar.get(2) : 0d), toInt(ar.get(3) != null ? ar.get(3) : 0),
+							toInt(ar.get(4) != null ? ar.get(4) : 0), toDouble(ar.get(5) != null ? ar.get(5) : 0d), toDouble(ar.get(6) != null ? ar.get(6) : 0d), (String) (ar.get(7) != null ? ar.get(7) : "0"), toDouble(ar.get(8) != null ? ar.get(8) : 0d),
+							toDouble(ar.get(9) != null ? ar.get(9) : 0d), toDouble(ar.get(10) != null ? ar.get(10) : 0d), toDouble(ar.get(11) != null ? ar.get(11) : 0d), toDouble(ar.get(12) != null ? ar.get(12) : 0d), (String) (ar.get(13) != null ? ar.get(13) : "0"),
+							toDouble(ar.get(14) != null ? ar.get(14) : 0d), toDouble(ar.get(15) != null ? ar.get(15) : 0d), (String) (ar.get(16) != null ? ar.get(16) : "0"), temp.length() != 0 ? temp.charAt(0) : ' ', (String) (ar.get(18) != null ? ar.get(18) : "0"),
+							(String) (ar.get(19) != null ? ar.get(19) : "0"), ((String) (ar.get(20) != null ? ar.get(20) : " ")).length() != 0 ? ((String) (ar.get(20) != null ? ar.get(20) : " ")).charAt(0) : ' ', (String) (ar.get(21) != null ? ar.get(21) : 0)));
 				} catch (IOException e) {
 				}
 			}
@@ -3504,10 +3504,10 @@ public class Hypo71 {
 					int J = 0;
 					double TESTJ = 0;
 					if (result.get(1) != null) {
-						J = (Integer) result.get(1);
+						J = toInt(result.get(1));
 					}
 					if (result.get(2) != null) {
-						TESTJ = (Double) result.get(2);
+						TESTJ = toDouble(result.get(2));
 					}
 					BHEAD = (String) result.get(3);
 					if (ISW.equals("    ") || ISW.equals("1   ") || ISW.length() == 0) {
@@ -3560,19 +3560,19 @@ public class Hypo71 {
 							break;
 						}
 						stationsList
-								.add(new Station(((String) (ar.get(0) != null ? ar.get(0) : " ")).charAt(0), (String) (ar.get(1) != null ? ar.get(1) : " "), (Integer) (ar.get(2) != null ? ar.get(2) : 0), ((Double) (ar.get(3) != null ? ar.get(3) : 0d)),
-										((String) (ar.get(4) != null ? ar.get(4) : " ")).charAt(0), (Integer) (ar.get(5) != null ? ar.get(5) : 0), ((Double) (ar.get(6) != null ? ar.get(6) : 0d)), ((String) (ar.get(7) != null ? ar.get(7) : " ")).charAt(0),
-										(Integer) (ar.get(8) != null ? ar.get(8) : 0), ((Double) (ar.get(9) != null ? ar.get(9) : 0d)), ((Double) (ar.get(10) != null ? ar.get(10) : 0d)), ((Double) (ar.get(11) != null ? ar.get(11) : 0d)), (Integer) (ar.get(12) != null ? ar
-												.get(12) : 0), ((Double) (ar.get(13) != null ? ar.get(13) : 0d)), ((Double) (ar.get(14) != null ? ar.get(14) : 0d)), (Integer) (ar.get(15) != null ? ar.get(15) : 0), (Integer) (ar.get(16) != null ? ar.get(16) : 0), (Integer) (ar
+								.add(new Station(((String) (ar.get(0) != null ? ar.get(0) : " ")).charAt(0), (String) (ar.get(1) != null ? ar.get(1) : " "), toInt(ar.get(2) != null ? ar.get(2) : 0), toDouble(ar.get(3) != null ? ar.get(3) : 0d),
+										((String) (ar.get(4) != null ? ar.get(4) : " ")).charAt(0), toInt(ar.get(5) != null ? ar.get(5) : 0), toDouble(ar.get(6) != null ? ar.get(6) : 0d), ((String) (ar.get(7) != null ? ar.get(7) : " ")).charAt(0),
+										toInt(ar.get(8) != null ? ar.get(8) : 0), toDouble(ar.get(9) != null ? ar.get(9) : 0d), toDouble(ar.get(10) != null ? ar.get(10) : 0d), toDouble(ar.get(11) != null ? ar.get(11) : 0d), toInt(ar.get(12) != null ? ar
+												.get(12) : 0), toDouble(ar.get(13) != null ? ar.get(13) : 0d), toDouble(ar.get(14) != null ? ar.get(14) : 0d), toInt(ar.get(15) != null ? ar.get(15) : 0), toInt(ar.get(16) != null ? ar.get(16) : 0), toInt(ar
 												.get(17) != null ? ar.get(17) : 0)));
 
 					} else {// 30
 						List ar = read(FINPUT_READER, "(A4,A1,I2,1X,F5.2,A1,I3,1X,F5.2,A1,I4,5X,I1,4F6.2,1X,I1,F6.2,1X,I1,2X,I6,I4)");
-						stationsList.add(new Station(((String) (ar.get(1) != null ? ar.get(1) : "")).charAt(0), (String) (ar.get(0) != null ? ar.get(0) : ""), (Integer) (ar.get(2) != null ? ar.get(2) : 0), ((Double) (ar.get(3) != null ? ar.get(3) : 0d)),
-								((String) (ar.get(4) != null ? ar.get(4) : "")).charAt(0), (Integer) (ar.get(5) != null ? ar.get(5) : 0), ((Double) (ar.get(6) != null ? ar.get(6) : 0d)), ((String) (ar.get(7) != null ? ar.get(7) : "")).charAt(0), (Integer) (ar.get(8) != null ? ar
-										.get(8) : 0), (Integer) (ar.get(9) != null ? ar.get(9) : 0), (Integer) (ar.get(10) != null ? ar.get(10) : 0), (Integer) (ar.get(11) != null ? ar.get(11) : 0), (Integer) (ar.get(12) != null ? ar.get(12) : 0),
-								(Integer) (ar.get(13) != null ? ar.get(13) : 0), (Integer) (ar.get(14) != null ? ar.get(14) : 0), (Integer) (ar.get(15) != null ? ar.get(15) : 0), (Integer) (ar.get(16) != null ? ar.get(16) : 0), (Integer) (ar.get(17) != null ? ar.get(17) : 0),
-								(Integer) (ar.get(18) != null ? ar.get(18) : 0)));
+						stationsList.add(new Station(((String) (ar.get(1) != null ? ar.get(1) : "")).charAt(0), (String) (ar.get(0) != null ? ar.get(0) : ""), toInt(ar.get(2) != null ? ar.get(2) : 0), toDouble(ar.get(3) != null ? ar.get(3) : 0d),
+								((String) (ar.get(4) != null ? ar.get(4) : "")).charAt(0), toInt(ar.get(5) != null ? ar.get(5) : 0), toDouble(ar.get(6) != null ? ar.get(6) : 0d), ((String) (ar.get(7) != null ? ar.get(7) : "")).charAt(0), toInt(ar.get(8) != null ? ar
+										.get(8) : 0), toInt(ar.get(9) != null ? ar.get(9) : 0), toInt(ar.get(10) != null ? ar.get(10) : 0), toInt(ar.get(11) != null ? ar.get(11) : 0), toInt(ar.get(12) != null ? ar.get(12) : 0),
+								toInt(ar.get(13) != null ? ar.get(13) : 0), toInt(ar.get(14) != null ? ar.get(14) : 0), toInt(ar.get(15) != null ? ar.get(15) : 0), toInt(ar.get(16) != null ? ar.get(16) : 0), toInt(ar.get(17) != null ? ar.get(17) : 0),
+								toInt(ar.get(18) != null ? ar.get(18) : 0)));
 					}
 				}
 				// Integration code goes here
@@ -3642,7 +3642,7 @@ public class Hypo71 {
 						error = false;
 						break;
 					}
-					crustalModelList.add(new CrustalModel(((Double) (ar.get(0) != null ? ar.get(0) : 0d)), ((Double) (ar.get(1) != null ? ar.get(1) : 0d))));
+					crustalModelList.add(new CrustalModel(toDouble(ar.get(0) != null ? ar.get(0) : 0d), toDouble(ar.get(1) != null ? ar.get(1) : 0d)));
 				}
 				// Integration code goes here
 				if (crustalModelList.size() <= 0) {
@@ -3745,11 +3745,11 @@ public class Hypo71 {
 
 		if (readFromFile) {
 			List ar = read(FINPUT_READER, "(I1,F4.0,2F5.0,F5.2,7I5,5I1,2(I4,F6.2))");
-			controlCard = new ControlCard((Integer) (ar.get(0) != null ? ar.get(0) : 0), ((Double) (ar.get(1) != null ? ar.get(1) : 0d)), ((Double) (ar.get(2) != null ? ar.get(2) : 0d)), ((Double) (ar.get(3) != null ? ar.get(3) : 0d)), ((Double) (ar.get(4) != null ? ar.get(4)
-					: 0d)), (Integer) (ar.get(5) != null ? ar.get(5) : 0), (Integer) (ar.get(6) != null ? ar.get(6) : 0), (Integer) (ar.get(7) != null ? ar.get(7) : 0), (Integer) (ar.get(8) != null ? ar.get(8) : 0), (Integer) (ar.get(9) != null ? ar.get(9) : 0),
-					(Integer) (ar.get(10) != null ? ar.get(10) : 0), (Integer) (ar.get(11) != null ? ar.get(11) : 0), (Integer) (ar.get(12) != null ? ar.get(12) : 0), (Integer) (ar.get(13) != null ? ar.get(13) : 0), (Integer) (ar.get(14) != null ? ar.get(14) : 0),
-					(Integer) (ar.get(15) != null ? ar.get(15) : 0), (Integer) (ar.get(16) != null ? ar.get(16) : 0), (Integer) (ar.get(17) != null ? ar.get(17) : 0), (Integer) (ar.get(18) != null ? ar.get(18) : 0), ((Double) (ar.get(19) != null ? ar.get(19) : 0d)),
-					((Double) (ar.get(20) != null ? ar.get(20) : 0d)));
+			controlCard = new ControlCard(toInt(ar.get(0) != null ? ar.get(0) : 0), toDouble(ar.get(1) != null ? ar.get(1) : 0d), toDouble(ar.get(2) != null ? ar.get(2) : 0d), toDouble(ar.get(3) != null ? ar.get(3) : 0d), toDouble(ar.get(4) != null ? ar.get(4)
+					: 0d), toInt(ar.get(5) != null ? ar.get(5) : 0), toInt(ar.get(6) != null ? ar.get(6) : 0), toInt(ar.get(7) != null ? ar.get(7) : 0), toInt(ar.get(8) != null ? ar.get(8) : 0), toInt(ar.get(9) != null ? ar.get(9) : 0),
+					toInt(ar.get(10) != null ? ar.get(10) : 0), toInt(ar.get(11) != null ? ar.get(11) : 0), toInt(ar.get(12) != null ? ar.get(12) : 0), toInt(ar.get(13) != null ? ar.get(13) : 0), toInt(ar.get(14) != null ? ar.get(14) : 0),
+					toInt(ar.get(15) != null ? ar.get(15) : 0), toInt(ar.get(16) != null ? ar.get(16) : 0), toInt(ar.get(17) != null ? ar.get(17) : 0), toInt(ar.get(18) != null ? ar.get(18) : 0), toDouble(ar.get(19) != null ? ar.get(19) : 0d),
+					toDouble(ar.get(20) != null ? ar.get(20) : 0d));
 		}
 
 		// Integration code goes here
@@ -3886,6 +3886,14 @@ public class Hypo71 {
 
 			}
 		}
+	}
+
+	public static int toInt(Object o) {
+		return ((Number)o).intValue();
+	}
+
+	public static double toDouble(Object o) {
+		return ((Number)o).doubleValue();
 	}
 
 	/**
