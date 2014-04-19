@@ -99,13 +99,12 @@ public class WIN
 		while (dis.available() != 0)
 		{
             ChannelData cur = new ChannelData();
-            cur.in_buf = new Vector<Integer>();
             readHeader(cur, dis);
-			readData(cur, dis);
+			readData(cur.packetSize,dis);
             //channelData.add(cur);
 		}
 		dis.close();
-		channelData = new ArrayList<ChannelData>(channelMap.values());
+		channelData = new ArrayList<ChannelData>(channelMap.values());// This is in order.
         return channelData;
 	}
 
@@ -185,12 +184,14 @@ public class WIN
 	 * @param dis DataInputStream to read WIN from
 	 * @throws IOException if it isn't a WIN file
 	 */
-	public void readData(ChannelData c, DataInputStream dis) throws IOException
+	public void readData(int packetSize,DataInputStream dis) throws IOException
 	{
 		int bytesRead = 10;
 		
 		do 
 		{	
+			ChannelData c = new ChannelData();
+            c.in_buf = new Vector<Integer>();
 			byte[] oneByte = new byte[1];
 			dis.readFully(oneByte);
 		
@@ -214,9 +215,7 @@ public class WIN
             	for (int ix = 0; ix < ((int) c.sampling_rate - 1); ix++)
 				{
 					accum += dis.readByte();
-					if(null != channelMap.get(c.channel_num)){
-						channelMap.get(c.channel_num).in_buf.add(accum);
-					}
+					c.in_buf.add(accum);
 					
 				}
             }
@@ -225,9 +224,7 @@ public class WIN
 				for (int ix = 0; ix < ((int) c.sampling_rate - 1); ix++)
 				{
 					accum += dis.readByte();
-					if(null != channelMap.get(c.channel_num)){
-						channelMap.get(c.channel_num).in_buf.add(accum);
-					}
+					c.in_buf.add(accum);
 					bytesRead ++;
 				}	
 			}
@@ -239,9 +236,7 @@ public class WIN
 					dis.readFully(twoBytes);
 					accum += shortFromTwoBytes (twoBytes);
 					d[ix] = accum;
-					if(null != channelMap.get(c.channel_num)){
-						channelMap.get(c.channel_num).in_buf.add (accum);
-					}
+					c.in_buf.add (accum);
 //					System.out.println ("data bytes: " + d[ix]);
 					bytesRead += 2;
 				}	
@@ -254,6 +249,7 @@ public class WIN
 					dis.readFully(threeBytes);
 					accum += intFromThreeBytes (threeBytes);
 					d[ix] = accum;
+					c.in_buf.add (accum);
 					bytesRead += 3;
 				}	
 			}
@@ -265,12 +261,18 @@ public class WIN
 					accum += intFromFourBytes (fourBytes);
 					
 					d[ix] = accum;
+					c.in_buf.add (accum);
 					bytesRead += 4;
 				}	
 			}
-			//System.out.println("Channel Num: "+c.channel_num);			
-			channelMap.put(c.channel_num, c);
-		} while (bytesRead < c.packetSize);
+			//System.out.println("Channel Num: "+c.channel_num);	
+            ChannelData check = channelMap.get(c.channel_num);
+            if(null == check){
+            	channelMap.put(c.channel_num, c);
+            }else{
+            	check.in_buf.addAll(c.in_buf);
+            }
+		} while (bytesRead < packetSize);
 	}
 
 	/**
