@@ -56,36 +56,11 @@ public class WIN
         public int channel_num;
         public int data_size;
         public float sampling_rate;
-        public Vector<Integer> in_buf;
+        public List<Integer> in_buf;
     }
 
-    List<ChannelData> channelData = null;
-    Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
-
-//	public float[] y;
-//	int yLen;
-//	public float[] x;
-//	public float[] real;
-//	public float[] imaginary;
-//	public float[] amp;
-//	public float[] phase;
-//	int baseVal;
-	
-//	public String kstnm = STRING8_UNDEF;  //
-//	public String kcmpnm = STRING8_UNDEF;
-//	public String knetwk = STRING8_UNDEF;
-
-	// undef values for WIN
-//	public static float FLOAT_UNDEF = -12345.0f;
-//	public static int INT_UNDEF = -12345;
-//	public static String STRING8_UNDEF = "-12345  ";
-//	public static String STRING16_UNDEF = "-12345          ";
-
-	/* TRUE and FALSE defined for convenience. */
-//	public static final int TRUE = 1;
-//	public static final int FALSE = 0;
-
-	/* Constants used by WIN. */
+    private Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
+	private List<ChannelData> channelData;
 
 	/**
      * reads the WIN file specified by the filename.
@@ -100,8 +75,7 @@ public class WIN
 		{
             ChannelData cur = new ChannelData();
             readHeader(cur, dis);
-			readData(cur.packetSize,dis);
-            //channelData.add(cur);
+			readData(cur, dis);
 		}
 		dis.close();
 		channelData = new ArrayList<ChannelData>(channelMap.values());// This is in order.
@@ -131,7 +105,6 @@ public class WIN
 	{
 		ByteBuffer wrapper = ByteBuffer.wrap(bites);
 		return wrapper.getShort();
-	
 	}
 	
 	private static int decodeBcd(byte[] b) 
@@ -143,8 +116,10 @@ public class WIN
 	            buf.append((char) ((b[i] & 0x0f) + '0'));
 	    }
 	    return Integer.parseInt(buf.toString());
-	}   
-	/** reads the header from the given stream.	 
+	}  
+	
+	/**
+	 * reads the header from the given stream.	 
 	 * @param dis DataInputStream to read WIN from
 	 * @throws FileNotFoundException if the file cannot be found
 	 * @throws IOException if it isn't a WIN file 
@@ -158,7 +133,6 @@ public class WIN
 		dis.readFully(fourBytes);	
 		c.packetSize = intFromFourBytes (fourBytes);
 	
-		
 		//read next 6 bytes: yy mm dd hh mi ss
 		dis.readFully (oneByte);
 		c.year = 2000 + decodeBcd(oneByte);
@@ -184,14 +158,13 @@ public class WIN
 	 * @param dis DataInputStream to read WIN from
 	 * @throws IOException if it isn't a WIN file
 	 */
-	public void readData(int packetSize,DataInputStream dis) throws IOException
+	public void readData(ChannelData c, DataInputStream dis) throws IOException
 	{
 		int bytesRead = 10;
 		
 		do 
 		{	
-			ChannelData c = new ChannelData();
-            c.in_buf = new Vector<Integer>();
+            c.in_buf = new ArrayList<Integer>();
 			byte[] oneByte = new byte[1];
 			dis.readFully(oneByte);
 		
@@ -201,14 +174,13 @@ public class WIN
 			c.data_size = intFromSingleByte(oneByte[0])>>4;
 		
 			dis.readFully(oneByte);
-			c.sampling_rate = intFromSingleByte(oneByte[0]); // TODO: needs lower 4 bits of above byte included
+			c.sampling_rate = intFromSingleByte(oneByte[0]); // TODO: needs lower 4 bits of above byte included?
 
 			byte[] fourBytes = new byte[4];
 			dis.readFully(fourBytes);
 			int accum = intFromFourBytes (fourBytes);
 
 			float[] d = new float[(int) c.sampling_rate - 1];
-			System.out.println ("base: " + accum);
 	
 			bytesRead += 8;
             if (c.data_size == 0) {
@@ -237,7 +209,6 @@ public class WIN
 					accum += shortFromTwoBytes (twoBytes);
 					d[ix] = accum;
 					c.in_buf.add (accum);
-//					System.out.println ("data bytes: " + d[ix]);
 					bytesRead += 2;
 				}	
 			}
@@ -265,14 +236,13 @@ public class WIN
 					bytesRead += 4;
 				}	
 			}
-			//System.out.println("Channel Num: "+c.channel_num);	
             ChannelData check = channelMap.get(c.channel_num);
             if(null == check){
             	channelMap.put(c.channel_num, c);
             }else{
             	check.in_buf.addAll(c.in_buf);
             }
-		} while (bytesRead < packetSize);
+		} while (bytesRead < c.packetSize);
 	}
 
 	/**
@@ -290,7 +260,7 @@ public class WIN
             sw.buffer = new int[c.in_buf.size()];
             for (int j = 0; j < c.in_buf.size(); j++)
             {
-                sw.buffer[j] = Math.round(c.in_buf.elementAt(j));
+                sw.buffer[j] = Math.round(c.in_buf.get(j));
             }
             waves[i] = sw;
         }
