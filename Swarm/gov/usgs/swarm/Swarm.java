@@ -1312,7 +1312,7 @@ public class Swarm extends JFrame
 		}
 	}
 	
-	public static void main(String[] args)
+	public static void main(final String[] args)
 	{
 		/*factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 		em = factory.createEntityManager();*/
@@ -1324,10 +1324,14 @@ public class Swarm extends JFrame
 		}
 		catch (Exception e) { }
 		
-		Swarm swarm = new Swarm(args);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				Swarm swarm = new Swarm(args);
 
-		if (Swarm.config.isKiosk())
-			swarm.parseKiosk();
+				if (Swarm.config.isKiosk())
+					swarm.parseKiosk();
+			}
+		});
 	}
 	
 	public static Event getSelectedEvent()
