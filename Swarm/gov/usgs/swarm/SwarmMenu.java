@@ -4,8 +4,10 @@ import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.database.model.Attempt;
 import gov.usgs.swarm.database.model.Event;
 import gov.usgs.swarm.database.util.DatabaseConnection;
+import gov.usgs.swarm.database.util.SessionCustomize;
 import gov.usgs.swarm.database.view.DataSearchDialog;
 import gov.usgs.util.Util;
+import gov.usgs.vdx.data.DataSource;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -33,6 +35,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -195,6 +198,11 @@ public class SwarmMenu extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(null == Swarm.factory){
+				  	Swarm.DBNAME = JOptionPane.showInputDialog("Please enter the database name:");
+				  	
+				  	if(null == Swarm.DBNAME || "".equalsIgnoreCase(Swarm.DBNAME.trim())){
+				  		return;
+				  	}
 					//DatabaseConnection.loadProperties();
 					Swarm.factory = Persistence.createEntityManagerFactory(Swarm.PERSISTENCE_UNIT_NAME);
 					try{
@@ -385,6 +393,11 @@ public class SwarmMenu extends JMenuBar
 			public void actionPerformed(ActionEvent e) {
 				if(null == Swarm.factory){
 					//DatabaseConnection.loadProperties();
+					Swarm.DBNAME = JOptionPane.showInputDialog("Please enter the database name:");
+				  	
+				  	if(null == Swarm.DBNAME || "".equalsIgnoreCase(Swarm.DBNAME.trim())){
+				  		return;
+				  	}
 					Swarm.factory = Persistence.createEntityManagerFactory(Swarm.PERSISTENCE_UNIT_NAME);
 					try{
 					Swarm.em = Swarm.factory.createEntityManager();

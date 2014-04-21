@@ -24,7 +24,6 @@ import gov.usgs.vdx.data.wave.Wave;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Image;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -46,10 +45,8 @@ import javax.jnlp.BasicService;
 import javax.jnlp.ServiceManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -104,6 +101,7 @@ public class Swarm extends JFrame
 	private static final int TOP_RIGHT = 8;
 	public static final String USER = "admin";
 	public static final String PASSWORD = "password";
+	public static String DBNAME;
 	public static boolean isCancelled = false;
 	
 	static

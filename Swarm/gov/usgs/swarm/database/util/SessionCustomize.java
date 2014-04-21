@@ -3,7 +3,6 @@ package gov.usgs.swarm.database.util;
 import gov.usgs.swarm.Swarm;
 
 import javax.sql.DataSource;
-import javax.swing.JOptionPane;
 
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -22,16 +21,9 @@ public class SessionCustomize implements SessionCustomizer {
 	      descriptor.getCachePolicy().setIdentityMapSize(1000);
 	    }
 	  }
-	  public static DataSource getDataSource() {
-		  	String dbName = null;
-		  	dbName = JOptionPane.showInputDialog("Please enter the database name:");
-		  	
-		  	if(null == dbName || "".equalsIgnoreCase(dbName.trim())){
-		  		return null;
-		  	}
-		  	
+	  public static DataSource getDataSource() {		  	
 	  		JdbcDataSource dataSource = new JdbcDataSource();	
-			dataSource.setURL("jdbc:h2:"+dbName);
+			dataSource.setURL("jdbc:h2:"+Swarm.DBNAME);
 			dataSource.setUser(Swarm.USER);
 			dataSource.setPassword(Swarm.PASSWORD);
 			return dataSource;

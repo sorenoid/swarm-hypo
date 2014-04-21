@@ -53,6 +53,7 @@ public class SeisanFile {
 		DataInputStream dis = new DataInputStream(buf);
 		
 		String data  = readLine(dis,80);
+		System.out.println(data);
 		noOfChannels = Integer.parseInt(data.substring(30,33).trim());
 		
 		year =  data.substring(33,36).trim().length() == 0?null:Integer.parseInt(data.substring(33,36).trim());
