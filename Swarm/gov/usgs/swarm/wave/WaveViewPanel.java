@@ -670,11 +670,11 @@ public class WaveViewPanel extends JComponent {
 						}
 
 						int x = e.getX();
-						double j2k = x * t[0] + t[1];
-//						Timestamp time = new Timestamp(Util.j2KToDate(j2k)
-//								.getTime());
+						double j2k = x * (t[0] + t[1]);
+						Timestamp time = new Timestamp(Util.j2KToDate(j2k)
+								.getTime());
 						
-						Timestamp time = new Timestamp((long)j2k);
+//						Timestamp time = new Timestamp((long)j2k);
 
 						// Try to get a marker at the specified location
 						Marker marker = getMarkerAtPosition(e.getX(), e.getY());
