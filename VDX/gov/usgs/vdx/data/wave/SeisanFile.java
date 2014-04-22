@@ -52,7 +52,7 @@ public class SeisanFile {
 		FileInputStream fis = new FileInputStream(filename);
 		BufferedInputStream buf = new BufferedInputStream(fis);
 		DataInputStream dis = new DataInputStream(buf);
-		detectParameters(dis,80);
+		detectParameters(dis);
 		String data  = readFileHeader(dis,80);
 		System.out.println(data);
 		noOfChannels = Integer.parseInt(data.substring(30,33).trim());
@@ -158,23 +158,24 @@ public class SeisanFile {
 	}
 	
 	private String readFileHeader(DataInputStream dis, int length) throws IOException{
-	    //detectParameters(dis,length);
-        int byteLength = lengthFlag.getLength();
-	    byte[] bytes = new byte[length+byteLength];
+	    byte[] bytes = new byte[length];
 	    dis.read(bytes);
-		int end = length + byteLength;
-        int start = byteLength;
-        String data = new String (bytes).trim();
-        if(data.length()<(length + byteLength))
-        	return data;
-        else
-        	 return data.substring(start,end);
+	    return new String(bytes);
 	}
 	
-	private void detectParameters(DataInputStream dis,int length){
+	private void detectParameters(DataInputStream dis){
 		byte[] bytes = new byte[4];
 		try {
 			dis.read(bytes);
+			if (bytes[0] == 80) {
+				// TODO: set PC endian
+			} else {
+				// TODO: set sun endian
+			}
+			if (bytes[3] == 80) {
+				// TODO: set 32 bit
+				return;
+			}
 			dis.mark(20);
 			dis.read(bytes);
 			if(bytes[0]==0){
