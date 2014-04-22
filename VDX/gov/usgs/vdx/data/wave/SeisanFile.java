@@ -65,7 +65,7 @@ public class SeisanFile {
 		second  = data.substring(53,59).trim().length() == 0?null:Float.parseFloat(data.substring(53,59).trim());
 
 		Calendar c  = Calendar.getInstance();
-		c.set(Calendar.YEAR, (year));
+		c.set(Calendar.YEAR, (year + 1900));
 		c.set(Calendar.MONTH, month-1);
 		c.set(Calendar.DAY_OF_MONTH, day);
 		c.set(Calendar.HOUR_OF_DAY, hour);
@@ -145,17 +145,17 @@ public class SeisanFile {
 	 * @throws IOException
 	 */
 	private String readLine(DataInputStream dis, int length) throws IOException{
-		dis.skipBytes(4);
+		dis.skipBytes(lengthFlag.getLength());
 		byte[] bytes  = new byte[length];
 	    dis.read(bytes);
-		dis.skipBytes(4);
+		dis.skipBytes(lengthFlag.getLength());
 	    return new String(bytes);
 	}
 	
 	private String readFileHeader(DataInputStream dis, int length) throws IOException{
 	    byte[] bytes = new byte[length];
 	    dis.read(bytes);
-	    dis.skipBytes(4);
+	    dis.skipBytes(lengthFlag.getLength());
 	    return new String(bytes);
 	}
 	
@@ -164,12 +164,12 @@ public class SeisanFile {
 		try {
 			dis.read(bytes);
 			if (bytes[0] == 80) {
-				// TODO: set PC endian
+				fileFlag = fileFlag.PC;
 			} else {
-				// TODO: set sun endian
+				fileFlag = fileFlag.SUN;
 			}
 			if (bytes[3] == 80) {
-				// TODO: set 32 bit
+				lengthFlag = lengthFlag.FOUR;
 				return;
 			}
 			dis.mark(20);
