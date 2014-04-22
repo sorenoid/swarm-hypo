@@ -34,7 +34,8 @@ public class SeisanFile {
 	private Float second;
 	private String fileName;
 	private Date startDate;
-	
+	private FileFlag fileFlag;
+	private LengthFlag lengthFlag;
 	
 	
 	/**
@@ -52,7 +53,7 @@ public class SeisanFile {
 		BufferedInputStream buf = new BufferedInputStream(fis);
 		DataInputStream dis = new DataInputStream(buf);
 		
-		String data  = readLine(dis,80);
+		String data  = readFileHeader(dis,80);
 		System.out.println(data);
 		noOfChannels = Integer.parseInt(data.substring(30,33).trim());
 		
@@ -144,18 +145,61 @@ public class SeisanFile {
 	 * @throws IOException
 	 */
 	private String readLine(DataInputStream dis, int length) throws IOException{
-		    byte[] bytes  = new byte[length + 8];
+		    int len = lengthFlag.getLength();
+			byte[] bytes  = new byte[length + len];
 		    dis.read(bytes);
-	        int end = length + 4;
-	        int start = 4;
+	        int end = length + len;
+	        int start = len;
 	        String data = new String (bytes).trim();
-	        if(data.length()<(length + 4))
+	        if(data.length()<(length + len))
 	        	return data;
 	        else
 	        	 return data.substring(start,end);
 	}
 	
+	private String readFileHeader(DataInputStream dis, int length) throws IOException{
+	    byte[] bytes  = detectParameters(dis,length);
+	    //dis.read(bytes);
+        int byteLength = lengthFlag.getLength();
+		int end = length + byteLength;
+        int start = byteLength;
+        String data = new String (bytes).trim();
+        if(data.length()<(length + byteLength))
+        	return data;
+        else
+        	 return data.substring(start,end);
+	}
 	
+	private byte[] detectParameters(DataInputStream dis,int length){
+		byte[] bytes = new byte[length+8];
+		try {
+			dis.read(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int i = 0;
+		int PFLAG = -1;
+		do{
+			if(bytes[i] == 80){
+				PFLAG = i;
+			}
+			i++;
+		}while(bytes[i]==0);
+		
+		if(3 == i || 4 == i){
+			lengthFlag = lengthFlag.FOUR;
+		}else if(7 == i || 8 == i){
+			lengthFlag = lengthFlag.EIGHT;
+		}		
+
+		if(-1 == PFLAG){
+			fileFlag = fileFlag.PC;
+		}else{
+			fileFlag = fileFlag.SUN;
+		}
+		
+		return bytes;
+	}
 	
 	
 
