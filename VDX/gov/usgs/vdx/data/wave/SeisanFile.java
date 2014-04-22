@@ -52,7 +52,7 @@ public class SeisanFile {
 		FileInputStream fis = new FileInputStream(filename);
 		BufferedInputStream buf = new BufferedInputStream(fis);
 		DataInputStream dis = new DataInputStream(buf);
-		
+		detectParameters(dis,80);
 		String data  = readFileHeader(dis,80);
 		System.out.println(data);
 		noOfChannels = Integer.parseInt(data.substring(30,33).trim());
@@ -158,9 +158,10 @@ public class SeisanFile {
 	}
 	
 	private String readFileHeader(DataInputStream dis, int length) throws IOException{
-	    byte[] bytes  = detectParameters(dis,length);
-	    //dis.read(bytes);
+	    //detectParameters(dis,length);
         int byteLength = lengthFlag.getLength();
+	    byte[] bytes = new byte[length+byteLength];
+	    dis.read(bytes);
 		int end = length + byteLength;
         int start = byteLength;
         String data = new String (bytes).trim();
@@ -170,13 +171,21 @@ public class SeisanFile {
         	 return data.substring(start,end);
 	}
 	
-	private byte[] detectParameters(DataInputStream dis,int length){
-		byte[] bytes = new byte[length+8];
+	private void detectParameters(DataInputStream dis,int length){
+		byte[] bytes = new byte[4];
 		try {
 			dis.read(bytes);
+			dis.mark(20);
+			dis.read(bytes);
+			if(bytes[0]==0){
+				lengthFlag = lengthFlag.EIGHT;
+			}else{
+				dis.reset();
+				lengthFlag = lengthFlag.FOUR;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}/*
 		int i = 0;
 		int PFLAG = -1;
 		do{
@@ -196,9 +205,7 @@ public class SeisanFile {
 			fileFlag = fileFlag.PC;
 		}else{
 			fileFlag = fileFlag.SUN;
-		}
-		
-		return bytes;
+		}*/
 	}
 	
 	
