@@ -145,21 +145,17 @@ public class SeisanFile {
 	 * @throws IOException
 	 */
 	private String readLine(DataInputStream dis, int length) throws IOException{
-		    int len = lengthFlag.getLength();
-			byte[] bytes  = new byte[length + len];
-		    dis.read(bytes);
-	        int end = length + len;
-	        int start = len;
-	        String data = new String (bytes).trim();
-	        if(data.length()<(length + len))
-	        	return data;
-	        else
-	        	 return data.substring(start,end);
+		dis.skipBytes(4);
+		byte[] bytes  = new byte[length];
+	    dis.read(bytes);
+		dis.skipBytes(4);
+	    return new String(bytes);
 	}
 	
 	private String readFileHeader(DataInputStream dis, int length) throws IOException{
 	    byte[] bytes = new byte[length];
 	    dis.read(bytes);
+	    dis.skipBytes(4);
 	    return new String(bytes);
 	}
 	
