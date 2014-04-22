@@ -338,7 +338,7 @@ public class WaveViewPanel extends JComponent {
 		Collection<Marker> markerCollection = markers;
 		for (Marker marker : markerCollection) {
 			if (t != null) {
-				double j2k = marker.getMarkerTime().getTime();
+				double j2k = Util.dateToJ2K(marker.getMarkerTime());
 				int x = (int) ((j2k - t[1]) / t[0]);
 				
 				if (marker.getMarkerType().equalsIgnoreCase(
