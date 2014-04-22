@@ -447,7 +447,9 @@ public class WaveViewPanel extends JComponent {
 	private Marker getMarkerAtPosition(int x, int y) {
 		double[] t = getTranslation();
 		double j2k = x * t[0] + t[1];
-		Timestamp time = new Timestamp((long)j2k);
+		//Timestamp time = new Timestamp((long)j2k);
+		Timestamp time = new Timestamp(Util.j2KToDate(j2k)
+				.getTime());
 
 		BufferedImage bi = new BufferedImage(getWidth(), getHeight(),
 				BufferedImage.TYPE_INT_ARGB);
@@ -670,7 +672,7 @@ public class WaveViewPanel extends JComponent {
 						}
 
 						int x = e.getX();
-						double j2k = x * (t[0] + t[1]);
+						double j2k = x * t[0] + t[1];
 						Timestamp time = new Timestamp(Util.j2KToDate(j2k)
 								.getTime());
 						
@@ -860,7 +862,9 @@ public class WaveViewPanel extends JComponent {
 //							Timestamp time = new Timestamp(Util.j2KToDate(j2k2)
 //									.getTime());
 							
-							Timestamp time = new Timestamp((long)j2k2);
+							//Timestamp time = new Timestamp((long)j2k2);
+							Timestamp time = new Timestamp(Util.j2KToDate(j2k2)
+									.getTime());
 							// markers.remove(time);
 							selectedMarker.setMarkerTime(time);
 
