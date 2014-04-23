@@ -37,7 +37,7 @@ public class DataRecord extends JFrame
 	
 	public DataRecord() {
 		super();
-		setAlwaysOnTop(true);
+		setAlwaysOnTop(false);
 
 		setTitle("Event Properties");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,6 +73,7 @@ public class DataRecord extends JFrame
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				SwarmMenu.setDataRecordState(false);
+				Swarm.getApplication().getWaveClipboard().disableMarkerGeneration();
 			}
 		});
 		
