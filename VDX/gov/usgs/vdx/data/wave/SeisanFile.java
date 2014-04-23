@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class SeisanFile {
 	private String fileName;
 	private Date startDate;
 	private FileFlag fileFlag;
-	private LengthFlag lengthFlag;
+	private int numberLength;
 	
 	
 	/**
@@ -54,7 +55,7 @@ public class SeisanFile {
 		DataInputStream dis = new DataInputStream(buf);
 		detectParameters(dis);
 		String data  = readFileHeader(dis,80);
-		System.out.println(data);
+//		System.out.println(data);
 		noOfChannels = Integer.parseInt(data.substring(30,33).trim());
 		
 		year =  data.substring(33,36).trim().length() == 0?null:Integer.parseInt(data.substring(33,36).trim());
@@ -80,8 +81,12 @@ public class SeisanFile {
 	    if (number_of_lines < 10){
 	        number_of_lines = 10;
 	    }
-	    dis.skipBytes(lengthFlag.getLength()+80+lengthFlag.getLength());
-	    dis.skipBytes((number_of_lines)*(lengthFlag.getLength()+80+lengthFlag.getLength()));
+//	    System.out.println("Ignoring line:");
+	    System.out.println(readLine(dis));
+	    for (int i=0; i<number_of_lines; i++) {
+//		    System.out.println("Ignoring line:");
+		    System.out.println(readLine(dis));
+	    }
 	    
 	    for(int i = 0 ; i < noOfChannels; i++){
 	    	readChannel(dis);
@@ -97,8 +102,7 @@ public class SeisanFile {
 	 * @throws IOException
 	 */
 	private void readChannel(DataInputStream dis) throws IOException{
-		String channelHeader = readLine(dis,1040);
-		System.out.println(channelHeader);
+		String channelHeader = readLine(dis);
 		SeisanChannel channel = new SeisanChannel(channelHeader);
 		readChannelData(dis,channel);
 		channels.add(channel);
@@ -114,34 +118,38 @@ public class SeisanFile {
 	 * @throws IOException
 	 */
 	private void readChannelData(DataInputStream dis, SeisanChannel channel) throws IOException{
-		dis.skipBytes(lengthFlag.getLength());
-		int[] wave_data = new int[channel.getNumberOfSamples()];
-	    
-	   
-		int index = 0;
-		while(index != channel.getNumberOfSamples()){
-			byte[] bytes = new byte[lengthFlag.getLength()];
-			dis.read(bytes);
-			int val = byteArrayToInt(bytes);
-		    wave_data[index] = val;
-		    index ++;
+		int length = readInt(dis);
+		int[] wave_data = new int[length / numberLength];
+
+		for (int i=0; i<wave_data.length; i++) {
+		    wave_data[i] = readInt(dis);
 		}	
-		dis.skipBytes(lengthFlag.getLength());
+		int prevLength = readInt(dis);
+		assert length == prevLength;
 	    channel.setData(wave_data);
 	}
-	
-	
-	private int byteArrayToInt(byte[] b) {
-	    final ByteBuffer bb = ByteBuffer.wrap(b);
-	    if(fileFlag == fileFlag.SUN)
-	    	bb.order(ByteOrder.BIG_ENDIAN);
-	    else
-	    	bb.order(ByteOrder.LITTLE_ENDIAN);
-	    return bb.getInt();
+
+	private int readInt(InputStream in) throws IOException {
+		byte[] buf = new byte[numberLength];
+		in.read(buf);
+		return readInt(buf);
 	}
 	
-	
-	
+	private int readInt(byte[] b) {
+	    final ByteBuffer bb = ByteBuffer.wrap(b);
+	    if (fileFlag == FileFlag.PC) {
+	    	bb.order(ByteOrder.LITTLE_ENDIAN);
+	    } else {
+	    	bb.order(ByteOrder.BIG_ENDIAN);
+	    }
+	    if (b.length == 4) {
+		    return bb.getInt();
+	    } else {
+	    	// Note, it's turned into an int at some point, so this truncation is assumed safe.
+	    	return (int)bb.getLong();
+	    }
+	}
+
 	/**
 	 * Reads a single line with a specified length of information  from the InputStream
 	 * @param dis
@@ -149,18 +157,21 @@ public class SeisanFile {
 	 * @return
 	 * @throws IOException
 	 */
-	private String readLine(DataInputStream dis, int length) throws IOException{
-		dis.skipBytes(lengthFlag.getLength());
+	private String readLine(DataInputStream dis) throws IOException{
+		int length = readInt(dis);
+//		System.out.println("Reading line of length: "+length);
 		byte[] bytes  = new byte[length];
 	    dis.read(bytes);
-		dis.skipBytes(lengthFlag.getLength());
+		int prevLength = readInt(dis);
+		assert length == prevLength;
 	    return new String(bytes);
 	}
 	
 	private String readFileHeader(DataInputStream dis, int length) throws IOException{
 	    byte[] bytes = new byte[length];
 	    dis.read(bytes);
-	    dis.skipBytes(lengthFlag.getLength());
+		int prevLength = readInt(dis);
+		assert length == prevLength;
 	    return new String(bytes);
 	}
 	
@@ -169,45 +180,25 @@ public class SeisanFile {
 		try {
 			dis.read(bytes);
 			if (bytes[0] == 80) {
-				fileFlag = fileFlag.PC;
+				fileFlag = FileFlag.PC;
 			} else {
-				fileFlag = fileFlag.SUN;
+				fileFlag = FileFlag.SUN;
 			}
 			if (bytes[3] == 80) {
-				lengthFlag = lengthFlag.FOUR;
+				numberLength = 4;
 				return;
 			}
 			dis.mark(20);
 			dis.read(bytes);
 			if(bytes[0]==0){
-				lengthFlag = lengthFlag.EIGHT;
+				numberLength = 8;
 			}else{
 				dis.reset();
-				lengthFlag = lengthFlag.FOUR;
+				numberLength = 4;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}/*
-		int i = 0;
-		int PFLAG = -1;
-		do{
-			if(bytes[i] == 80){
-				PFLAG = i;
-			}
-			i++;
-		}while(bytes[i]==0);
-		
-		if(3 == i || 4 == i){
-			lengthFlag = lengthFlag.FOUR;
-		}else if(7 == i || 8 == i){
-			lengthFlag = lengthFlag.EIGHT;
-		}		
-
-		if(-1 == PFLAG){
-			fileFlag = fileFlag.PC;
-		}else{
-			fileFlag = fileFlag.SUN;
-		}*/
+		}
 	}
 	
 	
