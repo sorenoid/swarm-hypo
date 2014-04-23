@@ -98,6 +98,7 @@ public class SeisanFile {
 	 */
 	private void readChannel(DataInputStream dis) throws IOException{
 		String channelHeader = readLine(dis,1040);
+		System.out.println(channelHeader);
 		SeisanChannel channel = new SeisanChannel(channelHeader);
 		readChannelData(dis,channel);
 		channels.add(channel);
@@ -132,7 +133,10 @@ public class SeisanFile {
 	
 	private int byteArrayToInt(byte[] b) {
 	    final ByteBuffer bb = ByteBuffer.wrap(b);
-	    bb.order(ByteOrder.LITTLE_ENDIAN);
+	    if(fileFlag == fileFlag.SUN)
+	    	bb.order(ByteOrder.BIG_ENDIAN);
+	    else
+	    	bb.order(ByteOrder.LITTLE_ENDIAN);
 	    return bb.getInt();
 	}
 	
