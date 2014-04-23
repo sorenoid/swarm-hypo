@@ -80,8 +80,8 @@ public class SeisanFile {
 	    if (number_of_lines < 10){
 	        number_of_lines = 10;
 	    }
-	    dis.skipBytes(88);
-	    dis.skipBytes((number_of_lines)*88);
+	    dis.skipBytes(lengthFlag.getLength()+80+lengthFlag.getLength());
+	    dis.skipBytes((number_of_lines)*(lengthFlag.getLength()+80+lengthFlag.getLength()));
 	    
 	    for(int i = 0 ; i < noOfChannels; i++){
 	    	readChannel(dis);
