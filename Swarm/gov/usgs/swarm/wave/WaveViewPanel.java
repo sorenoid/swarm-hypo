@@ -564,7 +564,7 @@ public class WaveViewPanel extends JComponent {
 												+ " m");
 					}
 				}
-				if (pMarker != null && stationCount == 3) {
+				if (stationCount == 3) {
 					double[] markerBoundaries = getMarkerTimeBoundaries(Marker.AZIMUTH_MARKER_LABEL);
 					if (markerBoundaries != null) {
 

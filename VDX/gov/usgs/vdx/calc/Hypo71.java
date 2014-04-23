@@ -13,7 +13,6 @@ import java.io.*;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -26,7 +25,7 @@ import static java.lang.Math.*;
  * 
  * @author Oleg Shepelev
  */
-@SuppressWarnings("all")
+//@SuppressWarnings({ "all" })
 public class Hypo71 {
 
 	public static class Results {
@@ -378,7 +377,7 @@ public class Hypo71 {
 		String SWTOUT = "";
 		String FMPOUT;
 		String RMK5 = "";
-		final String IPRO;
+		//final String IPRO;
 
 		// CHARACTER*5 ERHOUT,SE3OUT
 		String ERHOUT = "", SE3OUT = "";
@@ -392,12 +391,12 @@ public class Hypo71 {
 		String X4KOUT = "";
 
 		// REAL LAT2,LON2,LATEP,LONEP,MAG,LATR,LONR
-		final double /* MAG, */LATR, LONR;
+		//final double /* MAG, */LATR, LONR;
 		final double[] CAL = new double[101];
 		final double[] DEMP = new double[101];
 
 		// REAL*4 FMGC(151),XMGC(151),PRR(151),CALR(151)
-		final double[] FMCG = new double[151];
+		//final double[] FMCG = new double[151];
 
 		// DATA CLASS/'A','B','C','D'/
 		// DATA SYMBOL/' ','1','2','Q','*'/
@@ -1310,7 +1309,7 @@ public class Hypo71 {
 		if (QSUM != 0.) {
 			// Integration code goes here
 			results.setStats(new Stats(QNO[0], QNO[1], QNO[2], QNO[3], QSUM, 100. * QNO[0] / QSUM, 100. * QNO[1] / QSUM, 100. * QNO[2] / QSUM, 100. * QNO[3] / QSUM));
-			List dataList = convertArrayToListOfObjects(QNO);
+			List<Object> dataList = convertArrayToListOfObjects(QNO);
 			write("FPRINT_WRITER", data("1 ***** CLASS: A B C D TOTAL *****", "NUMBER", dataList.get(0), dataList.get(1), dataList.get(2), dataList.get(3), QSUM), "(A,//,7X,A,5F6.1)");
 			for (int I = 0; I < 4; I++) {// DO 10 I=1,4
 				// 10 QNO[I]=100.*QNO[I]/QSUM
@@ -1468,7 +1467,7 @@ public class Hypo71 {
 		// final String SUCARD;
 
 		// REAL*4 SE(4),AZ(101),AIN(101)
-		final double[] SE = new double[4];
+		//final double[] SE = new double[4];
 		// final double[] AZ = new double[101];
 		// final double[] AIN = new double[101];
 
@@ -1499,7 +1498,7 @@ public class Hypo71 {
 
 		int NFMR = 0; // 100
 
-		final double NO = FNO;
+		//final double NO = FNO;
 		for (int I = 0; I < O1.NRP; I++) { // 1
 			if (SYM[I] == 'N') {
 				SYM[I] = ' ';
@@ -1715,9 +1714,9 @@ public class Hypo71 {
 		double FLTEP = 0;
 		double PRMSSQ = 0;
 		double NIMAX = 0d;
-		double SVY1 = 0.0;
+		/*double SVY1 = 0.0;
 		double SVY2 = 0.0;
-		double SVY3 = 0.0;
+		double SVY3 = 0.0;*/
 
 		// DATA WF/.95,0.95,0.95,0.95,0.95,0.95,0.94,0.94,0.94,0.93,
 		// 1 0.92,0.92,0.91,0.90,0.88,0.87,0.85,0.83,0.80,0.77,
@@ -2382,9 +2381,9 @@ public class Hypo71 {
 									O2.LONEP = (O2.LONEP + Y[0] / (CA * Math.cos(PHI)));
 									O2.Z = O2.Z + Y[2];
 									O2.ORG = O2.ORG + Y[3];
-									SVY1 = Y[0];
+									/*SVY1 = Y[0];
 									SVY2 = Y[1];
-									SVY3 = Y[2];
+									SVY3 = Y[2];*/
 									O2.ADJSQ = XADJSQ;
 									if (O1.NDEC == 0) {
 										PRMSSQ = O2.RMSSQ;
@@ -3193,7 +3192,7 @@ public class Hypo71 {
 			l = L - 1;
 			if (readFromFile) {
 				try {
-					List ar = read(FINPUT_READER, "(2A4,T8,F1.0,T10,I8,I2,F5.2,T32,F5.2,A4,T40,F1.0,T44,F4.0,F3.2,F4.1,T59,F4.1,A3,F5.2,F5.0,T21,A4,T7,A1,T32,A4,T1,A80,T63,A1,T5,A4)");
+					List<Object> ar = read(FINPUT_READER, "(2A4,T8,F1.0,T10,I8,I2,F5.2,T32,F5.2,A4,T40,F1.0,T44,F4.0,F3.2,F4.1,T59,F4.1,A3,F5.2,F5.0,T21,A4,T7,A1,T32,A4,T1,A80,T63,A1,T5,A4)");
 					if (ar.size() == 0) {
 						goto350 = true;
 						break;
@@ -3442,10 +3441,10 @@ public class Hypo71 {
 			// RETURN
 	}
 
-	private static abstract class Wrapper<T> {
+	/*private static abstract class Wrapper<T> {
 		public abstract void setValue(T value);
 
-	}
+	}*/
 
 	private <T> List<Object> convertArrayToListOfObjects(double[] array) {
 		List<Object> list = new ArrayList<Object>();
@@ -3555,7 +3554,7 @@ public class Hypo71 {
 
 				if (readFromFile) {
 					if (!ISW.equals("1   ")) {
-						List ar = read(FINPUT_READER, "(1X,A1,A4,I2,F5.2,A1,I3,F5.2,A1,I4,F6.2,4X,F5.2,2X,F5.2,1X,I1,F5.2,F7.2,1X,I1,5X,I6,I4)");
+						List<Object> ar = read(FINPUT_READER, "(1X,A1,A4,I2,F5.2,A1,I3,F5.2,A1,I4,F6.2,4X,F5.2,2X,F5.2,1X,I1,F5.2,F7.2,1X,I1,5X,I6,I4)");
 						if (ar.size() == 0) {
 							break;
 						}
@@ -3567,7 +3566,7 @@ public class Hypo71 {
 												.get(17) != null ? ar.get(17) : 0)));
 
 					} else {// 30
-						List ar = read(FINPUT_READER, "(A4,A1,I2,1X,F5.2,A1,I3,1X,F5.2,A1,I4,5X,I1,4F6.2,1X,I1,F6.2,1X,I1,2X,I6,I4)");
+						List<Object> ar = read(FINPUT_READER, "(A4,A1,I2,1X,F5.2,A1,I3,1X,F5.2,A1,I4,5X,I1,4F6.2,1X,I1,F6.2,1X,I1,2X,I6,I4)");
 						stationsList.add(new Station(((String) (ar.get(1) != null ? ar.get(1) : "")).charAt(0), (String) (ar.get(0) != null ? ar.get(0) : ""), toInt(ar.get(2) != null ? ar.get(2) : 0), toDouble(ar.get(3) != null ? ar.get(3) : 0d),
 								((String) (ar.get(4) != null ? ar.get(4) : "")).charAt(0), toInt(ar.get(5) != null ? ar.get(5) : 0), toDouble(ar.get(6) != null ? ar.get(6) : 0d), ((String) (ar.get(7) != null ? ar.get(7) : "")).charAt(0), toInt(ar.get(8) != null ? ar
 										.get(8) : 0), toInt(ar.get(9) != null ? ar.get(9) : 0), toInt(ar.get(10) != null ? ar.get(10) : 0), toInt(ar.get(11) != null ? ar.get(11) : 0), toInt(ar.get(12) != null ? ar.get(12) : 0),
@@ -3637,7 +3636,7 @@ public class Hypo71 {
 
 				i = L - 1;
 				if (readFromFile) {
-					List ar = read(FINPUT_READER, "(2F7.3)");
+					List<Object> ar = read(FINPUT_READER, "(2F7.3)");
 					if (ar.size() == 0) {
 						error = false;
 						break;
@@ -3744,7 +3743,7 @@ public class Hypo71 {
 		KSING = 0;
 
 		if (readFromFile) {
-			List ar = read(FINPUT_READER, "(I1,F4.0,2F5.0,F5.2,7I5,5I1,2(I4,F6.2))");
+			List<Object> ar = read(FINPUT_READER, "(I1,F4.0,2F5.0,F5.2,7I5,5I1,2(I4,F6.2))");
 			controlCard = new ControlCard(toInt(ar.get(0) != null ? ar.get(0) : 0), toDouble(ar.get(1) != null ? ar.get(1) : 0d), toDouble(ar.get(2) != null ? ar.get(2) : 0d), toDouble(ar.get(3) != null ? ar.get(3) : 0d), toDouble(ar.get(4) != null ? ar.get(4)
 					: 0d), toInt(ar.get(5) != null ? ar.get(5) : 0), toInt(ar.get(6) != null ? ar.get(6) : 0), toInt(ar.get(7) != null ? ar.get(7) : 0), toInt(ar.get(8) != null ? ar.get(8) : 0), toInt(ar.get(9) != null ? ar.get(9) : 0),
 					toInt(ar.get(10) != null ? ar.get(10) : 0), toInt(ar.get(11) != null ? ar.get(11) : 0), toInt(ar.get(12) != null ? ar.get(12) : 0), toInt(ar.get(13) != null ? ar.get(13) : 0), toInt(ar.get(14) != null ? ar.get(14) : 0),
@@ -3808,7 +3807,7 @@ public class Hypo71 {
 			if (C1.IR != 0) {
 				for (int I = 1; I <= C1.IR; I++) {
 					for (int J = 1; J <= 40; J++) {
-						List ar = read(FINPUT_READER, "(20F4.2)");
+						List<Object> ar = read(FINPUT_READER, "(20F4.2)");
 						QSPA[I - 1] = (double[]) ar.get(0);
 					}
 					for (int J = 1; J <= 40; J++) {
@@ -3902,9 +3901,9 @@ public class Hypo71 {
 	 * 
 	 * @return
 	 */
-	private String getValueIfNotEmpty(String string, String defaultValue) {
+	/*private String getValueIfNotEmpty(String string, String defaultValue) {
 		return string.trim().length() == 0 ? defaultValue : string;
-	}
+	}*/
 
 	public Hypo71() {
 
@@ -3957,9 +3956,9 @@ public class Hypo71 {
 						}
 					} while (O1.NR >= 1);
 					O1.KKF = 0;
-					int KYEAR = C4.KDATE / 10000;
-					int KMONTH = (C4.KDATE - 10000 * KYEAR) / 100;
-					int KDAY = C4.KDATE - 10000 * KYEAR - 100 * KMONTH;
+					//int KYEAR = C4.KDATE / 10000;
+					//int KMONTH = (C4.KDATE - 10000 * KYEAR) / 100;
+					//int KDAY = C4.KDATE - 10000 * KYEAR - 100 * KMONTH;
 					if (KSING != 1) {
 						SINGLE(false);
 					} else {
@@ -4036,74 +4035,81 @@ public class Hypo71 {
 		runWithFileInput(args[0]);
         if (true) return;
 
-        //System.out.println("DATA INPUT");
-		Hypo71 hypoCalculator = new Hypo71();
-		Queue<Station> stationsList = new LinkedList<Station>();
-		Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
-		Queue<PhaseRecord> phaseRecordsList = new LinkedList<PhaseRecord>();
-		// ControlCard controlCard = new ControlCard(0, 5.0, 50.0, 100.0, 1.78,
-		// 2, 0, 18, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0);
-		Properties props = new Properties();
-		props.load(new FileInputStream("hypo71Constants.properties"));
-		ControlCard controlCard = new ControlCard(props);
+	}
+	
+	public static void hypoCalc(){
+		//System.out.println("DATA INPUT");
+				Hypo71 hypoCalculator = new Hypo71();
+				Queue<Station> stationsList = new LinkedList<Station>();
+				Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
+				Queue<PhaseRecord> phaseRecordsList = new LinkedList<PhaseRecord>();
+				// ControlCard controlCard = new ControlCard(0, 5.0, 50.0, 100.0, 1.78,
+				// 2, 0, 18, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+				Properties props = new Properties();
+				try {
+					props.load(new FileInputStream("hypo71Constants.properties"));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				ControlCard controlCard = new ControlCard(props);
 
-		// Filling stations list
-		stationsList.add(new Station(' ', "SR01", 38, 42.55, ' ', 122, 59.17, ' ', 0, -0.15, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR02", 38, 27.28, ' ', 123, 04.80, ' ', 0, 0.09, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR03", 38, 14.15, ' ', 122, 51.29, ' ', 0, 0.12, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR04", 38, 17.20, ' ', 122, 31.92, ' ', 0, 0.14, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR05", 38, 29.55, ' ', 122, 24.33, ' ', 0, 0.07, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR06", 38, 42.58, ' ', 122, 32.22, ' ', 0, -0.19, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR07", 38, 32.20, ' ', 122, 42.78, ' ', 0, 0.03, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR8A", 38, 35.50, ' ', 122, 49.38, ' ', 0, 0.04, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR08", 38, 35.92, ' ', 122, 48.25, ' ', 0, 0.07, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR09", 38, 29.42, ' ', 122, 51.00, ' ', 0, -0.19, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR10", 38, 25.00, ' ', 122, 38.75, ' ', 0, -0.16, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR11", 38, 33.58, ' ', 122, 39.48, ' ', 0, 0.02, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR12", 38, 33.95, ' ', 122, 46.20, ' ', 0, 0.19, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR13", 38, 28.50, ' ', 122, 41.10, ' ', 0, -0.01, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR14", 38, 23.08, ' ', 122, 49.38, ' ', 0, 0.01, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR15", 38, 29.40, ' ', 122, 35.95, ' ', 0, 0.07, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR16", 38, 32.02, ' ', 122, 58.55, ' ', 0, 0.04, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR17", 38, 45.95, ' ', 122, 48.35, ' ', 0, 0, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR18", 38, 17.75, ' ', 122, 44.48, ' ', 0, -0.11, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR19", 38, 40.25, ' ', 122, 40.08, ' ', 0, -0.05, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				// Filling stations list
+				stationsList.add(new Station(' ', "SR01", 38, 42.55, ' ', 122, 59.17, ' ', 0, -0.15, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR02", 38, 27.28, ' ', 123, 04.80, ' ', 0, 0.09, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR03", 38, 14.15, ' ', 122, 51.29, ' ', 0, 0.12, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR04", 38, 17.20, ' ', 122, 31.92, ' ', 0, 0.14, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR05", 38, 29.55, ' ', 122, 24.33, ' ', 0, 0.07, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR06", 38, 42.58, ' ', 122, 32.22, ' ', 0, -0.19, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR07", 38, 32.20, ' ', 122, 42.78, ' ', 0, 0.03, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR8A", 38, 35.50, ' ', 122, 49.38, ' ', 0, 0.04, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR08", 38, 35.92, ' ', 122, 48.25, ' ', 0, 0.07, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR09", 38, 29.42, ' ', 122, 51.00, ' ', 0, -0.19, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR10", 38, 25.00, ' ', 122, 38.75, ' ', 0, -0.16, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR11", 38, 33.58, ' ', 122, 39.48, ' ', 0, 0.02, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR12", 38, 33.95, ' ', 122, 46.20, ' ', 0, 0.19, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR13", 38, 28.50, ' ', 122, 41.10, ' ', 0, -0.01, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR14", 38, 23.08, ' ', 122, 49.38, ' ', 0, 0.01, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR15", 38, 29.40, ' ', 122, 35.95, ' ', 0, 0.07, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR16", 38, 32.02, ' ', 122, 58.55, ' ', 0, 0.04, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR17", 38, 45.95, ' ', 122, 48.35, ' ', 0, 0, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR18", 38, 17.75, ' ', 122, 44.48, ' ', 0, -0.11, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
+				stationsList.add(new Station(' ', "SR19", 38, 40.25, ' ', 122, 40.08, ' ', 0, -0.05, 0.4, 0.25, 8, 0.0, 0.0, 0, 0, 0));
 
-		// Filling phase records list
-		phaseRecordsList.add(new PhaseRecord("SR01", "IPD0", 0.0, 69100512, 6, 51.22, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "1.22", 'D', "", "SR01IPD0 691005120651.22", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR02", "IPU0", 0.0, 69100512, 6, 51.02, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "1.02", 'U', "", "SR02IPU0 691005120651.02", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR03", "IPD0", 0.0, 69100512, 6, 50.49, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "0.49", 'D', "", "SR03IPD0 691005120650.49", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR04", "IPU0", 0.0, 69100512, 6, 49.66, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 16.0, "9.66", 'U', "", "SR04IPU0 691005120649.66", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR05", "IPU0", 0.0, 69100512, 6, 49.72, 53.7, "ES 2", 2.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "9.72", 'U', "53.70", "SR05IPU0 691005120649.72", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR06", "IPD0", 0.0, 69100512, 6, 50.10, 54.20, "ESN4", 4.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "0.10", 'D', "54.20", "SR06IPD0 691005120650.10", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR07", "IPD0", 0.0, 69100512, 6, 46.38, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 18.0, "6.38", 'D', "", "SR07IPD0 691005120646.38", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR8A", "IPU0", 0.0, 69100512, 6, 48.09, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.09", 'U', "", "SR8AIPU0 691005120648.09", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR09", "IPU0", 0.0, 69100512, 6, 47.23, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "7.23", 'U', "", "SR09IPU0 691005120647.23", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR10", "IPU0", 0.0, 69100512, 6, 46.40, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "6.40", 'U', "", "SR10IPU0 691005120646.40", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR11", "IPD0", 0.0, 69100512, 6, 46.89, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "6.89", 'D', "", "SR11IPD0 691005120646.89", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR12", "IPD0", 0.0, 69100512, 6, 47.32, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "7.32", 'D', "", "SR12IPD0 691005120647.32", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR20", "IPD0", 0.0, 69100512, 6, 48.88, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.88", 'D', "", "SR20IPD0 691005120648.88", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR13", "IPD0", 0.0, 69100512, 6, 45.46, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "5.46", 'D', "", "SR13IPD0 691005120645.46", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR14", "IPD0", 0.0, 69100512, 6, 57.78, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "7.78", 'D', "", "SR14IPD0 691005120657.78", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR15", "IPU0", 0.0, 69100512, 6, 46.80, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "6.80", 'U', "", "SR15IPU0 691005120646.80", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR16", "IPU0", 0.0, 69100512, 6, 49.47, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "9.47", 'U', "", "SR16IPU0 691005120649.47", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR18", "IPD0", 0.0, 69100512, 6, 48.55, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.55", 'D', "", "SR18IPD0 691005120648.55", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR19", "IPD0", 0.0, 69100512, 6, 48.88, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.88", 'D', "", "SR19IPD0 691005120648.88", ' ', "IPD0"));
+				// Filling phase records list
+				phaseRecordsList.add(new PhaseRecord("SR01", "IPD0", 0.0, 69100512, 6, 51.22, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "1.22", 'D', "", "SR01IPD0 691005120651.22", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR02", "IPU0", 0.0, 69100512, 6, 51.02, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "1.02", 'U', "", "SR02IPU0 691005120651.02", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR03", "IPD0", 0.0, 69100512, 6, 50.49, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "0.49", 'D', "", "SR03IPD0 691005120650.49", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR04", "IPU0", 0.0, 69100512, 6, 49.66, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 16.0, "9.66", 'U', "", "SR04IPU0 691005120649.66", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR05", "IPU0", 0.0, 69100512, 6, 49.72, 53.7, "ES 2", 2.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "9.72", 'U', "53.70", "SR05IPU0 691005120649.72", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR06", "IPD0", 0.0, 69100512, 6, 50.10, 54.20, "ESN4", 4.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "0.10", 'D', "54.20", "SR06IPD0 691005120650.10", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR07", "IPD0", 0.0, 69100512, 6, 46.38, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 18.0, "6.38", 'D', "", "SR07IPD0 691005120646.38", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR8A", "IPU0", 0.0, 69100512, 6, 48.09, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.09", 'U', "", "SR8AIPU0 691005120648.09", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR09", "IPU0", 0.0, 69100512, 6, 47.23, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "7.23", 'U', "", "SR09IPU0 691005120647.23", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR10", "IPU0", 0.0, 69100512, 6, 46.40, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "6.40", 'U', "", "SR10IPU0 691005120646.40", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR11", "IPD0", 0.0, 69100512, 6, 46.89, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "6.89", 'D', "", "SR11IPD0 691005120646.89", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR12", "IPD0", 0.0, 69100512, 6, 47.32, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "7.32", 'D', "", "SR12IPD0 691005120647.32", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR20", "IPD0", 0.0, 69100512, 6, 48.88, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.88", 'D', "", "SR20IPD0 691005120648.88", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR13", "IPD0", 0.0, 69100512, 6, 45.46, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "5.46", 'D', "", "SR13IPD0 691005120645.46", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR14", "IPD0", 0.0, 69100512, 6, 57.78, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "7.78", 'D', "", "SR14IPD0 691005120657.78", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR15", "IPU0", 0.0, 69100512, 6, 46.80, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "6.80", 'U', "", "SR15IPU0 691005120646.80", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR16", "IPU0", 0.0, 69100512, 6, 49.47, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "9.47", 'U', "", "SR16IPU0 691005120649.47", ' ', "IPU0"));
+				phaseRecordsList.add(new PhaseRecord("SR18", "IPD0", 0.0, 69100512, 6, 48.55, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.55", 'D', "", "SR18IPD0 691005120648.55", ' ', "IPD0"));
+				phaseRecordsList.add(new PhaseRecord("SR19", "IPD0", 0.0, 69100512, 6, 48.88, 0.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, "", 0.0, 0.0, "8.88", 'D', "", "SR19IPD0 691005120648.88", ' ', "IPD0"));
 
-		// Filling crustal model list
-		crustalModelList.add(new CrustalModel(3.3, 0.0));
-		crustalModelList.add(new CrustalModel(5.0, 1.0));
-		crustalModelList.add(new CrustalModel(5.7, 4.0));
-		crustalModelList.add(new CrustalModel(6.7, 15.0));
-		crustalModelList.add(new CrustalModel(8.0, 25.0));
+				// Filling crustal model list
+				crustalModelList.add(new CrustalModel(3.3, 0.0));
+				crustalModelList.add(new CrustalModel(5.0, 1.0));
+				crustalModelList.add(new CrustalModel(5.7, 4.0));
+				crustalModelList.add(new CrustalModel(6.7, 15.0));
+				crustalModelList.add(new CrustalModel(8.0, 25.0));
 
-		try {
-			hypoCalculator.calculateHypo71("SOME SANTA ROSA QUAKES FOR TESTING HYPO71", null, stationsList, crustalModelList, controlCard, phaseRecordsList, null);
-			System.out.println(hypoCalculator.getResults().getOutput());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+				try {
+					hypoCalculator.calculateHypo71("SOME SANTA ROSA QUAKES FOR TESTING HYPO71", null, stationsList, crustalModelList, controlCard, phaseRecordsList, null);
+					System.out.println(hypoCalculator.getResults().getOutput());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 	}
 
 	public static void runWithFileInput(String finputName) {
