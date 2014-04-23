@@ -73,6 +73,7 @@ public class SeisanFile {
 		c.set(Calendar.SECOND, second.intValue());
 		startDate= c.getTime();
 		
+	    System.out.println("FILE HEADER: No Of Channels:"+noOfChannels+",Date:"+c.getTime()+",Start Date:"+startDate);
 	    
 	    int number_of_lines = (noOfChannels/ 3) + (noOfChannels % 3 + 1);
 	    
@@ -112,19 +113,19 @@ public class SeisanFile {
 	 * @throws IOException
 	 */
 	private void readChannelData(DataInputStream dis, SeisanChannel channel) throws IOException{
-		dis.skipBytes(4);
+		dis.skipBytes(lengthFlag.getLength());
 		int[] wave_data = new int[channel.getNumberOfSamples()];
 	    
 	   
 		int index = 0;
 		while(index != channel.getNumberOfSamples()){
-			byte[] bytes = new byte[4];
+			byte[] bytes = new byte[lengthFlag.getLength()];
 			dis.read(bytes);
 			int val = byteArrayToInt(bytes);
 		    wave_data[index] = val;
 		    index ++;
 		}	
-		dis.skipBytes(4);
+		dis.skipBytes(lengthFlag.getLength());
 	    channel.setData(wave_data);
 	}
 	

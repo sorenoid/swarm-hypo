@@ -747,6 +747,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 
 	private class OpenActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			Swarm.isCancelled = false;
 			JFileChooser chooser = Swarm.getApplication().getFileChooser();
 			chooser.resetChoosableFileFilters();
 			ExtensionFileFilter txtExt = new ExtensionFileFilter(".txt",
@@ -1197,6 +1198,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 					components.add(comp);
 				}
 			}
+			Swarm.isCancelled = false;
 			saveDetailstoFileSpec(f.getName(), components);
 		}
 
@@ -1358,7 +1360,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 			}
 		});
 		wvd.setFileSpecs(fss);
-		wvd.setVisible(true);
+		if(!Swarm.isCancelled)
+			wvd.setVisible(true);
 		return wvd.isOK;
 	}
 	
