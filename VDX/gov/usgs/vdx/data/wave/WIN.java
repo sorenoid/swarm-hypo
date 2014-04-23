@@ -31,11 +31,20 @@ package gov.usgs.vdx.data.wave;
 import gov.usgs.util.Log;
 import gov.usgs.util.Util;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 /**
@@ -95,7 +104,6 @@ public class WIN
 	
 	private static int intFromThreeBytes (byte[] bites)
 	{
-        // TODO: not sure about the endianness here
         byte[] padded = new byte[] { 0, bites[2], bites[1], bites[0] };
 		ByteBuffer wrapped = ByteBuffer.wrap(padded);
 		return wrapped.getInt ();
