@@ -25,7 +25,6 @@ import static java.lang.Math.*;
  * 
  * @author Oleg Shepelev
  */
-//@SuppressWarnings({ "all" })
 public class Hypo71 {
 
 	public static class Results {
@@ -4033,8 +4032,6 @@ public class Hypo71 {
             return;
         }
 		runWithFileInput(args[0]);
-        if (true) return;
-
 	}
 	
 	public static void hypoCalc(){
