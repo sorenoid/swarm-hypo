@@ -1007,7 +1007,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 	public void openFile(File f) {
 	
 		FileTypeDialog dialog = null;
-		wvd = new WaveLabelDialog();
 		SAC sac = null;
 		Wave sw = null;
 		SeisanFile seisan = null;
@@ -1063,6 +1062,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 			sw = sac.toWave();
 			channel = sac.getWinstonChannel().replace('$', ' ') + "_index_1";
 			WaveViewPanel po = getWave(f.getAbsolutePath(), 1);
+			WaveLabelDialog.rows = 1;
+			wvd = new WaveLabelDialog();
+			Object[][] tData = wvd.getTableData();
 			if (po == null) {
 				ArrayList<FileSpec> fss = getRelatedFileSpecs(1);
 				WaveViewPanel wvp = new WaveViewPanel();
@@ -1076,9 +1078,18 @@ public class WaveClipboardFrame extends SwarmFrame {
 				if (!isChannelInfoValid(p)) {
 					editLabels(p, fss);
 					if (wvd.getSelectedFileSpec() == null) {
-						p.setStationInfo(wvd.getStation(),
+						/*p.setStationInfo(wvd.getStation(),
 								wvd.getFirstTwoComponent(), wvd.getNetwork(),
-								wvd.getLastComponentCode());
+								wvd.getLastComponentCode());*/
+						String stationText = (null != tData[0][1])?tData[0][1].toString():"";
+						String firstTwoComponent = (null != tData[0][3])?tData[0][3].toString():"";
+						String network = (null != tData[0][2])?tData[0][2].toString():"";
+						String lastComponent = (null != tData[0][4])?tData[0][4].toString():"";
+						lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+						p.setStationInfo(stationText,
+								firstTwoComponent,
+								network,
+								lastComponent);
 					} else {
 						Component comp = wvd.getSelectedFileSpec()
 								.getComponent(p.getFileIndex());
@@ -1123,7 +1134,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 			String prevStation = "";
 			String prevNetwork = "";
 			String prevComp = "";
-			
+			WaveLabelDialog.rows = waves.length;
+			wvd = new WaveLabelDialog();
+			Object[][] tData = wvd.getTableData();
 			for (int i = 0; i < waves.length; i++) {
 				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
 				if (po == null) {
@@ -1145,10 +1158,20 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(p, fss);
-							p.setStationInfo(wvd.getStation(),
+							Swarm.isCancelled = true;
+							/*p.setStationInfo(wvd.getStation(),
 									wvd.getFirstTwoComponent(),
 									wvd.getNetwork(),
-									wvd.getLastComponentCode());
+									wvd.getLastComponentCode());*/
+							String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+							String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+							String network = (null != tData[i][2])?tData[i][2].toString():"";
+							String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+							lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+							p.setStationInfo(stationText,
+									firstTwoComponent,
+									network,
+									lastComponent);
 						} else {
 							Component comp = wvd.getSelectedFileSpec()
 									.getComponent(p.getFileIndex());
@@ -1211,7 +1234,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 			String prevStation = "";
 			String prevNetwork = "";
 			String prevComp = "";
-			
+			WaveLabelDialog.rows = seisan.getChannels().size();
+			wvd = new WaveLabelDialog();
+			Object[][] tData = wvd.getTableData();
 			for (int i = 0; i < seisan.getChannels().size(); i++) {
 				
 				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
@@ -1262,10 +1287,19 @@ public class WaveClipboardFrame extends SwarmFrame {
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(p, fss);
 							if (wvd.getSelectedFileSpec() == null) {
-								p.setStationInfo(wvd.getStation(),
+								/*p.setStationInfo(wvd.getStation(),
 										wvd.getFirstTwoComponent(),
 										wvd.getNetwork(),
-										wvd.getLastComponentCode());
+										wvd.getLastComponentCode());*/
+								String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+								String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+								String network = (null != tData[i][2])?tData[i][2].toString():"";
+								String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+								lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+								p.setStationInfo(stationText,
+										firstTwoComponent,
+										network,
+										lastComponent);
 							} else {
 								Component comp = wvd.getSelectedFileSpec()
 										.getComponent(p.getFileIndex());

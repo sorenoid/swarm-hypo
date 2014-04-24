@@ -14,7 +14,6 @@ import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.SwarmDialog;
 import gov.usgs.swarm.SwingWorker;
 import gov.usgs.swarm.WaveLabelDialog;
-
 import gov.usgs.util.CodeTimer;
 import gov.usgs.util.CurrentTime;
 import gov.usgs.util.Util;
@@ -46,6 +45,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+
+
+
+
 
 
 import javax.swing.BorderFactory;
@@ -235,7 +238,6 @@ public class FileDataSource extends AbstractCachingDataSource {
 	}
 	
 		public void openWINFile(final String fn, final String fName) {
-		wvd = new WaveLabelDialog();
 		if (openFiles.contains(fn))
 			return;
 
@@ -256,7 +258,9 @@ public class FileDataSource extends AbstractCachingDataSource {
 					String prevStation = "";
 					String prevNetwork = "";
 					String prevComp = "";
-					
+					WaveLabelDialog.rows = waves.length;
+					wvd = new WaveLabelDialog();
+					Object[][] tData = wvd.getTableData();
 					for (int i = 0; i < channelData.size(); i++) {
 						int index = (i + 1);
 						SimpleChannel sc = new SimpleChannel(null, prevNetwork,prevStation,
@@ -264,10 +268,19 @@ public class FileDataSource extends AbstractCachingDataSource {
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(sc, fss, fName, i+1);
 							if(wvd.getSelectedFileSpec() == null){
-								sc = new SimpleChannel(null, wvd.getNetwork(),
+								/*sc = new SimpleChannel(null, wvd.getNetwork(),
 										wvd.getStation(),
 										wvd.getFirstTwoComponent(),
-										wvd.getLastComponentCode());
+										wvd.getLastComponentCode());*/
+								String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+								String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+								String network = (null != tData[i][2])?tData[i][2].toString():"";
+								String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+								lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+								sc = new SimpleChannel(null, network,
+										stationText,
+										firstTwoComponent,
+										lastComponent);
 								channel =  "Channel "+ index+" : "+sc.toString;
 							}else{
 								Component comp = wvd.getSelectedFileSpec()
@@ -410,7 +423,9 @@ public class FileDataSource extends AbstractCachingDataSource {
 					String prevStation = "";
 					String prevNetwork = "";
 					String prevComp = "";
-					
+					WaveLabelDialog.rows = seisan.getChannels().size();
+					wvd = new WaveLabelDialog();
+					Object[][] tData = wvd.getTableData();
 					for (int i = 0; i < seisan.getChannels().size(); i++) {
 						SeisanChannel c = seisan.getChannels().get(i);
 						if (!c.channel.isPopulated()) {
@@ -436,10 +451,19 @@ public class FileDataSource extends AbstractCachingDataSource {
 									if (wvd.getSelectedFileSpec() == null) {
 									editLabels(sc, fss, fName, i + 1);
 									if (wvd.getSelectedFileSpec() == null) {
-										sc = new SimpleChannel(null,
+										/*sc = new SimpleChannel(null,
 												wvd.getNetwork(), wvd.getStation(),
 												wvd.getFirstTwoComponent(),
-												wvd.getLastComponentCode());
+												wvd.getLastComponentCode());*/
+										String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+										String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+										String network = (null != tData[i][2])?tData[i][2].toString():"";
+										String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+										lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+										sc = new SimpleChannel(null, network,
+												stationText,
+												firstTwoComponent,
+												lastComponent);
 										channel = "Channel "+ (i+1)+ " : " + sc.toString;
 									}else{
 										Component comp = wvd.getSelectedFileSpec()
