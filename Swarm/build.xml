@@ -126,6 +126,7 @@ dist    -- generates new binary distribution
 				<include name="gov/usgs/vdx/data/rsam/RSAMData*.class" />
 				<include name="gov/usgs/vdx/data/wave/SeisanChannel*.class" />
 				<include name="gov/usgs/vdx/data/wave/SeisanFile*.class" />
+				<include name="gov/usgs/vdx/data/wave/FileFlag*.class" />
 				<include name="gov/usgs/vdx/data/wave/WIN*.class" />
 				<include name="gov/usgs/vdx/data/wave/SAC*.class" />
 				<include name="gov/usgs/vdx/data/wave/Seed*.class" />
