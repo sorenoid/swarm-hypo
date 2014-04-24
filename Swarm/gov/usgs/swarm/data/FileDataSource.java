@@ -260,13 +260,14 @@ public class FileDataSource extends AbstractCachingDataSource {
 					String prevComp = "";
 					WaveLabelDialog.rows = waves.length;
 					wvd = new WaveLabelDialog();
-					Object[][] tData = wvd.getTableData();
+					Object[][] tData = null;
 					for (int i = 0; i < channelData.size(); i++) {
 						int index = (i + 1);
 						SimpleChannel sc = new SimpleChannel(null, prevNetwork,prevStation,
 								prevComp, "");
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(sc, fss, fName, i+1);
+							tData = wvd.getTableData();
 							if(wvd.getSelectedFileSpec() == null){
 								/*sc = new SimpleChannel(null, wvd.getNetwork(),
 										wvd.getStation(),
@@ -425,7 +426,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 					String prevComp = "";
 					WaveLabelDialog.rows = seisan.getChannels().size();
 					wvd = new WaveLabelDialog();
-					Object[][] tData = wvd.getTableData();
+					Object[][] tData = null;
 					for (int i = 0; i < seisan.getChannels().size(); i++) {
 						SeisanChannel c = seisan.getChannels().get(i);
 						if (!c.channel.isPopulated()) {
@@ -450,6 +451,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 										ft, c.channel.lastComponentCode);
 									if (wvd.getSelectedFileSpec() == null) {
 									editLabels(sc, fss, fName, i + 1);
+									tData = wvd.getTableData();
 									if (wvd.getSelectedFileSpec() == null) {
 										/*sc = new SimpleChannel(null,
 												wvd.getNetwork(), wvd.getStation(),

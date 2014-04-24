@@ -1064,7 +1064,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 			WaveViewPanel po = getWave(f.getAbsolutePath(), 1);
 			WaveLabelDialog.rows = 1;
 			wvd = new WaveLabelDialog();
-			Object[][] tData = wvd.getTableData();
+			Object[][] tData = null;
 			if (po == null) {
 				ArrayList<FileSpec> fss = getRelatedFileSpecs(1);
 				WaveViewPanel wvp = new WaveViewPanel();
@@ -1077,6 +1077,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 				WaveViewPanel p = new WaveViewPanel(wvp);
 				if (!isChannelInfoValid(p)) {
 					editLabels(p, fss);
+					tData = wvd.getTableData();
 					if (wvd.getSelectedFileSpec() == null) {
 						/*p.setStationInfo(wvd.getStation(),
 								wvd.getFirstTwoComponent(), wvd.getNetwork(),
@@ -1136,7 +1137,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 			String prevComp = "";
 			WaveLabelDialog.rows = waves.length;
 			wvd = new WaveLabelDialog();
-			Object[][] tData = wvd.getTableData();
+			Object[][] tData = null;
 			for (int i = 0; i < waves.length; i++) {
 				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
 				if (po == null) {
@@ -1158,6 +1159,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(p, fss);
+							tData = wvd.getTableData();
 							Swarm.isCancelled = true;
 							/*p.setStationInfo(wvd.getStation(),
 									wvd.getFirstTwoComponent(),
@@ -1236,7 +1238,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 			String prevComp = "";
 			WaveLabelDialog.rows = seisan.getChannels().size();
 			wvd = new WaveLabelDialog();
-			Object[][] tData = wvd.getTableData();
+			Object[][] tData = null;
 			for (int i = 0; i < seisan.getChannels().size(); i++) {
 				
 				WaveViewPanel po = getWave(f.getAbsolutePath(), (i + 1));
@@ -1286,6 +1288,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(p, fss);
+							tData = wvd.getTableData();
 							if (wvd.getSelectedFileSpec() == null) {
 								/*p.setStationInfo(wvd.getStation(),
 										wvd.getFirstTwoComponent(),
