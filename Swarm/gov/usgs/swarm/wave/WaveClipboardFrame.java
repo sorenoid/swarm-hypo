@@ -1638,6 +1638,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 				pmf.setLocation(100, 100);
 				pmf.setVisible(true);
 			} else {
+				pmf.setVisible(true);
 				pmf.paintComponents(pmf.getGraphics());
 			}
 

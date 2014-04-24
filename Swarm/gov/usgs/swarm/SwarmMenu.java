@@ -235,6 +235,7 @@ public class SwarmMenu extends JMenuBar
 						}
 						eventPropertiesDialog.setVisible(true);
 					}else{
+						eventPropertiesDialog.setVisible(true);
 						eventPropertiesDialog.doInitialise();
 					}
 				}
