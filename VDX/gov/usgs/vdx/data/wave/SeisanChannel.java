@@ -185,6 +185,10 @@ public class SeisanChannel {
         public String fullComponent() {
             return firstTwoComponentCode+lastComponentCode;
         }
+        
+        public String getLastComponentCode(){
+        	return lastComponentCode;
+        }
     }
 
     

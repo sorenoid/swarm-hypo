@@ -123,6 +123,8 @@ public class ParticleMotionViewPanel extends JPanel {
 
 	
 	private void drawAxisMarks(Graphics2D g2) {
+		double axisValueMax = (maxY>maxX)?maxY:maxX;
+		double axisValueMin = (minY>minX)?minY:minX;
 		g2.setColor(Color.red);
 		// drawing Y -marks
 		double Ydiff = maxY - minY;

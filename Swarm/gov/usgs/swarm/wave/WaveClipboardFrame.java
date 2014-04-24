@@ -1608,34 +1608,63 @@ public class WaveClipboardFrame extends SwarmFrame {
 				Marker.PARTICLE_MARKER_LABEL);
 		ArrayList<WaveViewPanel> views = getStationComponents(stationCode);
 		if (t != null && t.length == 2 && views.size() == 3) {
+			  
 			double[] data1 = getWaveData(views.get(0).getWave()
 					.subset(t[0], t[1]));
 			double[] data2 = getWaveData(views.get(1).getWave()
 					.subset(t[0], t[1]));
 			double[] data3 = getWaveData(views.get(2).getWave()
 					.subset(t[0], t[1]));
+			
+			//TODO: Plots should always have Z on y-axis if Z is involved and 
+			//TODO: Should have N on y-axis when plotting N vs E
+			if(views.get(0).getChannel().getLastComponentCode().equals("Z") || (views.get(0).getChannel().getLastComponentCode().equals("N") && views.get(1).getChannel().getLastComponentCode().equals("E"))){
+				pmf.getComponent1().setxLabel(
+						views.get(1).getChannel().fullComponent());
+				pmf.getComponent1().setxData(data2);
+				pmf.getComponent1().setyLabel(
+						views.get(0).getChannel().fullComponent());
+				pmf.getComponent1().setyData(data1);
+			}else{
+				pmf.getComponent1().setxLabel(
+				views.get(0).getChannel().fullComponent());
+				pmf.getComponent1().setxData(data1);
+				pmf.getComponent1().setyLabel(
+				views.get(1).getChannel().fullComponent());
+				pmf.getComponent1().setyData(data2);
+			}
 
-			pmf.getComponent1().setxLabel(
-					views.get(0).getChannel().fullComponent());
-			pmf.getComponent1().setxData(data1);
-			pmf.getComponent1().setyLabel(
-					views.get(1).getChannel().fullComponent());
-			pmf.getComponent1().setyData(data2);
-
-			pmf.getComponent2().setxLabel(
-					views.get(1).getChannel().fullComponent());
-			pmf.getComponent2().setxData(data2);
-			pmf.getComponent2().setyLabel(
-					views.get(2).getChannel().fullComponent());
-			pmf.getComponent2().setyData(data3);
-
-			pmf.getComponent3().setxLabel(
-					views.get(2).getChannel().fullComponent());
-			pmf.getComponent3().setxData(data3);
-			pmf.getComponent3().setyLabel(
-					views.get(0).getChannel().fullComponent());
-			pmf.getComponent3().setyData(data1);
-			pmf.setAlwaysOnTop(false);
+			if(views.get(1).getChannel().getLastComponentCode().equals("Z") || (views.get(1).getChannel().getLastComponentCode().equals("N") && views.get(2).getChannel().getLastComponentCode().equals("E"))){
+				pmf.getComponent2().setxLabel(
+						views.get(2).getChannel().fullComponent());
+				pmf.getComponent2().setxData(data3);
+				pmf.getComponent2().setyLabel(
+						views.get(1).getChannel().fullComponent());
+				pmf.getComponent2().setyData(data2);
+			}else{
+				pmf.getComponent2().setxLabel(
+				views.get(1).getChannel().fullComponent());
+				pmf.getComponent2().setxData(data2);
+				pmf.getComponent2().setyLabel(
+				views.get(2).getChannel().fullComponent());
+				pmf.getComponent2().setyData(data3);
+			}
+			
+			if(views.get(2).getChannel().getLastComponentCode().equals("Z") || (views.get(2).getChannel().getLastComponentCode().equals("N") && views.get(0).getChannel().getLastComponentCode().equals("E"))){
+				pmf.getComponent3().setxLabel(
+						views.get(0).getChannel().fullComponent());
+				pmf.getComponent3().setxData(data1);
+				pmf.getComponent3().setyLabel(
+						views.get(2).getChannel().fullComponent());
+				pmf.getComponent3().setyData(data3);
+			}else{
+				pmf.getComponent3().setxLabel(
+				views.get(2).getChannel().fullComponent());
+				pmf.getComponent3().setxData(data3);
+				pmf.getComponent3().setyLabel(
+				views.get(0).getChannel().fullComponent());
+				pmf.getComponent3().setyData(data1);				
+			}
 
 			if (!pmf.isVisible()) {
 				pmf.setLocation(100, 100);
