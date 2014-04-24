@@ -1598,7 +1598,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 			pmf.getComponent3().setyLabel(
 					views.get(0).getChannel().fullComponent());
 			pmf.getComponent3().setyData(data1);
-			pmf.setAlwaysOnTop(true);
+			pmf.setAlwaysOnTop(false);
 
 			if (!pmf.isVisible()) {
 				pmf.setLocation(100, 100);
