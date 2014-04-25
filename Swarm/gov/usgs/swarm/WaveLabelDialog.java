@@ -17,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -33,12 +34,12 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 @SuppressWarnings("serial")
 public class WaveLabelDialog extends SwarmDialog {
-	//private JLabel channelLabelValue;
+	private JLabel channelLabelValue;
 	private JLabel fileNameValue;
 
-	//private JTextField stationText;
-	//private JTextField networkText;
-	//private JTextField componentText;
+	private JTextField stationText;
+	private JTextField networkText;
+	private JTextField componentText;
 
 	private JCheckBox fileSpecCheckBox;
 	private JComboBox fileSpecCombo;
@@ -185,6 +186,76 @@ public class WaveLabelDialog extends SwarmDialog {
 		setSizeAndLocation();
 	}
 	
+	public WaveLabelDialog(boolean flag){
+		super(Swarm.getApplication(), "Label Properties", true);
+		createUIWaveDialog();
+
+		FormLayout layout = new FormLayout(
+				"pref, 1dlu, pref:grow, 1dlu, pref:grow",
+				"pref, 3dlu, pref, 3dlu,pref,3dlu,pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+
+		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+		builder.setDefaultDialogBorder();
+
+		fileSpecCheckBox = new JCheckBox("Use Existing Spec:");
+		builder.add(fileSpecCheckBox, "3,1,3,1,FILL,FILL");
+
+		fileSpecCombo = new JComboBox();
+		builder.add(fileSpecCombo, "3,3,3,1,FILL,FILL");
+
+		
+		fileNameValue = new JLabel("", JLabel.LEFT);
+		builder.addLabel("File :", "1,5,1,1,FILL,FILL");
+		builder.add(fileNameValue, "3,5,3,1,FILL,FILL");
+
+		
+		channelLabelValue = new JLabel("", JLabel.LEFT);
+		builder.addLabel("Wave Channel index:", "1,7,1,1,FILL,FILL");
+		builder.add(channelLabelValue, "3,7,3,1,FILL,FILL");
+
+		stationText = new JTextField();
+		builder.addLabel("Station :", "1,9,1,1,FILL,FILL");
+		builder.add(stationText, "3,9,3,1,FILL,FILL");
+
+		networkText = new JTextField();
+		builder.addLabel("Network :", "1,11,1,1,FILL,FILL");
+		builder.add(networkText, "3,11,3,1,FILL,FILL");
+
+		componentText = new JTextField();
+		builder.addLabel("Component :", "1,13,1,1,FILL,FILL");
+		builder.add(componentText, "3,13,1,1,FILL,FILL");
+
+		String[] specifications = { "Z", "E", "N" };
+		lastCompCombo = new JComboBox(specifications);
+		builder.add(lastCompCombo, "5,13,1,1,FILL,FILL");
+
+		fileSpecCheckBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (fileSpecCheckBox.isSelected()) {
+					fileSpecCombo.setEnabled(true);
+					//table.setEnabled(false);
+					stationText.setEnabled(false);
+					networkText.setEnabled(false);
+					componentText.setEnabled(false);
+					lastCompCombo.setEnabled(false);
+				} else {
+					fileSpecCombo.setEnabled(false);
+					//table.setEnabled(true);
+					stationText.setEnabled(true);
+					networkText.setEnabled(true);
+					componentText.setEnabled(true);
+					lastCompCombo.setEnabled(true);
+				}
+			}
+
+		});
+
+		mainPanel.add(builder.getPanel(), BorderLayout.CENTER);
+		setSizeAndLocation();
+	}
+	
 	private Object[] createRow() {
 		 Object[] newRow = new Object[5];
 		  int row = table.getRowCount() + 1;
@@ -206,35 +277,43 @@ public class WaveLabelDialog extends SwarmDialog {
 		//TODO: I am confused about this part. How to set these texts as now it's in tabular form
 		this.fileIndex = fileIndex;
 		this.fileName = fileName;
-		//channelLabelValue.setText("" + fileIndex);
-		fileNameValue.setText(fileName);
-        //stationText.setText(channel==null?"":channel.showStationCode());
-		//networkText.setText(channel==null?"":channel.showNetworkName());
-		//componentText.setText(channel==null?"":channel.showFirstTwoComponent());
+		if(null != channelLabelValue) channelLabelValue.setText("" + fileIndex);
+		if(null != fileNameValue) fileNameValue.setText(fileName);
+		if(null != stationText) stationText.setText(channel==null?"":channel.showStationCode());
+		if(null != networkText) networkText.setText(channel==null?"":channel.showNetworkName());
+		if(null != componentText) componentText.setText(channel==null?"":channel.showFirstTwoComponent());
         String lastComponentCode = channel==null?"":channel.lastComponentCode;
-		if (lastComponentCode != null && (!lastComponentCode.isEmpty())) {
+		if (null != lastComponentCode && (!lastComponentCode.isEmpty())) {
 			if (lastComponentCode.equalsIgnoreCase("Z") || lastComponentCode.equalsIgnoreCase("E") || lastComponentCode.equalsIgnoreCase("N")) {
-				//lastCompCombo.setSelectedItem(lastComponentCode);
+				lastCompCombo.setSelectedItem(lastComponentCode);
 			}
 		}
 	}
 	
 	
-	/*public String getStation(){
-		return stationText.getText();
+	public String getStation(){
+		if(null != stationText)
+			return stationText.getText();
+		return null;
 	} 
 	
 	public String getFirstTwoComponent(){
-		return componentText.getText();
+		if(null != componentText)
+			return componentText.getText();
+		return null;
 	}
 	
 	public String getNetwork(){
-		return networkText.getText();
-	}*/
+		if(null != networkText)
+			return networkText.getText();
+		return null;
+	}
 	
-	/*public String getLastComponentCode(){
-		return lastCompCombo.getSelectedItem().toString();
-	}*/
+	public String getLastComponentCode(){
+		if(null != lastCompCombo)
+			return lastCompCombo.getSelectedItem().toString();
+		return null;
+	}
 	
 	
 	public void setActionAfterFinish(Callable<Object> actionAfterFinish) {
@@ -264,7 +343,6 @@ public class WaveLabelDialog extends SwarmDialog {
 		}
 		try {
 			actionAfterFinish.call();
-			getTableData();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -291,10 +369,10 @@ public class WaveLabelDialog extends SwarmDialog {
 
 	@Override
 	public void show() {
-		//stationText.setEnabled(true);
-		//networkText.setEnabled(true);
-		//componentText.setEnabled(true);
-		//lastCompCombo.setEnabled(true);
+		if(null != stationText) stationText.setEnabled(true);
+		if(null != networkText) networkText.setEnabled(true);
+		if(null != componentText) componentText.setEnabled(true);
+		if(null != lastCompCombo) lastCompCombo.setEnabled(true);
 		fileSpecCheckBox.setSelected(false);
 		fileSpecCombo.setEnabled(false);
 

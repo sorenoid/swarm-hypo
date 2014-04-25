@@ -71,7 +71,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 	private Map<String, double[]> channelTimes;
 	private Set<String> openFiles;
 	
-	WaveLabelDialog wvd = new WaveLabelDialog();
+	WaveLabelDialog wvd = null;
 
 	public FileDataSource() {
 		super();
@@ -269,16 +269,20 @@ public class FileDataSource extends AbstractCachingDataSource {
 							if(null == tData)
 								tData = wvd.getTableData();
 							if(wvd.getSelectedFileSpec() == null){
-								/*sc = new SimpleChannel(null, wvd.getNetwork(),
-										wvd.getStation(),
-										wvd.getFirstTwoComponent(),
-										wvd.getLastComponentCode());*/
-								String stationText = (null != tData[i][1])?tData[i][1].toString():"";
-								String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
-								String network = (null != tData[i][2])?tData[i][2].toString():"";
-								String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
-								lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastComponent);
+								if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
+										&& null != wvd.getLastComponentCode()){
+									sc = new SimpleChannel(null, wvd.getNetwork(),
+											wvd.getStation(),
+											wvd.getFirstTwoComponent()+
+											wvd.getLastComponentCode());
+								}else{
+									String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+									String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+									String network = (null != tData[i][2])?tData[i][2].toString():"";
+									String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+									lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+									sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastComponent);
+								}
 								channel =  sc.toString;
 							}else{
 								Component comp = wvd.getSelectedFileSpec()
@@ -402,7 +406,6 @@ sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastCompone
 			ArrayList<Component> components = new ArrayList<Component>();
 			@Override
 			public Object construct() {
-				wvd = new WaveLabelDialog();
 				Object result = null;
 				fireChannelsProgress(fn, 0);
 				try {
@@ -447,18 +450,22 @@ sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastCompone
 									if(null == tData)
 										tData = wvd.getTableData();
 									if (wvd.getSelectedFileSpec() == null) {
-										/*sc = new SimpleChannel(null,
-												wvd.getNetwork(), wvd.getStation(),
-												wvd.getFirstTwoComponent(),
-												wvd.getLastComponentCode());*/
-										String stationText = (null != tData[i][1])?tData[i][1].toString():"";
-										String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
-										String network = (null != tData[i][2])?tData[i][2].toString():"";
-										String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
-										lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-										sc = new SimpleChannel(null, network,
-												stationText,
-												firstTwoComponent + lastComponent);
+										if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
+												&& null != wvd.getLastComponentCode()){
+											sc = new SimpleChannel(null,
+													wvd.getNetwork(), wvd.getStation(),
+													wvd.getFirstTwoComponent()+
+													wvd.getLastComponentCode());
+										}else{
+											String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+											String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+											String network = (null != tData[i][2])?tData[i][2].toString():"";
+											String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+											lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+											sc = new SimpleChannel(null, network,
+													stationText,
+													firstTwoComponent + lastComponent);
+										}
 										channel = sc.toString;
 									}else{
 										Component comp = wvd.getSelectedFileSpec()

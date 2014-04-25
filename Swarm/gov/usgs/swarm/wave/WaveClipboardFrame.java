@@ -260,11 +260,11 @@ public class WaveClipboardFrame extends SwarmFrame {
 						// WaveClipboardFrame.this.getSingleSelected();
 						// WaveViewPanel vp =
 						// WaveClipboardFrame.this.getSingleSelected();
-
+						Swarm.isCancelled = false;
 						WaveViewPanel vp = selectedSet.iterator().next();
 						int index = getIndexOfWave(vp);
 						if (index != -1) {
-							editLabels(vp, null);
+							editLabelsWaveEdit(vp, null);
 						}
 					}
 				});
@@ -1080,18 +1080,22 @@ public class WaveClipboardFrame extends SwarmFrame {
 					if(null == tData)
 						tData = wvd.getTableData();
 					if (wvd.getSelectedFileSpec() == null) {
-						/*p.setStationInfo(wvd.getStation(),
-								wvd.getFirstTwoComponent(), wvd.getNetwork(),
-								wvd.getLastComponentCode());*/
-						String stationText = (null != tData[0][1])?tData[0][1].toString():"";
-						String firstTwoComponent = (null != tData[0][3])?tData[0][3].toString():"";
-						String network = (null != tData[0][2])?tData[0][2].toString():"";
-						String lastComponent = (null != tData[0][4])?tData[0][4].toString():"";
-						lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-						p.setStationInfo(stationText,
-								firstTwoComponent,
-								network,
-								lastComponent);
+						if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
+								&& null != wvd.getLastComponentCode()){
+							p.setStationInfo(wvd.getStation(),
+									wvd.getFirstTwoComponent(), wvd.getNetwork(),
+									wvd.getLastComponentCode());
+						}else{
+							String stationText = (null != tData[0][1])?tData[0][1].toString():"";
+							String firstTwoComponent = (null != tData[0][3])?tData[0][3].toString():"";
+							String network = (null != tData[0][2])?tData[0][2].toString():"";
+							String lastComponent = (null != tData[0][4])?tData[0][4].toString():"";
+							lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+							p.setStationInfo(stationText,
+									firstTwoComponent,
+									network,
+									lastComponent);
+						}
 					} else {
 						Component comp = wvd.getSelectedFileSpec()
 								.getComponent(p.getFileIndex());
@@ -1162,19 +1166,23 @@ public class WaveClipboardFrame extends SwarmFrame {
 							editLabels(p, fss);
 							if(null == tData)
 								tData = wvd.getTableData();
-							/*p.setStationInfo(wvd.getStation(),
-									wvd.getFirstTwoComponent(),
-									wvd.getNetwork(),
-									wvd.getLastComponentCode());*/
-							String stationText = (null != tData[i][1])?tData[i][1].toString():"";
-							String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
-							String network = (null != tData[i][2])?tData[i][2].toString():"";
-							String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
-							lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-							p.setStationInfo(stationText,
-									firstTwoComponent,
-									network,
-									lastComponent);
+							if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
+									&& null != wvd.getLastComponentCode()){
+								p.setStationInfo(wvd.getStation(),
+										wvd.getFirstTwoComponent(),
+										wvd.getNetwork(),
+										wvd.getLastComponentCode());
+							}else{
+								String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+								String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+								String network = (null != tData[i][2])?tData[i][2].toString():"";
+								String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+								lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+								p.setStationInfo(stationText,
+										firstTwoComponent,
+										network,
+										lastComponent);
+							}
 						} else {
 							Component comp = wvd.getSelectedFileSpec()
 									.getComponent(p.getFileIndex());
@@ -1292,19 +1300,23 @@ public class WaveClipboardFrame extends SwarmFrame {
 							if(null == tData)
 								tData = wvd.getTableData();
 							if (wvd.getSelectedFileSpec() == null) {
-								/*p.setStationInfo(wvd.getStation(),
-										wvd.getFirstTwoComponent(),
-										wvd.getNetwork(),
-										wvd.getLastComponentCode());*/
-								String stationText = (null != tData[i][1])?tData[i][1].toString():"";
-								String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
-								String network = (null != tData[i][2])?tData[i][2].toString():"";
-								String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
-								lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-								p.setStationInfo(stationText,
-										firstTwoComponent,
-										network,
-										lastComponent);
+								if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
+										&& null != wvd.getLastComponentCode()){
+									p.setStationInfo(wvd.getStation(),
+											wvd.getFirstTwoComponent(),
+											wvd.getNetwork(),
+											wvd.getLastComponentCode());
+								}else{
+									String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+									String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+									String network = (null != tData[i][2])?tData[i][2].toString():"";
+									String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+									lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+									p.setStationInfo(stationText,
+											firstTwoComponent,
+											network,
+											lastComponent);
+								}
 							} else {
 								Component comp = wvd.getSelectedFileSpec()
 										.getComponent(p.getFileIndex());
@@ -1390,6 +1402,22 @@ public class WaveClipboardFrame extends SwarmFrame {
 		if (wvd == null) {
 			wvd = new WaveLabelDialog();
 		}
+		wvd.setWaveViewPanel(wvp.getChannel(), wvp.getFileName(),
+				wvp.getFileIndex());
+		wvd.setActionAfterFinish(new Callable<Object>() {
+			@Override
+			public Object call() throws Exception {
+				return null;
+			}
+		});
+		wvd.setFileSpecs(fss);
+		if(!Swarm.isCancelled)
+			wvd.setVisible(true);
+		return wvd.isOK;
+	}
+	
+	private boolean editLabelsWaveEdit(final WaveViewPanel wvp, ArrayList<FileSpec> fss) {
+		wvd = new WaveLabelDialog(true);
 		wvd.setWaveViewPanel(wvp.getChannel(), wvp.getFileName(),
 				wvp.getFileIndex());
 		wvd.setActionAfterFinish(new Callable<Object>() {
