@@ -66,7 +66,8 @@ public class SeisanFile {
 		second  = data.substring(53,59).trim().length() == 0?null:Float.parseFloat(data.substring(53,59).trim());
 
 		Calendar c  = Calendar.getInstance();
-		c.set(Calendar.YEAR, (year + 1900));
+		year = year+1900;
+		c.set(Calendar.YEAR, (year));
 		c.set(Calendar.MONTH, month-1);
 		c.set(Calendar.DAY_OF_MONTH, day);
 		c.set(Calendar.HOUR_OF_DAY, hour);
