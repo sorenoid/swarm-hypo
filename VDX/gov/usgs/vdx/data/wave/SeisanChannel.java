@@ -65,7 +65,7 @@ public class SeisanChannel {
 		
 		
 		System.out.println(c.getTime().toGMTString());
-		System.out.println(year + 1900+ " - " + month + " - " + day + "  " + hour + " : " + minute + ":" + ":"+second);
+		System.out.println((year + 1900)+ " - " + month + " - " + day + "  " + hour + " : " + minute + ":" + ":"+second);
 		
 	}
 
