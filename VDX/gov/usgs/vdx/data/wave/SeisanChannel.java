@@ -45,7 +45,7 @@ public class SeisanChannel {
         channel = new SimpleChannel(null,
                 header.substring(16,17),
                 header.substring(0,5).trim(),
-                header.substring(5,8).trim());
+                header.substring(5,9).trim());
 
 		year = header.substring(9,12).trim().length() == 0?null:Integer.parseInt(header.substring(9,12).trim());
 		secondLocationCode = header.substring(12,13).trim();
