@@ -220,7 +220,7 @@ public class WaveViewPanel extends JComponent {
 	
 	public void setStationInfo(String code, String comp, String network,
 			String lastComponent) {
-		channel = new SimpleChannel(null, network, code, comp, lastComponent);
+		channel = new SimpleChannel(null, network, code, comp + lastComponent);
 	}
 	
 	public String getStationCode() {

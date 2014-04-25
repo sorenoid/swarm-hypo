@@ -36,12 +36,17 @@ public class SeisanChannel {
 	 * @param header
 	 */
 	public SeisanChannel(String header){
+//        channel = new SimpleChannel(null,
+//                header.substring(16,17),
+//                header.substring(0,5).trim(),
+//                header.substring(5,7).trim(),
+//                header.substring(7,8).trim());
+
         channel = new SimpleChannel(null,
                 header.substring(16,17),
                 header.substring(0,5).trim(),
-                header.substring(5,7).trim(),
-                header.substring(7,8).trim());
-        
+                header.substring(5,8).trim());
+
 		year = header.substring(9,12).trim().length() == 0?null:Integer.parseInt(header.substring(9,12).trim());
 		secondLocationCode = header.substring(12,13).trim();
 		doy  = header.substring(13,16).trim();
@@ -106,16 +111,19 @@ public class SeisanChannel {
 	public static class SimpleChannel {
         public final String networkName;
         public final String stationCode;
+        public final String fullComponent;
         public final String firstTwoComponentCode;
         public final String lastComponentCode;
         public final String toString;
 
 
-        public SimpleChannel(String toString, String networkName, String stationCode, String firstTwoComponentCode, String lastComponentCode) {
+        public SimpleChannel(String toString, String networkName, String stationCode, String fullComponent) {
             this.networkName = networkName;
             this.stationCode = stationCode;
-            this.firstTwoComponentCode = firstTwoComponentCode;
-            this.lastComponentCode = lastComponentCode;
+            this.fullComponent = fullComponent;
+			int compLen = fullComponent.length();
+			this.firstTwoComponentCode = compLen > 1 ? fullComponent.substring(0, compLen - 1) : "";
+			this.lastComponentCode = compLen > 0 ? fullComponent.substring(compLen-1, compLen) : "";
             this.toString = toString != null ? toString : generateString();
         }
 
@@ -125,39 +133,51 @@ public class SeisanChannel {
 
         // TODO: should do generateString for display only. Should see how SCNL does parsing and follow that convention
         // for toString and parse
+//        public String generateString() {
+//            return (((stationCode == null || stationCode.trim().length() == 0) ? "--": stationCode)
+//                    + "  "
+//					+ ((firstTwoComponentCode == null || firstTwoComponentCode.trim().length() == 0) ? ((lastComponentCode == null || lastComponentCode
+//                    .trim().length() == 0) ? "--"
+//                    : lastComponentCode+"///")
+//                    : ((lastComponentCode == null || lastComponentCode
+//                    .trim().length() == 0) ? firstTwoComponentCode
+//                    : firstTwoComponentCode+lastComponentCode))
+//					+" "
+//					+((networkName == null || networkName.trim().length() == 0) ? "--": networkName+"//")
+//					+" ");
+//					
+//        }
+        
         public String generateString() {
-            return (((stationCode == null || stationCode.trim().length() == 0) ? "--": stationCode)
-                    + "  "
-					+ ((firstTwoComponentCode == null || firstTwoComponentCode.trim().length() == 0) ? ((lastComponentCode == null || lastComponentCode
-                    .trim().length() == 0) ? "--"
-                    : lastComponentCode+"///")
-                    : ((lastComponentCode == null || lastComponentCode
-                    .trim().length() == 0) ? firstTwoComponentCode
-                    : firstTwoComponentCode+lastComponentCode))
-					+" "
-					+((networkName == null || networkName.trim().length() == 0) ? "--": networkName+"//")
-					+" ");
-					
+    		return stationCode.trim() + "_" + fullComponent.trim() + "_" + networkName.trim();
         }
 
-        public static SimpleChannel parse(String channel) {
-            try {
-                String compressed = channel.replace("  ", " ");
-                String[] split = compressed.split(" ");
-                String network = "--".equals(split[0]) ? null : split[0];
-                int len = split[2].length();
-                String c1 = split[2].substring(0, len-1);
-                String c2 = split[2].substring(len-1, len);
-                return new SimpleChannel(channel, network, split[1], c1, c2);
-            } catch (Exception e) {
-                System.out.println("Could not parse channel: "+channel);
-                return new SimpleChannel(channel, null, null, null, null);
-            }
-        }
+//        public static SimpleChannel parse(String channel) {
+//            try {
+//                String compressed = channel.replace("  ", " ");
+//                String[] split = compressed.split(" ");
+//                String network = "--".equals(split[0]) ? null : split[0];
+//                int len = split[2].length();
+//                String c1 = split[2].substring(0, len-1);
+//                String c2 = split[2].substring(len-1, len);
+//                return new SimpleChannel(channel, network, split[1], c1, c2);
+//            } catch (Exception e) {
+//                System.out.println("Could not parse channel: "+channel);
+//                return new SimpleChannel(channel, null, null, null, null);
+//            }
+//        }
+
+      public static SimpleChannel parse(String channel) {
+    	  String[] values = channel.split("_");
+    	  String station = values[0];
+    	  String fullComponent = values[1];
+    	  String network = values.length >= 3 ? values[2] : "";
+    	  return new SimpleChannel(channel, network, station, fullComponent);
+      }
 
         public void populateSAC(SAC sac) {
             sac.kstnm = stationCode;
-            sac.kcmpnm = firstTwoComponentCode+lastComponentCode;
+            sac.kcmpnm = fullComponent;
             sac.knetwk = networkName;
         }
 
@@ -174,7 +194,7 @@ public class SeisanChannel {
         }
 
         public boolean isPopulated() {
-            return hasData(stationCode) && hasData(firstTwoComponentCode) && hasData(lastComponentCode);
+            return hasData(stationCode) && hasData(fullComponent);
         }
 
         // TODO: move to general place and use
@@ -183,7 +203,7 @@ public class SeisanChannel {
         }
 
         public String fullComponent() {
-            return firstTwoComponentCode+lastComponentCode;
+            return fullComponent;
         }
         
         public String getLastComponentCode(){

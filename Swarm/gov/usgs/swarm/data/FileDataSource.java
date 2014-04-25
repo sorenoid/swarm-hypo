@@ -263,8 +263,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 					Object[][] tData = null;
 					for (int i = 0; i < channelData.size(); i++) {
 						int index = (i + 1);
-						SimpleChannel sc = new SimpleChannel(null, prevNetwork,prevStation,
-								prevComp, "");
+						SimpleChannel sc = new SimpleChannel(null, prevNetwork, prevStation, prevComp);
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(sc, fss, fName, i+1);
 							if(null == tData)
@@ -279,10 +278,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 								String network = (null != tData[i][2])?tData[i][2].toString():"";
 								String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
 								lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-								sc = new SimpleChannel(null, network,
-										stationText,
-										firstTwoComponent,
-										lastComponent);
+sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastComponent);
 								channel =  sc.toString;
 							}else{
 								Component comp = wvd.getSelectedFileSpec()
@@ -290,8 +286,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 									sc = new SimpleChannel(null,
 											comp.getNetworkCode(),
 											comp.getStationCode(),
-											comp.getComponentCode(),
-											comp.getLastComponentCode());
+											comp.getComponentCode() + comp.getLastComponentCode());
 									channel =  sc.toString;
 							}
 							
@@ -301,11 +296,8 @@ public class FileDataSource extends AbstractCachingDataSource {
 								sc = new SimpleChannel(null,
 										comp.getNetworkCode(),
 										comp.getStationCode(),
-										comp.getComponentCode(),
-										comp.getLastComponentCode());
+										comp.getComponentCode() + comp.getLastComponentCode());
 								channel =  sc.toString;
-							
-							
 						}
 						prevStation = sc.stationCode;
 						prevNetwork = sc.networkName;
@@ -449,7 +441,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 								}	
 
 								SimpleChannel sc = new SimpleChannel(null, nt,st,
-										ft, c.channel.lastComponentCode);
+										ft + c.channel.lastComponentCode);
 									if (wvd.getSelectedFileSpec() == null) {
 									editLabels(sc, fss, fName, i + 1);
 									if(null == tData)
@@ -466,8 +458,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 										lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
 										sc = new SimpleChannel(null, network,
 												stationText,
-												firstTwoComponent,
-												lastComponent);
+												firstTwoComponent + lastComponent);
 										channel = sc.toString;
 									}else{
 										Component comp = wvd.getSelectedFileSpec()
@@ -475,8 +466,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 										sc = new SimpleChannel(null,
 												comp.getNetworkCode(),
 												comp.getStationCode(),
-												comp.getComponentCode(),
-												comp.getLastComponentCode());
+												comp.getComponentCode() + comp.getLastComponentCode());
 										channel =  sc.toString;
 									}
 								}else{
@@ -485,8 +475,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 									sc = new SimpleChannel(null,
 											comp.getNetworkCode(),
 											comp.getStationCode(),
-											comp.getComponentCode(),
-											comp.getLastComponentCode());
+											comp.getComponentCode() + comp.getLastComponentCode());
 									channel =  sc.toString;
 								}
 								

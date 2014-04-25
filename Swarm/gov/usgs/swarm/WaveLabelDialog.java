@@ -254,7 +254,7 @@ public class WaveLabelDialog extends SwarmDialog {
 				FileSpec fs = (FileSpec) fileSpecCombo.getSelectedItem();
 				selectedFileSpec = fs;
 				Component comp = fs.getComponent(fileIndex);
-                resultChannel = new SimpleChannel(null, comp.getNetworkCode(), comp.getStationCode(), comp.getComponentCode(), comp.getLastComponentCode());
+                resultChannel = new SimpleChannel(null, comp.getNetworkCode(), comp.getStationCode(), comp.getComponentCode() + comp.getLastComponentCode());
 
 			} else {
 				selectedFileSpec = null;
