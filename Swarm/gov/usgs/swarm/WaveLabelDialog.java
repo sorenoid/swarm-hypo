@@ -79,7 +79,7 @@ public class WaveLabelDialog extends SwarmDialog {
 
 	public WaveLabelDialog() {
 		super(Swarm.getApplication(), "Label Properties", true);
-		createUI();
+		createUIWaveDialog();
 
 		FormLayout layout = new FormLayout(
 				"pref, 1dlu, pref:grow, 1dlu, pref:grow",

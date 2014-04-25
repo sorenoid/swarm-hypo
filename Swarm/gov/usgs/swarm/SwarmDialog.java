@@ -69,6 +69,60 @@ public class SwarmDialog extends JDialog
 						{
 							dispose();
 							okClicked = true;
+							wasOK();
+						}
+					}
+				});
+		cancelButton = new JButton("Cancel");
+		cancelButton.setMnemonic('C');
+		cancelButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						if (allowCancel())
+						{
+							dispose();
+							wasCancelled();
+						}
+					}
+				});
+		Util.mapKeyStrokeToButton(mainPanel, "ESCAPE", "cancel1", cancelButton);
+		this.addWindowListener(new WindowAdapter() 
+				{
+		            public void windowOpened(WindowEvent e)
+		            {
+		            	okButton.requestFocus();
+		                JRootPane root = SwingUtilities.getRootPane(okButton);
+		                if (root != null) 
+		                    root.setDefaultButton(okButton);
+		            }
+		            
+		            public void windowClosing(WindowEvent e)
+		            {
+		            	if (!okClicked)
+		            		wasCancelled();
+		            }
+				});
+
+		buttonPanel = ButtonBarFactory.buildOKCancelBar(okButton, cancelButton);
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 10));
+		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+		this.setContentPane(mainPanel);
+	}
+	
+	protected void createUIWaveDialog()
+	{
+		mainPanel = new JPanel(new BorderLayout());
+		okButton = new JButton("OK");
+		okButton.setMnemonic('O');
+		okButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						if (allowOK())
+						{
+							dispose();
+							okClicked = true;
 							Swarm.isCancelled = true;
 							wasOK();
 						}

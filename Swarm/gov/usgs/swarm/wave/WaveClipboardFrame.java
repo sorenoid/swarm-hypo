@@ -1077,7 +1077,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 				WaveViewPanel p = new WaveViewPanel(wvp);
 				if (!isChannelInfoValid(p)) {
 					editLabels(p, fss);
-					tData = wvd.getTableData();
+					if(null == tData)
+						tData = wvd.getTableData();
 					if (wvd.getSelectedFileSpec() == null) {
 						/*p.setStationInfo(wvd.getStation(),
 								wvd.getFirstTwoComponent(), wvd.getNetwork(),
@@ -1159,8 +1160,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(p, fss);
-							tData = wvd.getTableData();
-							Swarm.isCancelled = true;
+							if(null == tData)
+								tData = wvd.getTableData();
 							/*p.setStationInfo(wvd.getStation(),
 									wvd.getFirstTwoComponent(),
 									wvd.getNetwork(),
@@ -1288,7 +1289,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(p, fss);
-							tData = wvd.getTableData();
+							if(null == tData)
+								tData = wvd.getTableData();
 							if (wvd.getSelectedFileSpec() == null) {
 								/*p.setStationInfo(wvd.getStation(),
 										wvd.getFirstTwoComponent(),

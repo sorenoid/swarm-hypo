@@ -267,7 +267,8 @@ public class FileDataSource extends AbstractCachingDataSource {
 								prevComp, "");
 						if (wvd.getSelectedFileSpec() == null) {
 							editLabels(sc, fss, fName, i+1);
-							tData = wvd.getTableData();
+							if(null == tData)
+								tData = wvd.getTableData();
 							if(wvd.getSelectedFileSpec() == null){
 								/*sc = new SimpleChannel(null, wvd.getNetwork(),
 										wvd.getStation(),
@@ -451,7 +452,8 @@ public class FileDataSource extends AbstractCachingDataSource {
 										ft, c.channel.lastComponentCode);
 									if (wvd.getSelectedFileSpec() == null) {
 									editLabels(sc, fss, fName, i + 1);
-									tData = wvd.getTableData();
+									if(null == tData)
+										tData = wvd.getTableData();
 									if (wvd.getSelectedFileSpec() == null) {
 										/*sc = new SimpleChannel(null,
 												wvd.getNetwork(), wvd.getStation(),
