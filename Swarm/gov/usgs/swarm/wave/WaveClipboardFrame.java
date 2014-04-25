@@ -1423,6 +1423,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 		wvd.setActionAfterFinish(new Callable<Object>() {
 			@Override
 			public Object call() throws Exception {
+				//TODO Re-render waves
 				return null;
 			}
 		});
