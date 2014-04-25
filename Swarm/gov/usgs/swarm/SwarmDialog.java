@@ -69,6 +69,7 @@ public class SwarmDialog extends JDialog
 						{
 							dispose();
 							okClicked = true;
+							Swarm.isCancelled = true;
 							wasOK();
 						}
 					}
