@@ -283,7 +283,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 										stationText,
 										firstTwoComponent,
 										lastComponent);
-								channel =  "Channel "+ index+" : "+sc.toString;
+								channel =  sc.toString;
 							}else{
 								Component comp = wvd.getSelectedFileSpec()
 								.getComponent(i + 1);
@@ -292,7 +292,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 											comp.getStationCode(),
 											comp.getComponentCode(),
 											comp.getLastComponentCode());
-									channel =  "Channel "+ index+" : "+sc.toString;
+									channel =  sc.toString;
 							}
 							
 						}else{
@@ -303,7 +303,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 										comp.getStationCode(),
 										comp.getComponentCode(),
 										comp.getLastComponentCode());
-								channel =  "Channel "+ index+" : "+sc.toString;
+								channel =  sc.toString;
 							
 							
 						}
@@ -468,7 +468,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 												stationText,
 												firstTwoComponent,
 												lastComponent);
-										channel = "Channel "+ (i+1)+ " : " + sc.toString;
+										channel = sc.toString;
 									}else{
 										Component comp = wvd.getSelectedFileSpec()
 										.getComponent(i + 1);
@@ -477,7 +477,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 												comp.getStationCode(),
 												comp.getComponentCode(),
 												comp.getLastComponentCode());
-										channel =  "Channel "+ (i+1)+ " : " + sc.toString;
+										channel =  sc.toString;
 									}
 								}else{
 									Component comp = wvd.getSelectedFileSpec()
@@ -487,7 +487,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 											comp.getStationCode(),
 											comp.getComponentCode(),
 											comp.getLastComponentCode());
-									channel =  "Channel "+ (i+1)+ " : " + sc.toString;
+									channel =  sc.toString;
 								}
 								
 								prevStation = sc.stationCode;
@@ -503,7 +503,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 								comp.setStationCode(sc.stationCode);
 								components.add(comp);
 						} else {
-							channel =  "Channel "+ (i+1)+ " : " + c.channel.toString;
+							channel =  c.channel.toString;
 							Component comp = new Component();
 							comp.setIndex(i+1);
 							comp.setComponentCode(c.channel.firstTwoComponentCode);
