@@ -66,6 +66,22 @@ public class WIN
         public int data_size;
         public float sampling_rate;
         public List<Integer> in_buf;
+
+        public ChannelData() {
+        }
+
+        public ChannelData(ChannelData copy) {
+        	this.packetSize = copy.packetSize;
+        	this.year = copy.year;
+        	this.month = copy.month;
+        	this.day = copy.day;
+        	this.hour = copy.hour;
+        	this.minute = copy.minute;
+        	this.second = copy.second;
+        	this.channel_num = copy.channel_num;
+        	this.data_size = copy.data_size;
+        	this.sampling_rate = copy.sampling_rate;
+        }
     }
 
     private Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
@@ -166,12 +182,13 @@ public class WIN
 	 * @param dis DataInputStream to read WIN from
 	 * @throws IOException if it isn't a WIN file
 	 */
-	public void readData(ChannelData c, DataInputStream dis) throws IOException
+	public void readData(ChannelData header, DataInputStream dis) throws IOException
 	{
 		int bytesRead = 10;
 		
 		do 
-		{	
+		{
+			ChannelData c = new ChannelData(header);
             c.in_buf = new ArrayList<Integer>();
 			byte[] oneByte = new byte[1];
 			dis.readFully(oneByte);
@@ -245,12 +262,13 @@ public class WIN
 				}	
 			}
             ChannelData check = channelMap.get(c.channel_num);
-            if(null == check){
+            if (null == check) {
             	channelMap.put(c.channel_num, c);
-            }else{
+            } else {
+            	// TODO: check that new buffer is immediately after previous one... probably 1 second is ok to assume.
             	check.in_buf.addAll(c.in_buf);
             }
-		} while (bytesRead < c.packetSize);
+		} while (bytesRead < header.packetSize);
 	}
 
 	/**
