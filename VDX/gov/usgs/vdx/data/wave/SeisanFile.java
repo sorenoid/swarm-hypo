@@ -33,6 +33,7 @@ public class SeisanFile {
 	private Integer hour;
 	private Integer minute;
 	private Float second;
+	private String networkName;
 	private String fileName;
 	private Date startDate;
 	private FileFlag fileFlag;
@@ -57,7 +58,8 @@ public class SeisanFile {
 		String data  = readFileHeader(dis,80);
 //		System.out.println(data);
 		noOfChannels = Integer.parseInt(data.substring(30,33).trim());
-		
+
+		networkName = data.substring(1, 30).trim();
 		year =  data.substring(33,36).trim().length() == 0?null:Integer.parseInt(data.substring(33,36).trim());
 		month = data.substring(41,43).trim().length() == 0?null:Integer.parseInt(data.substring(41,43).trim());
 		day  =  data.substring(44,46).trim().length() == 0?null:Integer.parseInt(data.substring(44,46).trim());

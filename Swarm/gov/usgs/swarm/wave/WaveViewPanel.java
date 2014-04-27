@@ -588,9 +588,12 @@ public class WaveViewPanel extends JComponent {
 							double azimuth = azimuthCalculator.calculate(
 									dataMatrix, 0, dataMatrix[0].length,
 									Swarm.config.ansv);
+							// Azimuth: integer, velocity: tenths, coherence: tenths
 							SwarmMenu.getDataRecord()
 									.getEventCalculationPanel()
-									.setAzimuthValue(Double.toString(azimuth));
+									.setAzimuthValue(Integer.toString((int)Math.round(azimuth))+", velocity: "
+											+Double.toString(Math.round(10*azimuthCalculator.getVelocity())/10.0)+", coherence: "
+											+Double.toString(Math.round(10*azimuthCalculator.getCoherence())/10.0));
 						} else {
 							System.out.println("cannot ger boundaries");
 						}

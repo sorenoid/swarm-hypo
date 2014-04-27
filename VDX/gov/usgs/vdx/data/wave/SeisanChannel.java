@@ -35,15 +35,9 @@ public class SeisanChannel {
 	 * 
 	 * @param header
 	 */
-	public SeisanChannel(String header){
-//        channel = new SimpleChannel(null,
-//                header.substring(16,17),
-//                header.substring(0,5).trim(),
-//                header.substring(5,7).trim(),
-//                header.substring(7,8).trim());
-
+	public SeisanChannel(String header) {
         channel = new SimpleChannel(null,
-                header.substring(16,17),
+                header.substring(16,17)+header.substring(19,20),
                 header.substring(0,5).trim(),
                 header.substring(5,9).trim());
 
