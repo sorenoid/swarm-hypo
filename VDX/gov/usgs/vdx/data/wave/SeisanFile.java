@@ -14,6 +14,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 /**
@@ -67,7 +68,7 @@ public class SeisanFile {
 		minute  = data.substring(50,52).trim().length() == 0?null:Integer.parseInt(data.substring(50,52).trim());
 		second  = data.substring(53,59).trim().length() == 0?null:Float.parseFloat(data.substring(53,59).trim());
 
-		Calendar c  = Calendar.getInstance();
+		Calendar c  = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		year = year+1900;
 		c.set(Calendar.YEAR, (year));
 		c.set(Calendar.MONTH, month-1);

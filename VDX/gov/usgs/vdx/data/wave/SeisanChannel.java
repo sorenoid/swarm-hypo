@@ -4,6 +4,7 @@ import gov.usgs.util.Util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 
@@ -53,7 +54,7 @@ public class SeisanChannel {
 		sampleRate = header.substring(36,43).trim().length()==0?null:Float.parseFloat(header.substring(36,43).trim());
 		numberOfSamples = header.substring(43,50).trim().length()==0?null:Integer.parseInt(header.substring(43,50).trim());
 		
-		Calendar c  = Calendar.getInstance();
+		Calendar c  = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		year = year+1900;
 		c.set(Calendar.YEAR, (year));
 		c.set(Calendar.MONTH, month-1);
@@ -63,9 +64,8 @@ public class SeisanChannel {
 		c.set(Calendar.SECOND, second.intValue());
 		startDate= c.getTime();
 		
-		
-		System.out.println(c.getTime().toGMTString());
-		System.out.println((year + 1900)+ " - " + month + " - " + day + "  " + hour + " : " + minute + ":" + ":"+second);
+		System.out.println(c.getTime());
+		System.out.println((year)+ " - " + month + " - " + day + "  " + hour + " : " + minute + ":" + ":"+second);
 		
 	}
 
