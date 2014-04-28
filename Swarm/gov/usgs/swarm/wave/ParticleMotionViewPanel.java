@@ -33,10 +33,16 @@ public class ParticleMotionViewPanel extends JPanel {
 	private String xLabel;
 	private String yLabel;
 
-	double minX;
+	static double minX;
 	double maxX;
 	double minY;
 	double maxY;
+	public static double zMin;
+	public static double zMax;
+	public static double eMin;
+	public static double eMax;
+	public static double nMin;
+	public static double nMax;
 
 	private int PLOT_TO_TICK_DIST = 30;
 
@@ -58,7 +64,8 @@ public class ParticleMotionViewPanel extends JPanel {
 		drawYLabel(g2);
 		drawXLabel(g2);
 		drawXAndYAxis(g2);
-		
+		System.out.println(xLabel);
+		System.out.println(yLabel);
 		minX = getMin(xData);
 		maxX = getMax(xData);
 		
@@ -66,14 +73,47 @@ public class ParticleMotionViewPanel extends JPanel {
 		
 		minY = getMin(yData);
 		maxY = getMax(yData);
-		maxX = maxY = (maxY>maxX)?maxY:maxX;
-		minX = minY = (minY<minX)?minY:minX;
+		/*maxX = maxY = (maxY>maxX)?maxY:maxX;
+		minX = minY = (minY<minX)?minY:minX;*/
+		if(xLabel.equalsIgnoreCase("SHE")){
+			minX = eMin;
+			maxX = eMax;
+		}else if(xLabel.equalsIgnoreCase("SHN")){
+			minX = nMin;
+			maxX = nMax;
+		}else{
+			minX = zMin;
+			maxX = zMax;
+		}
+		
+		if(yLabel.equalsIgnoreCase("SHE")){
+			minY = eMin;
+			maxY = eMax;
+		}else if(yLabel.equalsIgnoreCase("SHN")){
+			minY = nMin;
+			maxY = nMax;
+		}else{
+			minY = zMin;
+			maxY = zMax;
+		}
+		//0 should always be the center of the plot.
+		/*if(minY < 0){
+			//Multiply it with negative to find out the max range we can plot on the map.
+			double temp = -1 * minY;
+			if(temp > maxY){
+				maxX = maxY = temp;
+			}else{
+				minX = minY = -1 * maxX;
+			}
+		}else{
+			minX = minY = -1 * maxX;
+		}*/
 		drawPlot(g2);
 		drawAxisMarks(g2);
 	}
 	
 	
-	private double getMin(double[] data){
+	public double getMin(double[] data){
 		double min = data[0];
 		for (int i = 1; i < data.length; i++) {
 			double x = data[i];
@@ -85,7 +125,7 @@ public class ParticleMotionViewPanel extends JPanel {
 	}
 
 	
-	private double getMax(double[] data){
+	public double getMax(double[] data){
 		double max = data[0];
 		for (int i = 1; i < data.length; i++) {
 			double x = data[i];

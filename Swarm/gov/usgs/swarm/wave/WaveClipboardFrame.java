@@ -18,7 +18,6 @@ import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.SwarmDialog;
-
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
 import gov.usgs.util.Time;
 import gov.usgs.util.Util;
@@ -53,6 +52,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1647,8 +1647,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 			double[] data3 = getWaveData(views.get(2).getWave()
 					.subset(t[0], t[1]));
 			
-			//TODO: Plots should always have Z on y-axis if Z is involved and 
-			//TODO: Should have N on y-axis when plotting N vs E
+			//Plots should always have Z on y-axis if Z is involved and 
+			//Should have N on y-axis when plotting N vs E
 			if(views.get(0).getChannel().getLastComponentCode().equals("Z") || (views.get(0).getChannel().getLastComponentCode().equals("N") && views.get(1).getChannel().getLastComponentCode().equals("E"))){
 				pmf.getComponent1().setxLabel(
 						views.get(1).getChannel().fullComponent());
@@ -1664,7 +1664,24 @@ public class WaveClipboardFrame extends SwarmFrame {
 				views.get(1).getChannel().fullComponent());
 				pmf.getComponent1().setyData(data2);
 			}
-
+			
+			if(pmf.getComponent1().getyLabel().equalsIgnoreCase("SHZ")){
+				ParticleMotionViewPanel.zMin = pmf.getComponent1().getMin(data1);
+				ParticleMotionViewPanel.zMax = pmf.getComponent1().getMax(data1);
+				if(pmf.getComponent1().getxLabel().equalsIgnoreCase("SHN")){
+					ParticleMotionViewPanel.nMin = pmf.getComponent1().getMin(data2);
+					ParticleMotionViewPanel.nMax = pmf.getComponent1().getMax(data2);
+				}else{
+					ParticleMotionViewPanel.eMin = pmf.getComponent1().getMin(data2);
+					ParticleMotionViewPanel.eMax = pmf.getComponent1().getMax(data2);
+				}
+			}else{
+				ParticleMotionViewPanel.nMin = pmf.getComponent1().getMin(data1);
+				ParticleMotionViewPanel.nMax = pmf.getComponent1().getMax(data1);
+				ParticleMotionViewPanel.eMin = pmf.getComponent1().getMin(data2);
+				ParticleMotionViewPanel.eMax = pmf.getComponent1().getMax(data2);
+			}
+			
 			if(views.get(1).getChannel().getLastComponentCode().equals("Z") || (views.get(1).getChannel().getLastComponentCode().equals("N") && views.get(2).getChannel().getLastComponentCode().equals("E"))){
 				pmf.getComponent2().setxLabel(
 						views.get(2).getChannel().fullComponent());
@@ -1681,6 +1698,51 @@ public class WaveClipboardFrame extends SwarmFrame {
 				pmf.getComponent2().setyData(data3);
 			}
 			
+			if(pmf.getComponent2().getyLabel().equalsIgnoreCase("SHZ")){
+				double min = pmf.getComponent2().getMin(data2);
+				double max = pmf.getComponent2().getMax(data2);
+				if(ParticleMotionViewPanel.zMin > min){
+					ParticleMotionViewPanel.zMin = min;
+				}
+				if(ParticleMotionViewPanel.zMax < max){
+					ParticleMotionViewPanel.zMax = max;
+				}
+				min = pmf.getComponent2().getMin(data3);
+				max = pmf.getComponent2().getMax(data3);
+				if(pmf.getComponent2().getxLabel().equalsIgnoreCase("SHN")){
+					if(ParticleMotionViewPanel.nMin > min){
+						ParticleMotionViewPanel.nMin = min;
+					}
+					if(ParticleMotionViewPanel.nMax < max){
+						ParticleMotionViewPanel.nMax = max;
+					}
+				}else{
+					if(ParticleMotionViewPanel.eMin > min){
+						ParticleMotionViewPanel.eMin = min;
+					}
+					if(ParticleMotionViewPanel.eMax < max){
+						ParticleMotionViewPanel.eMax = max;
+					}
+				}
+			}else{
+				double min = pmf.getComponent2().getMin(data2);
+				double max = pmf.getComponent2().getMax(data2);
+				if(ParticleMotionViewPanel.nMin > min){
+					ParticleMotionViewPanel.nMin = min;
+				}
+				if(ParticleMotionViewPanel.nMax < max){
+					ParticleMotionViewPanel.nMax = max;
+				}
+				min = pmf.getComponent2().getMin(data3);
+				max = pmf.getComponent2().getMax(data3);
+				if(ParticleMotionViewPanel.eMin > min){
+					ParticleMotionViewPanel.eMin = min;
+				}
+				if(ParticleMotionViewPanel.eMax < max){
+					ParticleMotionViewPanel.eMax = max;
+				}
+			}
+			
 			if(views.get(2).getChannel().getLastComponentCode().equals("Z") || (views.get(2).getChannel().getLastComponentCode().equals("N") && views.get(0).getChannel().getLastComponentCode().equals("E"))){
 				pmf.getComponent3().setxLabel(
 						views.get(0).getChannel().fullComponent());
@@ -1695,6 +1757,51 @@ public class WaveClipboardFrame extends SwarmFrame {
 				pmf.getComponent3().setyLabel(
 				views.get(0).getChannel().fullComponent());
 				pmf.getComponent3().setyData(data1);				
+			}
+			
+			if(pmf.getComponent3().getyLabel().equalsIgnoreCase("SHZ")){
+				double min = pmf.getComponent3().getMin(data3);
+				double max = pmf.getComponent3().getMax(data3);
+				if(ParticleMotionViewPanel.zMin > min){
+					ParticleMotionViewPanel.zMin = min;
+				}
+				if(ParticleMotionViewPanel.zMax < max){
+					ParticleMotionViewPanel.zMax = max;
+				}
+				min = pmf.getComponent3().getMin(data1);
+				max = pmf.getComponent3().getMax(data1);
+				if(pmf.getComponent3().getxLabel().equalsIgnoreCase("SHN")){
+					if(ParticleMotionViewPanel.nMin > min){
+						ParticleMotionViewPanel.nMin = min;
+					}
+					if(ParticleMotionViewPanel.nMax < max){
+						ParticleMotionViewPanel.nMax = max;
+					}
+				}else{
+					if(ParticleMotionViewPanel.eMin > min){
+						ParticleMotionViewPanel.eMin = min;
+					}
+					if(ParticleMotionViewPanel.eMax < max){
+						ParticleMotionViewPanel.eMax = max;
+					}
+				}
+			}else{
+				double min = pmf.getComponent3().getMin(data3);
+				double max = pmf.getComponent3().getMax(data3);
+				if(ParticleMotionViewPanel.nMin > min){
+					ParticleMotionViewPanel.nMin = min;
+				}
+				if(ParticleMotionViewPanel.nMax < max){
+					ParticleMotionViewPanel.nMax = max;
+				}
+				min = pmf.getComponent3().getMin(data1);
+				max = pmf.getComponent3().getMax(data1);
+				if(ParticleMotionViewPanel.eMin > min){
+					ParticleMotionViewPanel.eMin = min;
+				}
+				if(ParticleMotionViewPanel.eMax < max){
+					ParticleMotionViewPanel.eMax = max;
+				}
 			}
 
 			if (!pmf.isVisible()) {

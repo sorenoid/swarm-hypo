@@ -15,6 +15,9 @@ public class ParticleMotionFrame extends JFrame {
 	private ParticleMotionViewPanel component1;
 	private ParticleMotionViewPanel component2;
 	private ParticleMotionViewPanel component3;
+	public static double [] nData;
+	public static double [] zData;
+	public static double [] eData;
 
 	public ParticleMotionFrame() {
 		super();
