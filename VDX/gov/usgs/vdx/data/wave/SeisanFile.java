@@ -107,6 +107,7 @@ public class SeisanFile {
 	 */
 	private void readChannel(DataInputStream dis) throws IOException{
 		String channelHeader = readLine(dis);
+		System.out.println("channel header: "+channelHeader);
 		SeisanChannel channel = new SeisanChannel(channelHeader);
 		readChannelData(dis,channel);
 		channels.add(channel);
@@ -123,11 +124,13 @@ public class SeisanFile {
 	 */
 	private void readChannelData(DataInputStream dis, SeisanChannel channel) throws IOException{
 		int length = readInt(dis);
-		int[] wave_data = new int[length / numberLength];
+//		int[] wave_data = new int[length / numberLength];
+		int[] wave_data = new int[length / 4];
 
 		for (int i=0; i<wave_data.length; i++) {
-		    wave_data[i] = readInt(dis);
-		}	
+//		    wave_data[i] = readInt(dis);
+		    wave_data[i] = readInt4(dis);
+		}
 		int prevLength = readInt(dis);
 		assert length == prevLength;
 	    channel.setData(wave_data);
@@ -135,6 +138,12 @@ public class SeisanFile {
 
 	private int readInt(InputStream in) throws IOException {
 		byte[] buf = new byte[numberLength];
+		in.read(buf);
+		return readInt(buf);
+	}
+
+	private int readInt4(InputStream in) throws IOException {
+		byte[] buf = new byte[4];
 		in.read(buf);
 		return readInt(buf);
 	}
@@ -150,7 +159,8 @@ public class SeisanFile {
 		    return bb.getInt();
 	    } else {
 	    	// Note, it's turned into an int at some point, so this truncation is assumed safe.
-	    	return (int)bb.getLong();
+	    	long test = bb.getLong();
+	    	return (int)test;
 	    }
 	}
 
