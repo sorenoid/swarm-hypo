@@ -40,6 +40,7 @@ import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,12 +57,12 @@ public class WIN
 
     public static class ChannelData {
         public int packetSize;
-        public long year;
-        public long month;
-        public long day;
-        public long hour;
-        public long minute;
-        public long second;
+        public int year;
+        public int month;
+        public int day;
+        public int hour;
+        public int minute;
+        public int second;
         public int channel_num;
         public int data_size;
         public float sampling_rate;
@@ -303,25 +304,23 @@ public class WIN
 	 */
 	public Date getStartTime(ChannelData c)
 	{
-		String ds = c.year + "," + c.day + "," + c.hour + "," + c.minute + "," + c.second + ",0.0";
-		SimpleDateFormat format = new SimpleDateFormat("yyyy,DDD,HH,mm,ss,SSS");
-		String timeZone = "UTC";
-		if(timeZoneValue < 0){
-			timeZone += "-"+timeZoneValue;
-		}else{
-			timeZone += "+"+timeZoneValue;
+		String timeZone = "GMT";
+		if (timeZoneValue < 0) {
+			timeZone += Integer.toString(timeZoneValue)+":00";
+		} else if (timeZoneValue > 0) {
+			timeZone += "+"+timeZoneValue+":00";
 		}
-		format.setTimeZone(TimeZone.getTimeZone(timeZone));
-		Date d = null;
-		try
-		{
-			d = format.parse(ds);
-		}
-		catch (ParseException e)
-		{
-			e.printStackTrace();
-		}
-		return d;
+		Calendar cal  = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
+		cal.set(Calendar.YEAR, c.year);
+		cal.set(Calendar.MONTH, c.month-1);
+		cal.set(Calendar.DAY_OF_MONTH, c.day);
+		cal.set(Calendar.HOUR_OF_DAY, c.hour);
+		cal.set(Calendar.MINUTE, c.minute);
+		cal.set(Calendar.SECOND, c.second);
+		System.out.println("d1: "+cal.getTime());
+		cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+		System.out.println("d2: "+cal.getTime());
+		return cal.getTime();
 	 }
 
 //	/** just for testing. Reads the filename given as the argument,

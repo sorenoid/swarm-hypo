@@ -407,14 +407,15 @@ public class WaveLabelDialog extends SwarmDialog {
 			if(null != textField){
 				String textVal = textField.getText().trim();
 				if(null != textVal && !"".equalsIgnoreCase(textVal)){
-					if(textVal.charAt(0) == '+'){
-						WIN.timeZoneValue = Integer.parseInt(textVal.substring(1));
-					}else{
-						WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
-					}
+//					if(textVal.charAt(0) == '+'){
+						WIN.timeZoneValue = Integer.parseInt(textVal);
+//					}else{
+//						WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
+//					}
 				}
 			}
-		}catch(Exception e){			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		isOK = true;
 		hide();
