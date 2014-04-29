@@ -947,7 +947,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 		} catch (Exception ex) {
 			win = null;
 		}
-		WIN.isWIN = false;
 		return win;
 	}
 	
@@ -1150,6 +1149,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 				});
 				wvd.setVisible(true);
 			}
+			WIN.isWIN = false;
 			String prevStation = "";
 			String prevNetwork = "";
 			String prevComp = "";

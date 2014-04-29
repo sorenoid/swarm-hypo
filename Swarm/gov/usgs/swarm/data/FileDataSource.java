@@ -247,7 +247,6 @@ public class FileDataSource extends AbstractCachingDataSource {
 		} else {
 			saveDetailstoFileSpec(fName,components);
 		}
-		WIN.isWIN = false;
 	}
 
 	private Object loadWin(String fn, String fName, List<Component> components, int fileIndex) {
@@ -271,6 +270,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 				});
 				wvd.setVisible(true);
 			}
+			WIN.isWIN = false;
 			final Wave[] waves = win.toWave();
 			String prevStation = "";
 			String prevNetwork = "";
