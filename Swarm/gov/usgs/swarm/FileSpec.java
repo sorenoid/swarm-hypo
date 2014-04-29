@@ -1,6 +1,7 @@
 package gov.usgs.swarm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
@@ -15,12 +16,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class FileSpec {
-
-	
 	String fileName;
-	
-	
-	ArrayList<Component> components = new ArrayList<Component>();
+
+	List<Component> components = new ArrayList<Component>();
 
 	@XmlElement
 	public String getFileName() {
@@ -32,11 +30,11 @@ public class FileSpec {
 	}
 
 	@XmlElements(value = { @XmlElement })
-	public ArrayList<Component> getComponents() {
+	public List<Component> getComponents() {
 		return components;
 	}
 
-	public void setComponents(ArrayList<Component> components) {
+	public void setComponents(List<Component> components) {
 		this.components = components;
 	}
 

@@ -51,6 +51,8 @@ import java.util.concurrent.Callable;
 
 
 
+
+
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -217,7 +219,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 				openSACFile(fs[i].getPath());
 				break;
 			case WIN:
-				openWINFile(fs[i].getPath(), fs[i].getName());
+				openWINFile(fs[i].getPath(), fs[i].getName(), i);
 				break;
 			case SEED:
 				openSeedFile(fs[i].getPath());
@@ -237,118 +239,113 @@ public class FileDataSource extends AbstractCachingDataSource {
 		}
 	}
 	
-		public void openWINFile(final String fn, final String fName) {
+	public void openWINFile(final String fn, final String fName, int fileIndex) {
 		if (openFiles.contains(fn))
 			return;
 
-		SwingWorker worker = new SwingWorker() {
-			ArrayList<Component> components = new ArrayList<Component>();
-			String channel = null;
-			@Override
-			public Object construct() {
-				Object result = null;
-				fireChannelsProgress(fn, 0);
-				try {
-					WIN win = new WIN();
-					final List<WIN.ChannelData> channelData = win.read(fn);
-					fireChannelsProgress(fn, 0.5);
-					ArrayList<FileSpec> fss = getRelatedFileSpecs(channelData
-							.size());
-					final Wave[] waves = win.toWave();
-					String prevStation = "";
-					String prevNetwork = "";
-					String prevComp = "";
-					WaveLabelDialog.rows = waves.length;
-					wvd = new WaveLabelDialog();
-					Object[][] tData = null;
-					for (int i = 0; i < channelData.size(); i++) {
-						int index = (i + 1);
-						SimpleChannel sc = new SimpleChannel(null, prevNetwork, prevStation, prevComp);
-						if (wvd.getSelectedFileSpec() == null) {
-							editLabels(sc, fss, fName, i+1);
-							if(null == tData)
-								tData = wvd.getTableData();
-							if(wvd.getSelectedFileSpec() == null){
-								if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
-										&& null != wvd.getLastComponentCode()){
-									sc = new SimpleChannel(null, wvd.getNetwork(),
-											wvd.getStation(),
-											wvd.getFirstTwoComponent()+
-											wvd.getLastComponentCode());
-								}else{
-									String stationText = (null != tData[i][1])?tData[i][1].toString():"";
-									String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
-									String network = (null != tData[i][2])?tData[i][2].toString():"";
-									String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
-									lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
-									sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastComponent);
-								}
-								channel =  sc.toString;
-							}else{
-								Component comp = wvd.getSelectedFileSpec()
-								.getComponent(i + 1);
-									sc = new SimpleChannel(null,
-											comp.getNetworkCode(),
-											comp.getStationCode(),
-											comp.getComponentCode() + comp.getLastComponentCode());
-									channel =  sc.toString;
-							}
-							
-						}else{
-							Component comp = wvd.getSelectedFileSpec()
-							.getComponent(i + 1);
-								sc = new SimpleChannel(null,
-										comp.getNetworkCode(),
-										comp.getStationCode(),
-										comp.getComponentCode() + comp.getLastComponentCode());
-								channel =  sc.toString;
-						}
-						prevStation = sc.stationCode;
-						prevNetwork = sc.networkName;
-						prevComp = sc.firstTwoComponentCode;
-						
-						Component comp = new Component();
-						comp.setIndex(i+1);
-						comp.setComponentCode(sc.firstTwoComponentCode);
-						comp.setLastComponentCode(sc.lastComponentCode);
-						comp.setNetworkCode(sc.networkName);
-						comp.setStationCode(sc.stationCode);
-						components.add(comp);
-						
-						final Wave wave = waves[i];
-						Metadata md = Swarm.config.getMetadata(channel,
-								true);
-						md.addGroup("WIN^" + fn);
-						updateChannelTimes(channel,
-								wave.getStartTime(), wave.getEndTime());
-						cacheWaveAsHelicorder(channel, wave);
-						putWave(channel, wave);
-						fireChannelsProgress(fn,
-								0.5 + 0.5 * ((float) i / channelData.size()));
-					}
-					openFiles.add(fn);
-				} catch (Throwable t) {
-					t.printStackTrace();
-					result = t;
-				}
-				fireChannelsProgress(fn, 1);
-				fireChannelsUpdated();
-				return result;
-				
-			}
+		List<Component> components = new ArrayList<Component>();
+		Object result = loadWin(fn, fName, components, fileIndex);
 
-			@Override
-			public void finished() {
-				if (getValue() != null) {
-					JOptionPane.showMessageDialog(Swarm.getApplication(),
-							"Could not open WIN file: " + fn, "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}else{
-					saveDetailstoFileSpec(fName,components);
+		if (result != null) {
+			JOptionPane.showMessageDialog(Swarm.getApplication(),
+					"Could not open WIN file: " + fn, "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			saveDetailstoFileSpec(fName,components);
+		}
+	}
+
+	private Object loadWin(String fn, String fName, List<Component> components, int fileIndex) {
+		String channel = null;
+
+		Object result = null;
+		fireChannelsProgress(fn, 0);
+		try {
+			WIN win = new WIN();
+			final List<WIN.ChannelData> channelData = win.read(fn);
+			fireChannelsProgress(fn, 0.5);
+			ArrayList<FileSpec> fss = getRelatedFileSpecs(channelData
+					.size());
+			final Wave[] waves = win.toWave();
+			String prevStation = "";
+			String prevNetwork = "";
+			String prevComp = "";
+			WaveLabelDialog.rows = waves.length;
+			wvd = new WaveLabelDialog();
+			Object[][] tData = null;
+			
+			SimpleChannel sc = new SimpleChannel(null, prevNetwork, prevStation, prevComp);
+			editLabels(sc, fss, fName, fileIndex+1);
+			for (int i = 0; i < channelData.size(); i++) {
+				if (wvd.getSelectedFileSpec() == null) {
+					if(null == tData)
+						tData = wvd.getTableData();
+					if(wvd.getSelectedFileSpec() == null){
+						if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
+								&& null != wvd.getLastComponentCode()){
+							sc = new SimpleChannel(null, wvd.getNetwork(),
+									wvd.getStation(),
+									wvd.getFirstTwoComponent()+
+									wvd.getLastComponentCode());
+						}else{
+							String stationText = (null != tData[i][1])?tData[i][1].toString():"";
+							String firstTwoComponent = (null != tData[i][3])?tData[i][3].toString():"";
+							String network = (null != tData[i][2])?tData[i][2].toString():"";
+							String lastComponent = (null != tData[i][4])?tData[i][4].toString():"";
+							lastComponent = ("SELECT".equalsIgnoreCase(lastComponent))?"":lastComponent;
+							sc = new SimpleChannel(null, network, stationText, firstTwoComponent+lastComponent);
+						}
+						channel =  sc.toString;
+					}else{
+						Component comp = wvd.getSelectedFileSpec()
+						.getComponent(i + 1);
+							sc = new SimpleChannel(null,
+									comp.getNetworkCode(),
+									comp.getStationCode(),
+									comp.getComponentCode() + comp.getLastComponentCode());
+							channel =  sc.toString;
+					}
+				} else {
+					Component comp = wvd.getSelectedFileSpec()
+					.getComponent(i + 1);
+						sc = new SimpleChannel(null,
+								comp.getNetworkCode(),
+								comp.getStationCode(),
+								comp.getComponentCode() + comp.getLastComponentCode());
+						channel =  sc.toString;
 				}
+
+				prevStation = sc.stationCode;
+				prevNetwork = sc.networkName;
+				prevComp = sc.firstTwoComponentCode;
+				
+				Component comp = new Component();
+				comp.setIndex(i+1);
+				comp.setComponentCode(sc.firstTwoComponentCode);
+				comp.setLastComponentCode(sc.lastComponentCode);
+				comp.setNetworkCode(sc.networkName);
+				comp.setStationCode(sc.stationCode);
+				components.add(comp);
+				
+				final Wave wave = waves[i];
+				Metadata md = Swarm.config.getMetadata(channel,
+						true);
+				md.addGroup("WIN^" + fn);
+				updateChannelTimes(channel,
+						wave.getStartTime(), wave.getEndTime());
+				cacheWaveAsHelicorder(channel, wave);
+				putWave(channel, wave);
+				fireChannelsProgress(fn,
+						0.5 + 0.5 * ((float) i / channelData.size()));
 			}
-		};
-		worker.start();
+			openFiles.add(fn);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			result = t;
+		}
+		fireChannelsProgress(fn, 1);
+		fireChannelsUpdated();
+		return result;
 	}
 
 	public void openSACFile(final String fn) {
@@ -548,7 +545,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 		worker.start();
 	}
 	
-	private void editLabels(final SimpleChannel sc, ArrayList<FileSpec> fss, String fileName, int index) {
+	private synchronized void editLabels(final SimpleChannel sc, ArrayList<FileSpec> fss, String fileName, int index) {
 		wvd.setWaveViewPanel(sc, fileName, index);
 		wvd.setActionAfterFinish(new Callable<Object>() {
 			@Override
@@ -563,7 +560,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 	}
 	
 	
-	private void saveDetailstoFileSpec(String fileName, ArrayList<Component> components) {
+	private void saveDetailstoFileSpec(String fileName, List<Component> components) {
         try {
 			FileSpec fileSpec = Swarm.getApplication().getWaveClipboard()
 					.getWaveFileSpec()
