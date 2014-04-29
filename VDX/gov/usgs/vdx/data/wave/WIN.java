@@ -86,6 +86,7 @@ public class WIN
 
     private Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
 	private List<ChannelData> channelData;
+	public static int timeZoneValue;
 
 	/**
      * reads the WIN file specified by the filename.
@@ -302,7 +303,13 @@ public class WIN
 	{
 		String ds = c.year + "," + c.day + "," + c.hour + "," + c.minute + "," + c.second + ",0.0";
 		SimpleDateFormat format = new SimpleDateFormat("yyyy,DDD,HH,mm,ss,SSS");
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		String timeZone = "UTC";
+		if(timeZoneValue < 0){
+			timeZone += "-"+timeZoneValue;
+		}else{
+			timeZone += "+"+timeZoneValue;
+		}
+		format.setTimeZone(TimeZone.getTimeZone(timeZone));
 		Date d = null;
 		try
 		{

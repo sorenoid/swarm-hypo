@@ -2,6 +2,7 @@ package gov.usgs.swarm;
 
 import gov.usgs.swarm.FileSpec.Component;
 import gov.usgs.swarm.data.ComboTableCellRenderer;
+import gov.usgs.vdx.data.wave.WIN;
 import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 
 import java.awt.BorderLayout;
@@ -36,6 +37,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class WaveLabelDialog extends SwarmDialog {
 	private JLabel channelLabelValue;
 	private JLabel fileNameValue;
+	private JTextField timeZoneText;
 
 	private JTextField stationText;
 	private JTextField networkText;
@@ -100,7 +102,9 @@ public class WaveLabelDialog extends SwarmDialog {
 		builder.addLabel("File :", "1,5,1,1,FILL,FILL");
 		builder.add(fileNameValue, "3,5,3,1,FILL,FILL");
 
-		
+		timeZoneText = new JTextField();
+		builder.addLabel("Time Zone Value e.g. +5 or -5 :", "1,7,1,1,FILL,FILL");
+		builder.add(timeZoneText, "3,7,3,1,FILL,FILL");
 		/*channelLabelValue = new JLabel("", JLabel.LEFT);
 		builder.addLabel("Wave Channel index:", "1,7,1,1,FILL,FILL");
 		builder.add(channelLabelValue, "3,7,3,1,FILL,FILL");
@@ -157,7 +161,7 @@ public class WaveLabelDialog extends SwarmDialog {
 
 		  JScrollPane scrollPane = new JScrollPane(table);
 		  getContentPane().add(scrollPane);
-		  builder.add(scrollPane,"3,7,3,1,FILL,FILL");
+		  builder.add(scrollPane,"3,9,3,1,FILL,FILL");
 
 		fileSpecCheckBox.addActionListener(new ActionListener() {
 
@@ -166,6 +170,7 @@ public class WaveLabelDialog extends SwarmDialog {
 				if (fileSpecCheckBox.isSelected()) {
 					fileSpecCombo.setEnabled(true);
 					table.setEnabled(false);
+					timeZoneText.setEnabled(false);
 					//stationText.setEnabled(false);
 					//networkText.setEnabled(false);
 					//componentText.setEnabled(false);
@@ -173,6 +178,7 @@ public class WaveLabelDialog extends SwarmDialog {
 				} else {
 					fileSpecCombo.setEnabled(false);
 					table.setEnabled(true);
+					timeZoneText.setEnabled(true);
 					//stationText.setEnabled(true);
 					//networkText.setEnabled(true);
 					//componentText.setEnabled(true);
@@ -282,6 +288,18 @@ public class WaveLabelDialog extends SwarmDialog {
 		if(null != stationText) stationText.setText(channel==null?"":channel.showStationCode());
 		if(null != networkText) networkText.setText(channel==null?"":channel.showNetworkName());
 		if(null != componentText) componentText.setText(channel==null?"":channel.showFirstTwoComponent());
+		String textVal = timeZoneText.getText().trim();
+		try{
+			if(null != textVal && !"".equalsIgnoreCase(textVal)){
+				if(textVal.charAt(0) == '+'){
+					WIN.timeZoneValue = Integer.parseInt(textVal.substring(1));
+				}else{
+					WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
+				}
+			}
+		}catch(Exception nfe){			
+		}
+		
         String lastComponentCode = channel==null?"":channel.lastComponentCode;
 		if (null != lastComponentCode && (!lastComponentCode.isEmpty())) {
 			if (lastComponentCode.equalsIgnoreCase("Z") || lastComponentCode.equalsIgnoreCase("E") || lastComponentCode.equalsIgnoreCase("N")) {
@@ -346,7 +364,19 @@ public class WaveLabelDialog extends SwarmDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		String textVal = null;
+		if(null != timeZoneText)
+			textVal = timeZoneText.getText().trim();
+		try{
+			if(null != textVal && !"".equalsIgnoreCase(textVal)){
+				if(textVal.charAt(0) == '+'){
+					WIN.timeZoneValue = Integer.parseInt(textVal.substring(1));
+				}else{
+					WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
+				}
+			}
+		}catch(Exception e){			
+		}
 		isOK = true;
 		hide();
 		
