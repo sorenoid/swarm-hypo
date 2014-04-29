@@ -1,5 +1,7 @@
 package gov.usgs.swarm;
 
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
 import gov.usgs.swarm.FileSpec.Component;
 import gov.usgs.swarm.data.ComboTableCellRenderer;
 import gov.usgs.vdx.data.wave.WIN;
@@ -11,14 +13,19 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -37,7 +44,6 @@ import com.jgoodies.forms.layout.FormLayout;
 public class WaveLabelDialog extends SwarmDialog {
 	private JLabel channelLabelValue;
 	private JLabel fileNameValue;
-	private JTextField timeZoneText;
 
 	private JTextField stationText;
 	private JTextField networkText;
@@ -47,6 +53,12 @@ public class WaveLabelDialog extends SwarmDialog {
 	private JComboBox fileSpecCombo;
 
 	private JComboBox lastCompCombo;
+	
+	JLabel label;
+	JTextField textField;
+	JCheckBox caseCheckBox;
+	JButton okayButton;
+	JButton cnclButton;
 	
 	private JTable table;
 	
@@ -102,9 +114,7 @@ public class WaveLabelDialog extends SwarmDialog {
 		builder.addLabel("File :", "1,5,1,1,FILL,FILL");
 		builder.add(fileNameValue, "3,5,3,1,FILL,FILL");
 
-		timeZoneText = new JTextField();
-		builder.addLabel("Time Zone Value e.g. +5 or -5 :", "1,7,1,1,FILL,FILL");
-		builder.add(timeZoneText, "3,7,3,1,FILL,FILL");
+		
 		/*channelLabelValue = new JLabel("", JLabel.LEFT);
 		builder.addLabel("Wave Channel index:", "1,7,1,1,FILL,FILL");
 		builder.add(channelLabelValue, "3,7,3,1,FILL,FILL");
@@ -161,7 +171,7 @@ public class WaveLabelDialog extends SwarmDialog {
 
 		  JScrollPane scrollPane = new JScrollPane(table);
 		  getContentPane().add(scrollPane);
-		  builder.add(scrollPane,"3,9,3,1,FILL,FILL");
+		  builder.add(scrollPane,"3,7,3,1,FILL,FILL");
 
 		fileSpecCheckBox.addActionListener(new ActionListener() {
 
@@ -170,7 +180,6 @@ public class WaveLabelDialog extends SwarmDialog {
 				if (fileSpecCheckBox.isSelected()) {
 					fileSpecCombo.setEnabled(true);
 					table.setEnabled(false);
-					timeZoneText.setEnabled(false);
 					//stationText.setEnabled(false);
 					//networkText.setEnabled(false);
 					//componentText.setEnabled(false);
@@ -178,7 +187,6 @@ public class WaveLabelDialog extends SwarmDialog {
 				} else {
 					fileSpecCombo.setEnabled(false);
 					table.setEnabled(true);
-					timeZoneText.setEnabled(true);
 					//stationText.setEnabled(true);
 					//networkText.setEnabled(true);
 					//componentText.setEnabled(true);
@@ -191,6 +199,36 @@ public class WaveLabelDialog extends SwarmDialog {
 		mainPanel.add(builder.getPanel(), BorderLayout.CENTER);
 		setSizeAndLocation();
 	}
+	
+	public WaveLabelDialog(String val){
+		super(Swarm.getApplication(), val, true);
+		createUITimeZoneDialog();
+
+		FormLayout layout = new FormLayout(
+				"pref, 1dlu, pref:grow, 1dlu, pref:grow",
+				"pref, 3dlu, pref, 3dlu,pref,3dlu,pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+
+		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+		builder.setDefaultDialogBorder();
+
+		caseCheckBox = new JCheckBox("Use this timezone for other WIN files loading:");
+		builder.add(caseCheckBox, "3,1,3,1,FILL,FILL");
+
+		textField = new JTextField();
+		builder.add(textField, "3,3,3,1,FILL,FILL");
+
+		caseCheckBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WIN.useBatch = caseCheckBox.isEnabled();
+			}
+
+		});
+
+		mainPanel.add(builder.getPanel(), BorderLayout.CENTER);
+		setSizeAndLocation();
+	    }
 	
 	public WaveLabelDialog(boolean flag){
 		super(Swarm.getApplication(), "Label Properties", true);
@@ -288,18 +326,6 @@ public class WaveLabelDialog extends SwarmDialog {
 		if(null != stationText) stationText.setText(channel==null?"":channel.showStationCode());
 		if(null != networkText) networkText.setText(channel==null?"":channel.showNetworkName());
 		if(null != componentText) componentText.setText(channel==null?"":channel.showFirstTwoComponent());
-		String textVal = timeZoneText.getText().trim();
-		try{
-			if(null != textVal && !"".equalsIgnoreCase(textVal)){
-				if(textVal.charAt(0) == '+'){
-					WIN.timeZoneValue = Integer.parseInt(textVal.substring(1));
-				}else{
-					WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
-				}
-			}
-		}catch(Exception nfe){			
-		}
-		
         String lastComponentCode = channel==null?"":channel.lastComponentCode;
 		if (null != lastComponentCode && (!lastComponentCode.isEmpty())) {
 			if (lastComponentCode.equalsIgnoreCase("Z") || lastComponentCode.equalsIgnoreCase("E") || lastComponentCode.equalsIgnoreCase("N")) {
@@ -345,6 +371,12 @@ public class WaveLabelDialog extends SwarmDialog {
 		hide();
 	}
 	
+	public void wasCancelledTZ(){
+		isOK = false;
+		//this.setVisible(false);
+		hide();
+	}
+	
 	public void wasOK() {
 		if (fileSpecCheckBox.isVisible()) {
 			if (fileSpecCheckBox.isSelected()) {
@@ -364,15 +396,22 @@ public class WaveLabelDialog extends SwarmDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String textVal = null;
-		if(null != timeZoneText)
-			textVal = timeZoneText.getText().trim();
+		
+		isOK = true;
+		hide();
+		
+	}
+	
+	public void wasOKTZ() {
 		try{
-			if(null != textVal && !"".equalsIgnoreCase(textVal)){
-				if(textVal.charAt(0) == '+'){
-					WIN.timeZoneValue = Integer.parseInt(textVal.substring(1));
-				}else{
-					WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
+			if(null != textField){
+				String textVal = textField.getText().trim();
+				if(null != textVal && !"".equalsIgnoreCase(textVal)){
+					if(textVal.charAt(0) == '+'){
+						WIN.timeZoneValue = Integer.parseInt(textVal.substring(1));
+					}else{
+						WIN.timeZoneValue = (-1) * Integer.parseInt(textVal.substring(1));
+					}
 				}
 			}
 		}catch(Exception e){			
@@ -399,29 +438,33 @@ public class WaveLabelDialog extends SwarmDialog {
 
 	@Override
 	public void show() {
-		if(null != stationText) stationText.setEnabled(true);
-		if(null != networkText) networkText.setEnabled(true);
-		if(null != componentText) componentText.setEnabled(true);
-		if(null != lastCompCombo) lastCompCombo.setEnabled(true);
-		fileSpecCheckBox.setSelected(false);
-		fileSpecCombo.setEnabled(false);
-
-		if (fileSpecs == null || fileSpecs.size() == 0) {
-			fileSpecCombo.setVisible(true);
-			fileSpecCheckBox.setVisible(true);
+		if(WIN.isWIN){
+			super.show();
+		}else{
+			if(null != stationText) stationText.setEnabled(true);
+			if(null != networkText) networkText.setEnabled(true);
+			if(null != componentText) componentText.setEnabled(true);
+			if(null != lastCompCombo) lastCompCombo.setEnabled(true);
+			fileSpecCheckBox.setSelected(false);
 			fileSpecCombo.setEnabled(false);
-			fileSpecCheckBox.setEnabled(false);
-		} else {
-			DefaultComboBoxModel model = (DefaultComboBoxModel) fileSpecCombo
-					.getModel();
-			model.removeAllElements();
-			for (FileSpec f : fileSpecs) {
-				model.addElement(f);
+	
+			if (fileSpecs == null || fileSpecs.size() == 0) {
+				fileSpecCombo.setVisible(true);
+				fileSpecCheckBox.setVisible(true);
+				fileSpecCombo.setEnabled(false);
+				fileSpecCheckBox.setEnabled(false);
+			} else {
+				DefaultComboBoxModel model = (DefaultComboBoxModel) fileSpecCombo
+						.getModel();
+				model.removeAllElements();
+				for (FileSpec f : fileSpecs) {
+					model.addElement(f);
+				}
+				fileSpecCombo.setVisible(true);
+				fileSpecCheckBox.setVisible(true);
 			}
-			fileSpecCombo.setVisible(true);
-			fileSpecCheckBox.setVisible(true);
+			super.show();
 		}
-		super.show();
 
 	}
 

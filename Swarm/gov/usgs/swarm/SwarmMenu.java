@@ -8,6 +8,7 @@ import gov.usgs.swarm.database.util.SessionCustomize;
 import gov.usgs.swarm.database.view.DataSearchDialog;
 import gov.usgs.util.Util;
 import gov.usgs.vdx.data.DataSource;
+import gov.usgs.vdx.data.wave.WIN;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -133,6 +134,8 @@ public class SwarmMenu extends JMenuBar
 					public void actionPerformed(ActionEvent e)
 					{
 						Swarm.isCancelled = false;
+						WIN.useBatch = false;
+						WIN.timeZoneValue = 0;
 						JFileChooser chooser = Swarm.getApplication().getFileChooser();
 						chooser.resetChoosableFileFilters();
 						chooser.setFileFilter(chooser.getAcceptAllFileFilter());

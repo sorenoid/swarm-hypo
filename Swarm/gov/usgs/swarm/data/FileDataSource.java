@@ -13,6 +13,7 @@ import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.SwarmDialog;
 import gov.usgs.swarm.SwingWorker;
+import gov.usgs.swarm.TimeZoneDialog;
 import gov.usgs.swarm.WaveLabelDialog;
 import gov.usgs.util.CodeTimer;
 import gov.usgs.util.CurrentTime;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+
 
 
 
@@ -240,6 +242,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 	}
 	
 	public void openWINFile(final String fn, final String fName, int fileIndex) {
+		WIN.isWIN = true;
 		if (openFiles.contains(fn))
 			return;
 
@@ -253,6 +256,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 		} else {
 			saveDetailstoFileSpec(fName,components);
 		}
+		WIN.isWIN = false;
 	}
 
 	private Object loadWin(String fn, String fName, List<Component> components, int fileIndex) {
@@ -266,6 +270,16 @@ public class FileDataSource extends AbstractCachingDataSource {
 			fireChannelsProgress(fn, 0.5);
 			ArrayList<FileSpec> fss = getRelatedFileSpecs(channelData
 					.size());
+			if(!WIN.useBatch){
+				wvd = new WaveLabelDialog("Time Zone");
+				wvd.setActionAfterFinish(new Callable<Object>() {
+					@Override
+					public Object call() throws Exception {
+						return null;
+					}
+				});
+				wvd.setVisible(true);
+			}
 			final Wave[] waves = win.toWave();
 			String prevStation = "";
 			String prevNetwork = "";
@@ -273,7 +287,6 @@ public class FileDataSource extends AbstractCachingDataSource {
 			WaveLabelDialog.rows = waves.length;
 			wvd = new WaveLabelDialog();
 			Object[][] tData = null;
-			
 			SimpleChannel sc = new SimpleChannel(null, prevNetwork, prevStation, prevComp);
 			editLabels(sc, fss, fName, fileIndex+1);
 			for (int i = 0; i < channelData.size(); i++) {

@@ -87,6 +87,8 @@ public class WIN
     private Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
 	private List<ChannelData> channelData;
 	public static int timeZoneValue;
+	public static boolean useBatch;
+	public static boolean isWIN;
 
 	/**
      * reads the WIN file specified by the filename.
