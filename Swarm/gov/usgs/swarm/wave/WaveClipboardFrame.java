@@ -747,6 +747,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 
 	private class OpenActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			WIN.useBatch = false;
+			WIN.timeZoneValue = 0;
 			Swarm.isCancelled = false;
 			JFileChooser chooser = Swarm.getApplication().getFileChooser();
 			chooser.resetChoosableFileFilters();
@@ -938,12 +940,14 @@ public class WaveClipboardFrame extends SwarmFrame {
 	}
 	
 	private WIN readWIN(File f) {
+		WIN.isWIN = true;
 		WIN win = new WIN();
 		try {
 			win.read(f.getPath());
 		} catch (Exception ex) {
 			win = null;
 		}
+		WIN.isWIN = false;
 		return win;
 	}
 	
@@ -1136,7 +1140,16 @@ public class WaveClipboardFrame extends SwarmFrame {
 			isSeisanFile = false;
 			Wave[] waves = win.toWave();
 			ArrayList<FileSpec> fss = getRelatedFileSpecs(waves.length);
-			
+			if(!WIN.useBatch){
+				wvd = new WaveLabelDialog("Time Zone");
+				wvd.setActionAfterFinish(new Callable<Object>() {
+					@Override
+					public Object call() throws Exception {
+						return null;
+					}
+				});
+				wvd.setVisible(true);
+			}
 			String prevStation = "";
 			String prevNetwork = "";
 			String prevComp = "";
