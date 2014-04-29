@@ -1079,9 +1079,10 @@ public class WaveClipboardFrame extends SwarmFrame {
 				wvp.setFilePath(f.getAbsolutePath());
 				WaveViewPanel p = new WaveViewPanel(wvp);
 				if (!isChannelInfoValid(p)) {
-					editLabels(p, fss);
-					if(null == tData)
+					if(null == tData){
+						editLabels(p, fss);
 						tData = wvd.getTableData();
+					}
 					if (wvd.getSelectedFileSpec() == null) {
 						if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
 								&& null != wvd.getLastComponentCode()){
@@ -1176,9 +1177,10 @@ public class WaveClipboardFrame extends SwarmFrame {
 								"");
 						
 						if (wvd.getSelectedFileSpec() == null) {
-							editLabels(p, fss);
-							if(null == tData)
+							if(null == tData){
+								editLabels(p, fss);
 								tData = wvd.getTableData();
+							}
 							if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
 									&& null != wvd.getLastComponentCode()){
 								p.setStationInfo(wvd.getStation(),
@@ -1309,9 +1311,10 @@ public class WaveClipboardFrame extends SwarmFrame {
 								c.channel.lastComponentCode);
 						
 						if (wvd.getSelectedFileSpec() == null) {
-							editLabels(p, fss);
-							if(null == tData)
+							if(null == tData){
+								editLabels(p, fss);
 								tData = wvd.getTableData();
+							}
 							if (wvd.getSelectedFileSpec() == null) {
 								if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
 										&& null != wvd.getLastComponentCode()){

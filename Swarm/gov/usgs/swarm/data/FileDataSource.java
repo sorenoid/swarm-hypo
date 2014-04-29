@@ -447,9 +447,10 @@ public class FileDataSource extends AbstractCachingDataSource {
 								SimpleChannel sc = new SimpleChannel(null, nt,st,
 										ft + c.channel.lastComponentCode);
 									if (wvd.getSelectedFileSpec() == null) {
-									editLabels(sc, fss, fName, i + 1);
-									if(null == tData)
+									if(null == tData){
+										editLabels(sc, fss, fName, i + 1);
 										tData = wvd.getTableData();
+									}
 									if (wvd.getSelectedFileSpec() == null) {
 										if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
 												&& null != wvd.getLastComponentCode()){
