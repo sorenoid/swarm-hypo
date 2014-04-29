@@ -13,7 +13,6 @@ import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.SwarmDialog;
 import gov.usgs.swarm.SwingWorker;
-import gov.usgs.swarm.TimeZoneDialog;
 import gov.usgs.swarm.WaveLabelDialog;
 import gov.usgs.util.CodeTimer;
 import gov.usgs.util.CurrentTime;
@@ -22,9 +21,9 @@ import gov.usgs.vdx.data.heli.HelicorderData;
 import gov.usgs.vdx.data.wave.SAC;
 import gov.usgs.vdx.data.wave.SeisanChannel;
 import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
+import gov.usgs.vdx.data.wave.SeisanFile;
 import gov.usgs.vdx.data.wave.WIN;
 import gov.usgs.vdx.data.wave.Wave;
-import gov.usgs.vdx.data.wave.SeisanFile;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -46,14 +45,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
-
-
-
-
-
-
-
-
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
