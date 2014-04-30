@@ -127,10 +127,6 @@ public class WIN
 	{
 		byte pad = (byte)((bites[0] < 0) ? -1 : 0);
         byte[] padded = new byte[] { pad, bites[0], bites[1], bites[2] };
-        int value = ((bites[0] < 0) ? -1 & 0xff000000 : 0)
-        		| ((bites[0] & 0xff) << 16)
-        		| ((bites[1] & 0xff) << 8)
-        		| ((bites[2] & 0xff));
 		ByteBuffer wrapped = ByteBuffer.wrap(padded);
 		int theInt = wrapped.getInt();
 		return theInt;
