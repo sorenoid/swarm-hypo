@@ -1903,4 +1903,9 @@ public class WaveViewPanel extends JComponent {
 	public void setSelectedMarker(Marker marker) {
 		selectedMarker = marker;
 	}
+
+	public String getFileType() {
+		return fileType;
+	}
+	
 }

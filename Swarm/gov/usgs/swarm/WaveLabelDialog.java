@@ -86,6 +86,12 @@ public class WaveLabelDialog extends SwarmDialog {
 	            tableData[i][j] = dtm.getValueAt(i,j);
 	    return tableData;
 	}
+	
+	public void setTableData (int index,String[] data) {
+	    Object[][] tableData = getTableData();
+	    for (int i = 0 ; i < data.length ; i++)
+	    	tableData[index-1][i] = data[i];
+	}
 
 	private ArrayList<FileSpec> fileSpecs = new ArrayList<FileSpec>();
 	public SimpleChannel getResultChannel() {
@@ -233,7 +239,7 @@ public class WaveLabelDialog extends SwarmDialog {
 	public WaveLabelDialog(boolean flag){
 		super(Swarm.getApplication(), "Label Properties", true);
 		createUIWaveDialog();
-
+		
 		FormLayout layout = new FormLayout(
 				"pref, 1dlu, pref:grow, 1dlu, pref:grow",
 				"pref, 3dlu, pref, 3dlu,pref,3dlu,pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");

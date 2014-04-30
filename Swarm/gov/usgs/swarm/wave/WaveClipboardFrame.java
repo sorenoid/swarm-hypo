@@ -130,7 +130,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	private JButton histButton;
 	private JButton locationmodeButton;
 	private JButton editLabelButton;
-	
+	private String[] editWaveData;
 	private DateFormat saveAllDateFormat;
 	private static boolean isSeisanFile = false;
 
@@ -265,6 +265,24 @@ public class WaveClipboardFrame extends SwarmFrame {
 						int index = getIndexOfWave(vp);
 						if (index != -1) {
 							editLabelsWaveEdit(vp, null);
+							if(vp.getFileType().contains("WIN")){
+								String stationText = editWaveData[0];
+								String firstTwoComponent = editWaveData[2];
+								String network = editWaveData[1];
+								String lastComponent = editWaveData[3];
+								WaveViewPanel po = getWave(new File(vp.getFilePath()).getAbsolutePath(), (index));
+								po.setStationInfo(stationText,
+										firstTwoComponent,
+										network,
+										lastComponent);/*
+								Component comp = new Component();
+								comp.setIndex(i + 1);
+								comp.setComponentCode(po.getChannel().firstTwoComponentCode);
+								comp.setLastComponentCode(po.getChannel().lastComponentCode);
+								comp.setNetworkCode(po.getChannel().networkName);
+								comp.setStationCode(po.getChannel().stationCode);
+								components.add(comp);*/
+							}
 						}
 					}
 				});
@@ -1446,6 +1464,11 @@ public class WaveClipboardFrame extends SwarmFrame {
 		wvd.setFileSpecs(fss);
 		if(!Swarm.isCancelled)
 			wvd.setVisible(true);
+		editWaveData = new String[4];
+		editWaveData[0] = wvd.getStation();
+		editWaveData[1] = wvd.getNetwork();
+		editWaveData[2] = wvd.getFirstTwoComponent();
+		editWaveData[3] = (wvd.getLastComponentCode().equalsIgnoreCase("SELECT"))?"":wvd.getLastComponentCode();
 		return wvd.isOK;
 	}
 	
@@ -2384,4 +2407,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 		}
 
 	}
+
+	public String[] getEditWaveData() {
+		return editWaveData;
+	}
+
+	public void setEditWaveData(String[] editWaveData) {
+		this.editWaveData = editWaveData;
+	}
+	
 }
