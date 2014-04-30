@@ -143,6 +143,9 @@ public class WaveViewPanel extends JComponent {
 	private boolean allowClose;
 
 	private EventListenerList listeners = new EventListenerList();
+	public EventListenerList getListerners(){
+		return listeners;
+	}
 
 	/**
 	 * A flag that indicates whether data are being loaded for this panel.

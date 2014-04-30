@@ -107,6 +107,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 	public ParticleMotionFrame pmf = new ParticleMotionFrame();
 	
 	private File[] file;
+	private FileType fType;
+	private boolean isEdit;
+	private Object[][] editData;
 
 	private JScrollPane scrollPane;
 	private Box waveBox;
@@ -269,11 +272,37 @@ public class WaveClipboardFrame extends SwarmFrame {
 								String firstTwoComponent = editWaveData[2];
 								String network = editWaveData[1];
 								String lastComponent = editWaveData[3];
-								WaveViewPanel po = getWave(new File(vp.getFilePath()).getAbsolutePath(), (index));
-								po.setStationInfo(stationText,
-										firstTwoComponent,
-										network,
-										lastComponent);/*
+								editData[index-1][1] = stationText;
+								editData[index-1][2] = firstTwoComponent;
+								editData[index-1][3] = network;
+								editData[index-1][4] = lastComponent;
+								switch(vp.getFileType()){
+									case "WIN":
+										fType = FileType.WIN;
+										break;
+									case "SAC":
+										fType = FileType.SAC;
+										break;
+									case "SEISAN":
+										fType = FileType.SEISAN;
+										break;
+								}
+
+								for (int i = 0; i < WaveLabelDialog.rows; i++) {
+									WaveViewPanel po = getWave(new File(vp.getFilePath()).getAbsolutePath(), (i+1));
+									if(i == index-1){
+										po.setStationInfo(stationText,
+												firstTwoComponent,
+												network,
+												lastComponent);
+									}
+									if(null != po)
+										po.fireClose();
+								}
+								isEdit = true;
+								openFile(new File(vp.getFilePath()));
+								isEdit = false;
+								/*
 								Component comp = new Component();
 								comp.setIndex(i + 1);
 								comp.setComponentCode(po.getChannel().firstTwoComponentCode);
@@ -1034,8 +1063,9 @@ public class WaveClipboardFrame extends SwarmFrame {
 		String channel = f.getName();
 		
 		
-		
-		FileType ft = FileType.fromFileExtension(f);
+		FileType ft = fType;
+		if(null == ft)
+			ft = FileType.fromFileExtension(f);
 		if (ft == FileType.UNKNOWN) {
 			if (dialog == null)
 				dialog = new FileTypeDialog();
@@ -1097,8 +1127,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 				WaveViewPanel p = new WaveViewPanel(wvp);
 				if (!isChannelInfoValid(p)) {
 					if(null == tData){
-						editLabels(p, fss);
-						tData = wvd.getTableData();
+						if(isEdit){
+							tData = editData;
+						}else{
+							editLabels(p, fss);
+							tData = wvd.getTableData();
+							editData = wvd.getTableData();
+						}
 					}
 					if (wvd.getSelectedFileSpec() == null) {
 						if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
@@ -1165,7 +1200,8 @@ public class WaveClipboardFrame extends SwarmFrame {
 						return null;
 					}
 				});
-				wvd.setVisible(true);
+				if(!isEdit)
+					wvd.setVisible(true);
 			}
 			WIN.isWIN = false;
 			String prevStation = "";
@@ -1195,8 +1231,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							if(null == tData){
-								editLabels(p, fss);
-								tData = wvd.getTableData();
+								if(isEdit){
+									tData = editData;
+								}else{
+									editLabels(p, fss);
+									tData = wvd.getTableData();
+									editData = wvd.getTableData();
+								}
 							}
 							if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
 									&& null != wvd.getLastComponentCode()){
@@ -1328,8 +1369,13 @@ public class WaveClipboardFrame extends SwarmFrame {
 						
 						if (wvd.getSelectedFileSpec() == null) {
 							if(null == tData){
-								editLabels(p, fss);
-								tData = wvd.getTableData();
+								if(isEdit){
+									tData = editData;
+								}else{
+									editLabels(p, fss);
+									tData = wvd.getTableData();
+									editData = wvd.getTableData();
+								}
 							}
 							if (wvd.getSelectedFileSpec() == null) {
 								if(null != wvd.getNetwork() && null != wvd.getStation() && null != wvd.getFirstTwoComponent()
