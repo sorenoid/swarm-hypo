@@ -69,6 +69,7 @@ public class SeisanFile {
 		second  = data.substring(53,59).trim().length() == 0?null:Float.parseFloat(data.substring(53,59).trim());
 
 		Calendar c  = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c.setTimeInMillis(0);
 		year = year+1900;
 		c.set(Calendar.YEAR, (year));
 		c.set(Calendar.MONTH, month-1);

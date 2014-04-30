@@ -315,15 +315,14 @@ public class WIN
 			timeZone += "+"+timeZoneValue+":00";
 		}
 		Calendar cal  = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
+		cal.setTimeInMillis(0);
 		cal.set(Calendar.YEAR, c.year);
 		cal.set(Calendar.MONTH, c.month-1);
 		cal.set(Calendar.DAY_OF_MONTH, c.day);
 		cal.set(Calendar.HOUR_OF_DAY, c.hour);
 		cal.set(Calendar.MINUTE, c.minute);
 		cal.set(Calendar.SECOND, c.second);
-		System.out.println("d1: "+cal.getTime());
 		cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-		System.out.println("d2: "+cal.getTime());
 		return cal.getTime();
 	 }
 
