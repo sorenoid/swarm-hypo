@@ -1016,7 +1016,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 	public WaveViewPanel getWave(String filePath, int fileIndex) {
 		for (WaveViewPanel wvp : waves) {
 			
-			if (wvp.getFilePath().equals(filePath)
+			if ((filePath != null && filePath.equals(wvp.getFilePath()))
 					&& wvp.getFileIndex() == fileIndex) {
 				return wvp;
 			}

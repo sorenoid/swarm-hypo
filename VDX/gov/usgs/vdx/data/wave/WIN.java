@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
@@ -85,7 +86,7 @@ public class WIN
         }
     }
 
-    private Map<Integer,ChannelData> channelMap = new HashMap<Integer,ChannelData>();
+    private Map<Integer,ChannelData> channelMap = new TreeMap<Integer,ChannelData>();
 	private List<ChannelData> channelData;
 	public static int timeZoneValue;
 	public static boolean useBatch;
@@ -124,9 +125,11 @@ public class WIN
 	
 	private static int intFromThreeBytes (byte[] bites)
 	{
-        byte[] padded = new byte[] { 0, bites[2], bites[1], bites[0] };
+		byte pad = (byte)((bites[0] < 0) ? -1 : 0);
+        byte[] padded = new byte[] { pad, bites[0], bites[1], bites[2] };
 		ByteBuffer wrapped = ByteBuffer.wrap(padded);
-		return wrapped.getInt ();
+		int theInt = wrapped.getInt();
+		return theInt;
 	}
 	
 	private static short shortFromTwoBytes (byte[] bites)
@@ -186,7 +189,7 @@ public class WIN
 	 * @param dis DataInputStream to read WIN from
 	 * @throws IOException if it isn't a WIN file
 	 */
-	public void readData(ChannelData header, DataInputStream dis) throws IOException
+	public void readData(final ChannelData header, final DataInputStream dis) throws IOException
 	{
 		int bytesRead = 10;
 		
@@ -200,10 +203,11 @@ public class WIN
 			dis.readFully(oneByte);
 			c.channel_num = intFromSingleByte(oneByte[0]);
 			dis.readFully(oneByte);
+			byte sampleRateUpperBits = (byte)(oneByte[0] & 0xF);
 			c.data_size = intFromSingleByte(oneByte[0])>>4;
 		
 			dis.readFully(oneByte);
-			c.sampling_rate = intFromSingleByte(oneByte[0]); // TODO: needs lower 4 bits of above byte included?
+			c.sampling_rate = intFromSingleByte(oneByte[0]) + (sampleRateUpperBits << 4);
 
 			byte[] fourBytes = new byte[4];
 			dis.readFully(fourBytes);
