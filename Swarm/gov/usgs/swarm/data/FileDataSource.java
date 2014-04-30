@@ -230,6 +230,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 			}
 			Swarm.config.lastPath = fs[i].getParent();
 		}
+		Swarm.isCancelled = false;
 	}
 	
 	public void openWINFile(final String fn, final String fName, int fileIndex) {

@@ -265,7 +265,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 						int index = getIndexOfWave(vp);
 						if (index != -1) {
 							editLabelsWaveEdit(vp, null);
-							if(vp.getFileType().contains("WIN")){
 								String stationText = editWaveData[0];
 								String firstTwoComponent = editWaveData[2];
 								String network = editWaveData[1];
@@ -282,7 +281,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 								comp.setNetworkCode(po.getChannel().networkName);
 								comp.setStationCode(po.getChannel().stationCode);
 								components.add(comp);*/
-							}
 						}
 					}
 				});
@@ -800,6 +798,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 						Swarm.config.lastPath = fs[i].getParent();
 					}
 				}
+				Swarm.isCancelled = false;
 			}
 		}
 	}
@@ -1265,7 +1264,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 					components.add(comp);
 				}
 			}
-			Swarm.isCancelled = false;
 			saveDetailstoFileSpec(f.getName(), components);
 		}
 
