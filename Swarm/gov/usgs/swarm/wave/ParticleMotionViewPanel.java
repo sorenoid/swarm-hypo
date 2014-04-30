@@ -33,16 +33,10 @@ public class ParticleMotionViewPanel extends JPanel {
 	private String xLabel;
 	private String yLabel;
 
-	static double minX;
+	double minX;
 	double maxX;
 	double minY;
 	double maxY;
-	public static double zMin;
-	public static double zMax;
-	public static double eMin;
-	public static double eMax;
-	public static double nMin;
-	public static double nMax;
 
 	private int PLOT_TO_TICK_DIST = 30;
 
@@ -75,39 +69,22 @@ public class ParticleMotionViewPanel extends JPanel {
 		maxY = getMax(yData);
 		/*maxX = maxY = (maxY>maxX)?maxY:maxX;
 		minX = minY = (minY<minX)?minY:minX;*/
-		if(xLabel.equalsIgnoreCase("SHE")){
-			minX = eMin;
-			maxX = eMax;
-		}else if(xLabel.equalsIgnoreCase("SHN")){
-			minX = nMin;
-			maxX = nMax;
-		}else{
-			minX = zMin;
-			maxX = zMax;
+
+		if(yLabel.contains("Z")){
+			minY = ParticleMotionFrame.zData[0];
+			maxY = ParticleMotionFrame.zData[1];
+		}else if(yLabel.contains("N")){
+			minY = ParticleMotionFrame.nData[0];
+			maxY = ParticleMotionFrame.nData[1];
+		}
+		if(xLabel.contains("N")){
+			minX = ParticleMotionFrame.nData[0];
+			maxX = ParticleMotionFrame.nData[1];
+		}else if(xLabel.contains("E")){
+			minX = ParticleMotionFrame.eData[0];
+			maxX = ParticleMotionFrame.eData[1];
 		}
 		
-		if(yLabel.equalsIgnoreCase("SHE")){
-			minY = eMin;
-			maxY = eMax;
-		}else if(yLabel.equalsIgnoreCase("SHN")){
-			minY = nMin;
-			maxY = nMax;
-		}else{
-			minY = zMin;
-			maxY = zMax;
-		}
-		//0 should always be the center of the plot.
-		/*if(minY < 0){
-			//Multiply it with negative to find out the max range we can plot on the map.
-			double temp = -1 * minY;
-			if(temp > maxY){
-				maxX = maxY = temp;
-			}else{
-				minX = minY = -1 * maxX;
-			}
-		}else{
-			minX = minY = -1 * maxX;
-		}*/
 		drawPlot(g2);
 		drawAxisMarks(g2);
 	}
