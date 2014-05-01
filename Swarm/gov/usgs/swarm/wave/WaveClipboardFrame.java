@@ -276,17 +276,7 @@ public class WaveClipboardFrame extends SwarmFrame {
 								editData[index-1][2] = firstTwoComponent;
 								editData[index-1][3] = network;
 								editData[index-1][4] = lastComponent;
-								switch(vp.getFileType()){
-									case "WIN":
-										fType = FileType.WIN;
-										break;
-									case "SAC":
-										fType = FileType.SAC;
-										break;
-									case "SEISAN":
-										fType = FileType.SEISAN;
-										break;
-								}
+								fType = FileType.fromFile(vp.getFileType());
 
 								for (int i = 0; i < WaveLabelDialog.rows; i++) {
 									WaveViewPanel po = getWave(new File(vp.getFilePath()).getAbsolutePath(), (i+1));
