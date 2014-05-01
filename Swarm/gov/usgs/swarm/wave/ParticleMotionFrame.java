@@ -46,10 +46,12 @@ public class ParticleMotionFrame extends JFrame {
 		
 		component1 = new ParticleMotionViewPanel();	
 		
-		if(views.get(0).getChannel().getLastComponentCode().endsWith("Z")){
+		boolean zWave = views.get(0).getChannel().getLastComponentCode().endsWith("Z");
+		if(zWave){
 			zData[0] = component1.getMin(data1);
 			zData[1] = component1.getMax(data1);
-			if(views.get(0).getChannel().getLastComponentCode().endsWith("N")){
+			boolean nWave = views.get(0).getChannel().getLastComponentCode().endsWith("N");
+			if(nWave){
 				nData[0] = component1.getMin(data2);
 				nData[1] = component1.getMax(data2);
 			}else{
@@ -65,8 +67,8 @@ public class ParticleMotionFrame extends JFrame {
 		
 		
 		component2 = new ParticleMotionViewPanel();
-		
-		if(views.get(1).getChannel().getLastComponentCode().endsWith("Z")){
+		zWave = views.get(1).getChannel().getLastComponentCode().endsWith("Z");
+		if(zWave){
 			double min = component2.getMin(data2);
 			double max = component2.getMax(data2);
 			if(zData[0] > min){
@@ -77,7 +79,8 @@ public class ParticleMotionFrame extends JFrame {
 			}
 			min = component2.getMin(data3);
 			max = component2.getMax(data3);
-			if(views.get(1).getChannel().getLastComponentCode().endsWith("N")){
+			boolean nWave = views.get(1).getChannel().getLastComponentCode().endsWith("N");
+			if(nWave){
 				if(nData[0] > min){
 					nData[0] = min;
 				}
@@ -113,8 +116,8 @@ public class ParticleMotionFrame extends JFrame {
 		
 
 		component3 = new ParticleMotionViewPanel();
-		
-		if(views.get(2).getChannel().getLastComponentCode().endsWith("Z")){
+		zWave = views.get(2).getChannel().getLastComponentCode().endsWith("Z");
+		if(zWave){
 			double min = component3.getMin(data3);
 			double max = component3.getMax(data3);
 			if(zData[0] > min){
@@ -125,7 +128,8 @@ public class ParticleMotionFrame extends JFrame {
 			}
 			min = component3.getMin(data1);
 			max = component3.getMax(data1);
-			if(views.get(2).getChannel().getLastComponentCode().endsWith("N")){
+			boolean nWave = views.get(2).getChannel().getLastComponentCode().endsWith("N");
+			if(nWave){
 				if(nData[0] > min){
 					nData[0] = min;
 				}
@@ -156,6 +160,35 @@ public class ParticleMotionFrame extends JFrame {
 			}
 			if(eData[1] < max){
 				eData[1] = max;
+			}
+		}
+		
+		if(zData[0] < 0){
+			double temp = (-1) * zData[0];
+			if(temp > zData[1]){
+				zData[1] = temp;
+			}else{
+				zData[0] = (-1) * zData[1];
+			}
+		}else{
+			zData[0] = (-1) * zData[1];
+		}
+		
+		if(nData[0] < 0){
+			double temp = (-1) * nData[0];
+			if(temp > nData[1]){
+				nData[1] = temp;
+			}else{
+				nData[0] = (-1) * nData[1];
+			}
+		}
+		
+		if(eData[0] < 0){
+			double temp = (-1) * eData[0];
+			if(temp > eData[1]){
+				eData[1] = temp;
+			}else{
+				eData[0] = (-1) * eData[1];
 			}
 		}
 		

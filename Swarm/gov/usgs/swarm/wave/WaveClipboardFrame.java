@@ -1722,56 +1722,70 @@ public class WaveClipboardFrame extends SwarmFrame {
 			pmf = new ParticleMotionFrame(views,data1,data2,data3);
 			//Plots should always have Z on y-axis if Z is involved and 
 			//Should have N on y-axis when plotting N vs E
-			if(views.get(0).getChannel().getLastComponentCode().endsWith("Z") || (views.get(0).getChannel().getLastComponentCode().endsWith("N") && views.get(1).getChannel().getLastComponentCode().endsWith("E"))){
-				pmf.getComponent1().setxLabel(
-						views.get(1).getChannel().fullComponent());
-				pmf.getComponent1().setxData(data2);
-				pmf.getComponent1().setyLabel(
-						views.get(0).getChannel().fullComponent());
-				pmf.getComponent1().setyData(data1);
+			boolean zWave = views.get(0).getChannel().getLastComponentCode().endsWith("Z");
+			boolean nWave = views.get(0).getChannel().getLastComponentCode().endsWith("N");
+			boolean eWave = views.get(1).getChannel().getLastComponentCode().endsWith("E");
+			ParticleMotionViewPanel component1 = pmf.getComponent1();
+			String views1 = views.get(1).getChannel().fullComponent();
+			String views0 = views.get(0).getChannel().fullComponent();
+			if(zWave || (nWave && eWave)){
+				component1.setxLabel(
+						views1);
+				component1.setxData(data2);
+				component1.setyLabel(
+						views0);
+				component1.setyData(data1);
 			}else{
-				pmf.getComponent1().setxLabel(
-				views.get(0).getChannel().fullComponent());
-				pmf.getComponent1().setxData(data1);
-				pmf.getComponent1().setyLabel(
-				views.get(1).getChannel().fullComponent());
-				pmf.getComponent1().setyData(data2);
+				component1.setxLabel(
+				views0);
+				component1.setxData(data1);
+				component1.setyLabel(
+				views1);
+				component1.setyData(data2);
 			}
 			
 			
-			
-			if(views.get(1).getChannel().getLastComponentCode().endsWith("Z") || (views.get(1).getChannel().getLastComponentCode().endsWith("N") && views.get(2).getChannel().getLastComponentCode().endsWith("E"))){
-				pmf.getComponent2().setxLabel(
-						views.get(2).getChannel().fullComponent());
-				pmf.getComponent2().setxData(data3);
-				pmf.getComponent2().setyLabel(
-						views.get(1).getChannel().fullComponent());
-				pmf.getComponent2().setyData(data2);
+			zWave = views.get(1).getChannel().getLastComponentCode().endsWith("Z");
+			nWave = views.get(1).getChannel().getLastComponentCode().endsWith("N");
+			eWave = views.get(2).getChannel().getLastComponentCode().endsWith("E");
+			ParticleMotionViewPanel component2 = pmf.getComponent2();
+			String views2 = views.get(2).getChannel().fullComponent();
+			if(zWave || (nWave && eWave)){
+				component2.setxLabel(
+						views2);
+				component2.setxData(data3);
+				component2.setyLabel(
+						views1);
+				component2.setyData(data2);
 			}else{
-				pmf.getComponent2().setxLabel(
-				views.get(1).getChannel().fullComponent());
-				pmf.getComponent2().setxData(data2);
-				pmf.getComponent2().setyLabel(
-				views.get(2).getChannel().fullComponent());
-				pmf.getComponent2().setyData(data3);
+				component2.setxLabel(
+				views1);
+				component2.setxData(data2);
+				component2.setyLabel(
+				views2);
+				component2.setyData(data3);
 			}
 			
 			
+			zWave = views.get(2).getChannel().getLastComponentCode().endsWith("Z");
+			nWave = views.get(2).getChannel().getLastComponentCode().endsWith("N");
+			eWave = views.get(0).getChannel().getLastComponentCode().endsWith("E");
 			
-			if(views.get(2).getChannel().getLastComponentCode().endsWith("Z") || (views.get(2).getChannel().getLastComponentCode().endsWith("N") && views.get(0).getChannel().getLastComponentCode().endsWith("E"))){
-				pmf.getComponent3().setxLabel(
-						views.get(0).getChannel().fullComponent());
-				pmf.getComponent3().setxData(data1);
-				pmf.getComponent3().setyLabel(
-						views.get(2).getChannel().fullComponent());
-				pmf.getComponent3().setyData(data3);
+			ParticleMotionViewPanel component3 = pmf.getComponent3();
+			if(zWave || (nWave && eWave)){
+				component3.setxLabel(
+						views0);
+				component3.setxData(data1);
+				component3.setyLabel(
+						views2);
+				component3.setyData(data3);
 			}else{
-				pmf.getComponent3().setxLabel(
-				views.get(2).getChannel().fullComponent());
-				pmf.getComponent3().setxData(data3);
-				pmf.getComponent3().setyLabel(
-				views.get(0).getChannel().fullComponent());
-				pmf.getComponent3().setyData(data1);				
+				component3.setxLabel(
+				views2);
+				component3.setxData(data3);
+				component3.setyLabel(
+				views0);
+				component3.setyData(data1);				
 			}
 			
 			
