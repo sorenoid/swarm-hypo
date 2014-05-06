@@ -18,7 +18,7 @@ public class PhaseRecord {
 	/**
 	 * Year, month and day of P-arrival
 	 */
-	private double W;
+	private float W;
 	/**
 	 * Time.
 	 */
@@ -27,26 +27,26 @@ public class PhaseRecord {
 	 * 
 	 */
 	private int JMIN;
-	private double P;
-	private double S;
+	private float P;
+	private float S;
 	private String SRMK;
-	private double WS;
+	private float WS;
 	/** 
 	 * Maximum peak-to-peak amplitude in mm.
 	 */
-	private double AMX;
+	private float AMX;
 	/**
 	 * Period of the maximum amplitude in sec. 
 	 */
-	private double PRX;
+	private float PRX;
 	/** 
 	 * Normally not used except as noted in next item.
 	 */
-	private double CALP;
+	private float CALP;
 	/** 
 	 * Peak-to-peak amplitude of 10mv calibration signal in mm.
 	 */
-	private double CALX;
+	private float CALX;
 	/** 
 	 * Remark for this phase card.
 	 */
@@ -54,11 +54,11 @@ public class PhaseRecord {
 	/**
 	 * Time correction in sec.
 	 */
-	private double DT;
+	private float DT;
 	/**
 	 * F-P time in sec. This is the duration time of earthquake.
 	 */
-	private double FMP;
+	private float FMP;
 	private String AZRES;
 	private char SYM;
 	private String AS;
@@ -71,8 +71,8 @@ public class PhaseRecord {
 	public PhaseRecord(){
 		
 	}
-	public PhaseRecord(String mSTA, String pRMK, double w, int jTIME, int jMIN, double p, double s, String sRMK, double wS, double aMX, double pRX, double cALP, double cALX, String rMK, double dT,
-			double fMP, String aZRES, char sYM, String aS, String iCARD, char qRMK, String iPRO) {
+	public PhaseRecord(String mSTA, String pRMK, float w, int jTIME, int jMIN, float p, float s, String sRMK, float wS, float aMX, float pRX, float cALP, float cALX, String rMK, float dT,
+			float fMP, String aZRES, char sYM, String aS, String iCARD, char qRMK, String iPRO) {
 		MSTA = mSTA;
 		PRMK = pRMK;
 		W = w;
@@ -111,10 +111,10 @@ public class PhaseRecord {
 		PRMK = pRMK;
 	}
 	@XmlElement
-	public double getW() {
+	public float getW() {
 		return W;
 	}
-	public void setW(double w) {
+	public void setW(float w) {
 		W = w;
 	}
 	@XmlElement
@@ -132,17 +132,17 @@ public class PhaseRecord {
 		JMIN = jMIN;
 	}
 	@XmlElement
-	public double getP() {
+	public float getP() {
 		return P;
 	}
-	public void setP(double p) {
+	public void setP(float p) {
 		P = p;
 	}
 	@XmlElement
-	public double getS() {
+	public float getS() {
 		return S;
 	}
-	public void setS(double s) {
+	public void setS(float s) {
 		S = s;
 	}
 	@XmlElement
@@ -153,38 +153,38 @@ public class PhaseRecord {
 		SRMK = sRMK;
 	}
 	@XmlElement
-	public double getWS() {
+	public float getWS() {
 		return WS;
 	}
-	public void setWS(double wS) {
+	public void setWS(float wS) {
 		WS = wS;
 	}
 	@XmlElement
-	public double getAMX() {
+	public float getAMX() {
 		return AMX;
 	}
-	public void setAMX(double aMX) {
+	public void setAMX(float aMX) {
 		AMX = aMX;
 	}
 	@XmlElement
-	public double getPRX() {
+	public float getPRX() {
 		return PRX;
 	}
-	public void setPRX(double pRX) {
+	public void setPRX(float pRX) {
 		PRX = pRX;
 	}
 	@XmlElement
-	public double getCALP() {
+	public float getCALP() {
 		return CALP;
 	}
-	public void setCALP(double cALP) {
+	public void setCALP(float cALP) {
 		CALP = cALP;
 	}
 	@XmlElement
-	public double getCALX() {
+	public float getCALX() {
 		return CALX;
 	}
-	public void setCALX(double cALX) {
+	public void setCALX(float cALX) {
 		CALX = cALX;
 	}
 	@XmlElement
@@ -195,17 +195,17 @@ public class PhaseRecord {
 		RMK = rMK;
 	}
 	@XmlElement
-	public double getDT() {
+	public float getDT() {
 		return DT;
 	}
-	public void setDT(double dT) {
+	public void setDT(float dT) {
 		DT = dT;
 	}
 	@XmlElement
-	public double getFMP() {
+	public float getFMP() {
 		return FMP;
 	}
-	public void setFMP(double fMP) {
+	public void setFMP(float fMP) {
 		FMP = fMP;
 	}
 	@XmlElement

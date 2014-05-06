@@ -35,7 +35,9 @@ package gov.usgs.vdx.calc.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.*;
 
@@ -45,7 +47,8 @@ import java.util.*;
  * @author Oleg Shepelev
  */
 public class FortranFormat {
-
+	private static DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS = new DecimalFormatSymbols(Locale.US);
+	
 	/**
 	 * A hash of the descriptors for easy access.
 	 */
@@ -184,8 +187,10 @@ public class FortranFormat {
 					for (int j = 0; j < u.getDecimalLength(); j++) {
 						dfs.append('0');
 					}
+					DecimalFormat df = new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS);
+					df.setRoundingMode(RoundingMode.HALF_UP);
 					s = (neg ? '-' : "")
-							+ new DecimalFormat(dfs.toString()).format(d);
+							+ df.format(d);
 				}
 				return format(s, u.getLength(), true);
 			}
@@ -293,13 +298,13 @@ public class FortranFormat {
 						dfs.append('0');
 					}
 					s = (neg ? "-" : "")
-							+ new DecimalFormat(dfs.toString()).format(d);
+							+ new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS).format(d);
 					dfs = new StringBuilder();
 					for (int j = 0; j < u.getExponentLength(); j++) {
 						dfs.append('0');
 					}
 					s = s + "E" + (expneg ? "-" : "+")
-							+ new DecimalFormat(dfs.toString()).format(exp);
+							+ new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS).format(exp);
 				}
 				return format(s, u.getLength(), true);
 			}
@@ -344,13 +349,13 @@ public class FortranFormat {
 						dfs.append('0');
 					}
 					s = (neg ? '-' : "")
-							+ new DecimalFormat(dfs.toString()).format(d);
+							+ new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS).format(d);
 					dfs = new StringBuilder();
 					for (int j = 0; j < u.getExponentLength(); j++) {
 						dfs.append('0');
 					}
 					s = s + 'E' + (expneg ? '-' : '+')
-							+ new DecimalFormat(dfs.toString()).format(exp);
+							+ new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS).format(exp);
 				}
 				return format(s, u.getLength(), true);
 			}
@@ -395,13 +400,13 @@ public class FortranFormat {
 						dfs.append('0');
 					}
 					s = (neg ? "-" : "")
-							+ new DecimalFormat(dfs.toString()).format(d);
+							+ new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS).format(d);
 					dfs = new StringBuilder();
 					for (int j = 0; j < u.getExponentLength(); j++) {
 						dfs.append('0');
 					}
 					s = s + "E" + (expneg ? "-" : "+")
-							+ new DecimalFormat(dfs.toString()).format(exp);
+							+ new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS).format(exp);
 				}
 				return format(s, u.getLength(), true);
 			}
@@ -1173,7 +1178,7 @@ public class FortranFormat {
 		/**
 		 * Use this to choose whether character strings are left aligned.
 		 */
-		private boolean leftAlignCharacters = false;
+		private boolean leftAlignCharacters = true;
 
 		/**
 		 * Gets the positioning char. This is the character to use when skipping
@@ -1311,7 +1316,7 @@ public class FortranFormat {
 	public static String write(final List<Object> objects, final String format)
 			throws ParseException, IOException {
 		final FortranFormat ff = new FortranFormat(format);
-		return ff.format(objects);
+		return ff.format(objects);//.replaceAll( "-(0(.0*)?) ", " $1 ");
 	}
 
 	/**
