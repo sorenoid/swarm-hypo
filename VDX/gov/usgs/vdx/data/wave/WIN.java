@@ -112,30 +112,38 @@ public class WIN
         return channelData;
 	}
 
-	static private int intFromSingleByte (byte b)
+	
+	private ByteBuffer converter2 = ByteBuffer.wrap(new byte[2]);
+	private ByteBuffer converter4 = ByteBuffer.wrap(new byte[4]);
+	
+	static int intFromSingleByte(byte b)
 	{
 		return b;
 	}
 
-	private static int intFromFourBytes (byte[] bites)
+	private int intFromFourBytes(byte[] bites)
 	{
-		ByteBuffer wrapped = ByteBuffer.wrap(bites); 
-		return wrapped.getInt ();
+	    converter4.clear();
+	    converter4.mark();
+	    converter4.put(bites);
+	    converter4.rewind();
+		return converter4.getInt();
 	}
-	
-	private static int intFromThreeBytes (byte[] bites)
+
+	private int intFromThreeBytes (byte[] bites)
 	{
 		byte pad = (byte)((bites[0] < 0) ? -1 : 0);
         byte[] padded = new byte[] { pad, bites[0], bites[1], bites[2] };
-		ByteBuffer wrapped = ByteBuffer.wrap(padded);
-		int theInt = wrapped.getInt();
-		return theInt;
+        return intFromFourBytes(padded);
 	}
 	
-	private static short shortFromTwoBytes (byte[] bites)
+	private short shortFromTwoBytes(byte[] bites)
 	{
-		ByteBuffer wrapper = ByteBuffer.wrap(bites);
-		return wrapper.getShort();
+	    converter2.clear();
+	    converter2.mark();
+	    converter2.put(bites);
+	    converter2.rewind();
+		return converter2.getShort();
 	}
 	
 	private static int decodeBcd(byte[] b) 
