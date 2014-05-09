@@ -1707,99 +1707,40 @@ public class WaveClipboardFrame extends SwarmFrame {
 	}
 	
 	public void plotParticleMotion(String stationCode) {
-
 		double[] t = getMarkerTimeBoundaries(stationCode,
 				Marker.PARTICLE_MARKER_LABEL);
 		ArrayList<WaveViewPanel> views = getStationComponents(stationCode);
 		if (t != null && t.length == 2 && views.size() == 3) {
-			  
-			double[] data1 = getWaveData(views.get(0).getWave()
-					.subset(t[0], t[1]));
-			double[] data2 = getWaveData(views.get(1).getWave()
-					.subset(t[0], t[1]));
-			double[] data3 = getWaveData(views.get(2).getWave()
-					.subset(t[0], t[1]));
-			pmf = new ParticleMotionFrame(views,data1,data2,data3);
-			//Plots should always have Z on y-axis if Z is involved and 
-			//Should have N on y-axis when plotting N vs E
-			boolean zWave = views.get(0).getChannel().getLastComponentCode().endsWith("Z");
-			boolean nWave = views.get(0).getChannel().getLastComponentCode().endsWith("N");
-			boolean eWave = views.get(1).getChannel().getLastComponentCode().endsWith("E");
-			ParticleMotionViewPanel component1 = pmf.getComponent1();
-			String views1 = views.get(1).getChannel().fullComponent();
-			String views0 = views.get(0).getChannel().fullComponent();
-			if(zWave || (nWave && eWave)){
-				component1.setxLabel(
-						views1);
-				component1.setxData(data2);
-				component1.setyLabel(
-						views0);
-				component1.setyData(data1);
-			}else{
-				component1.setxLabel(
-				views0);
-				component1.setxData(data1);
-				component1.setyLabel(
-				views1);
-				component1.setyData(data2);
+			if (pmf != null) {
+				pmf.setVisible(false);
+				pmf.dispose();
 			}
 			
+			// We'll store it in order N, E, Z
+			double[][] compData = new double[3][];
+			String[] compLabels = new String[3];
 			
-			zWave = views.get(1).getChannel().getLastComponentCode().endsWith("Z");
-			nWave = views.get(1).getChannel().getLastComponentCode().endsWith("N");
-			eWave = views.get(2).getChannel().getLastComponentCode().endsWith("E");
-			ParticleMotionViewPanel component2 = pmf.getComponent2();
-			String views2 = views.get(2).getChannel().fullComponent();
-			if(zWave || (nWave && eWave)){
-				component2.setxLabel(
-						views2);
-				component2.setxData(data3);
-				component2.setyLabel(
-						views1);
-				component2.setyData(data2);
-			}else{
-				component2.setxLabel(
-				views1);
-				component2.setxData(data2);
-				component2.setyLabel(
-				views2);
-				component2.setyData(data3);
+			for (int i=0; i<3; i++) {
+				double[] data = getWaveData(views.get(i).getWave().subset(t[0], t[1]));
+				String label = views.get(i).getChannel().fullComponent();
+				if (views.get(i).getChannel().getLastComponentCode().endsWith("N")) {
+					compData[0] = data;
+					compLabels[0] = label;
+				}
+				else if (views.get(i).getChannel().getLastComponentCode().endsWith("E")) {
+					compData[1] = data;
+					compLabels[1] = label;
+				}
+				else if (views.get(i).getChannel().getLastComponentCode().endsWith("Z")) {
+					compData[2] = data;
+					compLabels[2] = label;
+				}
 			}
 			
-			
-			zWave = views.get(2).getChannel().getLastComponentCode().endsWith("Z");
-			nWave = views.get(2).getChannel().getLastComponentCode().endsWith("N");
-			eWave = views.get(0).getChannel().getLastComponentCode().endsWith("E");
-			
-			ParticleMotionViewPanel component3 = pmf.getComponent3();
-			if(zWave || (nWave && eWave)){
-				component3.setxLabel(
-						views0);
-				component3.setxData(data1);
-				component3.setyLabel(
-						views2);
-				component3.setyData(data3);
-			}else{
-				component3.setxLabel(
-				views2);
-				component3.setxData(data3);
-				component3.setyLabel(
-				views0);
-				component3.setyData(data1);				
-			}
-			
-			
-
-			if (!pmf.isVisible()) {
-				pmf.setLocation(100, 100);
-				pmf.setVisible(true);
-			} else {
-				pmf.setVisible(true);
-				pmf.paintComponents(pmf.getGraphics());
-			}
-
+			pmf = new ParticleMotionFrame(views, compLabels, compData);
+			pmf.setLocation(100, 100);
+			pmf.setVisible(true);
 		}
-
 	}
 
 	
