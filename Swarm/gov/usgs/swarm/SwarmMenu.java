@@ -134,6 +134,7 @@ public class SwarmMenu extends JMenuBar
 					public void actionPerformed(ActionEvent e)
 					{
 						Swarm.isCancelled = false;
+						Swarm.cancelProcess = false;
 						WIN.useBatch = false;
 						WIN.timeZoneValue = 0;
 						JFileChooser chooser = Swarm.getApplication().getFileChooser();

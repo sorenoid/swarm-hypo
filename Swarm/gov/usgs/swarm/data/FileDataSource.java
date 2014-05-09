@@ -119,7 +119,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 		}
 
 		protected void createUI() {
-			super.createUI();
+			super.createFileTypeUI();
 			filename = new JLabel();
 			filename.setFont(Font.decode("dialog-BOLD-12"));
 			filename.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
@@ -187,48 +187,53 @@ public class FileDataSource extends AbstractCachingDataSource {
 	}
 
 	public void openFiles(File[] fs) {
+		Swarm.isAssumeSame = false;
 		FileTypeDialog dialog = null;
 		for (int i = 0; i < fs.length; i++) {
-			FileType ft = FileType.fromFileExtension(fs[i]);
-			if (ft == FileType.UNKNOWN) {
-				if (dialog == null)
-					dialog = new FileTypeDialog();
-				if (!dialog.opened || (dialog.opened && !dialog.isAssumeSame())) {
-					dialog.setFilename(fs[i].getName());
-					dialog.setVisible(true);
+			if(!Swarm.cancelProcess){
+				FileType ft = FileType.fromFileExtension(fs[i]);
+				if (ft == FileType.UNKNOWN && !Swarm.isAssumeSame) {
+					if (dialog == null)
+						dialog = new FileTypeDialog();
+					if (!dialog.opened || (dialog.opened && !dialog.isAssumeSame())) {
+						dialog.setFilename(fs[i].getName());
+						dialog.setVisible(true);
+					}
+	
+					if (dialog.cancelled)
+						ft = FileType.UNKNOWN;
+					else{
+						ft = dialog.getFileType();
+						Swarm.isAssumeSame = dialog.isAssumeSame();
+					}
+	
+					Swarm.logger.warning("user input file type: " + fs[i].getPath()
+							+ " -> " + ft);
 				}
-
-				if (dialog.cancelled)
-					ft = FileType.UNKNOWN;
-				else
-					ft = dialog.getFileType();
-
-				Swarm.logger.warning("user input file type: " + fs[i].getPath()
-						+ " -> " + ft);
+	
+				switch (ft) {
+				case SAC:
+					openSACFile(fs[i].getPath());
+					break;
+				case WIN:
+					openWINFile(fs[i].getPath(), fs[i].getName(), i);
+					break;
+				case SEED:
+					openSeedFile(fs[i].getPath());
+					break;
+				case SEISAN:
+					openSEISANFile(fs[i].getPath(), fs[i].getName());
+					break;
+				case UNKNOWN:
+					Swarm.logger.warning("unknown file type: " + fs[i].getPath());
+					break;
+				default:
+					Swarm.logger.warning("Cannot load file type " + ft + ": "
+							+ fs[i].getPath());
+					break;
+				}
+				Swarm.config.lastPath = fs[i].getParent();
 			}
-
-			switch (ft) {
-			case SAC:
-				openSACFile(fs[i].getPath());
-				break;
-			case WIN:
-				openWINFile(fs[i].getPath(), fs[i].getName(), i);
-				break;
-			case SEED:
-				openSeedFile(fs[i].getPath());
-				break;
-			case SEISAN:
-				openSEISANFile(fs[i].getPath(), fs[i].getName());
-				break;
-			case UNKNOWN:
-				Swarm.logger.warning("unknown file type: " + fs[i].getPath());
-				break;
-			default:
-				Swarm.logger.warning("Cannot load file type " + ft + ": "
-						+ fs[i].getPath());
-				break;
-			}
-			Swarm.config.lastPath = fs[i].getParent();
 		}
 		Swarm.isCancelled = false;
 	}

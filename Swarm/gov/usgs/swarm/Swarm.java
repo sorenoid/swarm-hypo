@@ -3,6 +3,7 @@ package gov.usgs.swarm;
 import gov.usgs.swarm.chooser.DataChooser;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.FileDataSource;
+import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.database.model.Attempt;
 import gov.usgs.swarm.database.model.Event;
@@ -103,6 +104,9 @@ public class Swarm extends JFrame
 	public static final String PASSWORD = "password";
 	public static String DBNAME;
 	public static boolean isCancelled = false;
+	public static boolean isAssumeSame = false;
+	public static FileType fileType = null;
+	public static boolean cancelProcess = false;
 	
 	static
 	{
