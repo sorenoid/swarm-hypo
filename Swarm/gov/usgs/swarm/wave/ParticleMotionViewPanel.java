@@ -1,5 +1,7 @@
 package gov.usgs.swarm.wave;
 
+import gov.usgs.util.Pair;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -11,6 +13,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import javax.swing.JPanel;
+
 
 /**
  * A Panel that holds a single particle motion plot between two sets of component data
@@ -26,17 +29,18 @@ import javax.swing.JPanel;
  */
 @SuppressWarnings("serial")
 public class ParticleMotionViewPanel extends JPanel {
+	private double[] xData;
+	private double[] yData;
 
-	private double[] xData = { -20, -22, -23, -56, 34, 23, 45, 23, 56, 178 };
-	private double[] yData = { -10, -12, -22, -46, 24, 13, 45, 13, 36, 149 };
+	private Pair<Double, Double> extent;
+	private double maxMagnitude;
+	private double minX;
+	private double maxX;
+	private double minY;
+	private double maxY;
 
 	private String xLabel;
 	private String yLabel;
-
-	double minX;
-	double maxX;
-	double minY;
-	double maxY;
 
 	private int PLOT_TO_TICK_DIST = 30;
 
@@ -46,6 +50,21 @@ public class ParticleMotionViewPanel extends JPanel {
 
 	private int plotBegin = PLOT_TO_TICK_DIST + TICKS_TO_LABEL_DIST
 			+ LABEL_TO_SCREEN_DIST;
+
+	public ParticleMotionViewPanel(String labelX, double[] dataX,
+			String labelY, double[] dataY, Pair<Double, Double> extent) {
+		this.xLabel = labelX;
+		this.yLabel = labelY;
+		this.xData = dataX;
+		this.yData = dataY;
+		this.extent = extent;
+		maxMagnitude = Math.max(Math.abs(extent.item1), Math.abs(extent.item2));
+		minX = -maxMagnitude;
+		maxX = maxMagnitude;
+		minY = -maxMagnitude;
+		maxY = maxMagnitude;
+	}
+
 
 	@Override
 	public void paint(Graphics g) {
@@ -58,72 +77,11 @@ public class ParticleMotionViewPanel extends JPanel {
 		drawYLabel(g2);
 		drawXLabel(g2);
 		drawXAndYAxis(g2);
-		System.out.println(xLabel);
-		System.out.println(yLabel);
-		minX = getMin(xData);
-		maxX = getMax(xData);
-		
-		System.out.println("x : "+minX + "  " + minY);
-		
-		minY = getMin(yData);
-		maxY = getMax(yData);
-		/*maxX = maxY = (maxY>maxX)?maxY:maxX;
-		minX = minY = (minY<minX)?minY:minX;*/
 
-		if(yLabel.contains("Z")){
-			minY = ParticleMotionFrame.zData[0];
-			maxY = ParticleMotionFrame.zData[1];
-		}else if(yLabel.contains("N")){
-			minY = ParticleMotionFrame.nData[0];
-			maxY = ParticleMotionFrame.nData[1];
-		}
-		if(xLabel.contains("N")){
-			minX = ParticleMotionFrame.nData[0];
-			maxX = ParticleMotionFrame.nData[1];
-		}else if(xLabel.contains("E")){
-			minX = ParticleMotionFrame.eData[0];
-			maxX = ParticleMotionFrame.eData[1];
-		}
-		
 		drawPlot(g2);
 		drawAxisMarks(g2);
 	}
 	
-	
-	public double getMin(double[] data){
-		double min = data[0];
-		for (int i = 1; i < data.length; i++) {
-			double x = data[i];
-			if (x <= min) {
-				min = x;
-			}
-		}
-		return getBounds(min,false);
-	}
-
-	
-	public double getMax(double[] data){
-		double max = data[0];
-		for (int i = 1; i < data.length; i++) {
-			double x = data[i];
-			if (x >= max) {
-				max = x;
-			}
-		}
-		return getBounds(max,true);
-	}
-
-	private double getBounds(double mainVal, boolean up) {
-		
-		if(up){
-			return Math.round((mainVal + 500)/ 1000.0) * 1000.0;
-		}else{
-			return Math.round((mainVal -  500)/ 1000.0) * 1000.0;
-		}
-
-	}
-
-
 	public double getXPixel(double x) {
 		return ((x - minX) * getXScale()) + plotBegin;
 	}
@@ -306,5 +264,4 @@ public class ParticleMotionViewPanel extends JPanel {
 	public void setyLabel(String yLabel) {
 		this.yLabel = yLabel;
 	}
-
 }

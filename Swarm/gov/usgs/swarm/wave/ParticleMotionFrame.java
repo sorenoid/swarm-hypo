@@ -1,5 +1,7 @@
 package gov.usgs.swarm.wave;
 
+import gov.usgs.util.Pair;
+
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
@@ -17,15 +19,29 @@ public class ParticleMotionFrame extends JFrame {
 	private ParticleMotionViewPanel component2;
 	private ParticleMotionViewPanel component3;		
 
-	public static double [] nData = new double[2]; //0-Min 1-Max
-	public static double [] zData = new double[2]; //0-Min 1-Max
-	public static double [] eData = new double[2]; //0-Min 1-Max
-
-	public ParticleMotionFrame() {
+	/**
+	 * @param compLabels labels ordered N, E, Z
+	 * @param compData wave data ordered N, E, Z
+	 */
+	public ParticleMotionFrame(ArrayList<WaveViewPanel> views, String[] compLabels, double[][] compData) {
 		super();
-		component1 = new ParticleMotionViewPanel();
-		component2 = new ParticleMotionViewPanel();
-		component3 = new ParticleMotionViewPanel();
+		String labelN = compLabels[0];
+		String labelE = compLabels[1];
+		String labelZ = compLabels[2];
+		
+		double[] dataN = compData[0];
+		double[] dataE = compData[1];
+		double[] dataZ = compData[2];
+		
+		Pair<Double, Double> extentN = extent(dataN);
+		Pair<Double, Double> extentE = extent(dataE);
+		Pair<Double, Double> extentZ = extent(dataZ);
+		
+		//Plots should always have Z on y-axis if Z is involved and 
+		//Should have N on y-axis when plotting N vs E
+		component1 = new ParticleMotionViewPanel(labelE, dataE, labelN, dataN, extent(extentE, extentN));
+		component2 = new ParticleMotionViewPanel(labelN, dataN, labelZ, dataZ, extent(extentN, extentZ));
+		component3 = new ParticleMotionViewPanel(labelE, dataE, labelZ, dataZ, extent(extentE, extentZ));
 		
 		this.setTitle("Particle Motion Plot");
 		GridLayout gr = new GridLayout(1,3);
@@ -39,181 +55,22 @@ public class ParticleMotionFrame extends JFrame {
 		this.setResizable(false);
 	}
 
-	public ParticleMotionFrame(ArrayList<WaveViewPanel> views, double[] data1,
-			double[] data2, double[] data3) {
-		super();
-
-		
-		component1 = new ParticleMotionViewPanel();	
-		
-		boolean zWave = views.get(0).getChannel().getLastComponentCode().endsWith("Z");
-		if(zWave){
-			zData[0] = component1.getMin(data1);
-			zData[1] = component1.getMax(data1);
-			boolean nWave = views.get(0).getChannel().getLastComponentCode().endsWith("N");
-			if(nWave){
-				nData[0] = component1.getMin(data2);
-				nData[1] = component1.getMax(data2);
-			}else{
-				eData[0] = component1.getMin(data2);
-				eData[1] = component1.getMax(data2);
+	private Pair<Double, Double> extent(double[] dataN) {
+		double min = dataN[0];
+		double max = dataN[0];
+		for (int i=0; i<dataN.length; i++) {
+			double d = dataN[i];
+			if (d > max) {
+				max = d;
 			}
-		}else{
-			nData[0] = component1.getMin(data1);
-			nData[1] = component1.getMax(data1);
-			eData[0] = component1.getMin(data2);
-			eData[1] = component1.getMax(data2);
-		}
-		
-		
-		component2 = new ParticleMotionViewPanel();
-		zWave = views.get(1).getChannel().getLastComponentCode().endsWith("Z");
-		if(zWave){
-			double min = component2.getMin(data2);
-			double max = component2.getMax(data2);
-			if(zData[0] > min){
-				zData[0] = min;
-			}
-			if(zData[1] < max){
-				zData[1] = max;
-			}
-			min = component2.getMin(data3);
-			max = component2.getMax(data3);
-			boolean nWave = views.get(1).getChannel().getLastComponentCode().endsWith("N");
-			if(nWave){
-				if(nData[0] > min){
-					nData[0] = min;
-				}
-				if(nData[1] < max){
-					nData[1] = max;
-				}
-			}else{
-				if(eData[0] > min){
-					eData[0] = min;
-				}
-				if(eData[1] < max){
-					eData[1] = max;
-				}
-			}
-		}else{
-			double min = component2.getMin(data2);
-			double max = component2.getMax(data2);
-			if(nData[0] > min){
-				nData[0] = min;
-			}
-			if(nData[1] < max){
-				nData[1] = max;
-			}
-			min = component2.getMin(data3);
-			max = component2.getMax(data3);
-			if(eData[0] > min){
-				eData[0] = min;
-			}
-			if(eData[1] < max){
-				eData[1] = max;
+			else if (d < min) {
+				min = d;
 			}
 		}
-		
-
-		component3 = new ParticleMotionViewPanel();
-		zWave = views.get(2).getChannel().getLastComponentCode().endsWith("Z");
-		if(zWave){
-			double min = component3.getMin(data3);
-			double max = component3.getMax(data3);
-			if(zData[0] > min){
-				zData[0] = min;
-			}
-			if(zData[1] < max){
-				zData[1] = max;
-			}
-			min = component3.getMin(data1);
-			max = component3.getMax(data1);
-			boolean nWave = views.get(2).getChannel().getLastComponentCode().endsWith("N");
-			if(nWave){
-				if(nData[0] > min){
-					nData[0] = min;
-				}
-				if(nData[1] < max){
-					nData[1] = max;
-				}
-			}else{
-				if(eData[0] > min){
-					eData[0] = min;
-				}
-				if(eData[1] < max){
-					eData[1] = max;
-				}
-			}
-		}else{
-			double min = component3.getMin(data3);
-			double max = component3.getMax(data3);
-			if(nData[0] > min){
-				nData[0] = min;
-			}
-			if(nData[1] < max){
-				nData[1] = max;
-			}
-			min = component3.getMin(data1);
-			max = component3.getMax(data1);
-			if(eData[0] > min){
-				eData[0] = min;
-			}
-			if(eData[1] < max){
-				eData[1] = max;
-			}
-		}
-		
-		if(zData[0] < 0){
-			double temp = (-1) * zData[0];
-			if(temp > zData[1]){
-				zData[1] = temp;
-			}else{
-				zData[0] = (-1) * zData[1];
-			}
-		}else{
-			zData[0] = (-1) * zData[1];
-		}
-		
-		if(nData[0] < 0){
-			double temp = (-1) * nData[0];
-			if(temp > nData[1]){
-				nData[1] = temp;
-			}else{
-				nData[0] = (-1) * nData[1];
-			}
-		}
-		
-		if(eData[0] < 0){
-			double temp = (-1) * eData[0];
-			if(temp > eData[1]){
-				eData[1] = temp;
-			}else{
-				eData[0] = (-1) * eData[1];
-			}
-		}
-		
-		this.setTitle("Particle Motion Plot");
-		GridLayout gr = new GridLayout(1,3);
-		gr.setHgap(2);
-		gr.setHgap(2);
-		this.getContentPane().setLayout(gr);
-		this.add(component1);
-		this.add(component2);
-		this.add(component3);
-		this.setSize(756, 306);
-		this.setResizable(false);
+		return new Pair<Double, Double>(min, max);
 	}
 
-	public ParticleMotionViewPanel getComponent1() {
-		return component1;
+	private Pair<Double, Double> extent(Pair<Double, Double> extent1, Pair<Double, Double> extent2) {
+		return new Pair<Double, Double>(Math.min(extent1.item1, extent2.item1), Math.max(extent1.item2, extent2.item2));
 	}
-
-	public ParticleMotionViewPanel getComponent2() {
-		return component2;
-	}
-
-	public ParticleMotionViewPanel getComponent3() {
-		return component3;
-	}
-	
 }

@@ -150,19 +150,31 @@ public class SeisanFile {
 	}
 	
 	private int readInt(byte[] b) {
-	    final ByteBuffer bb = ByteBuffer.wrap(b);
-	    if (fileFlag == FileFlag.PC) {
-	    	bb.order(ByteOrder.LITTLE_ENDIAN);
-	    } else {
-	    	bb.order(ByteOrder.BIG_ENDIAN);
-	    }
-	    if (b.length == 4) {
-		    return bb.getInt();
-	    } else {
-	    	// Note, it's turned into an int at some point, so this truncation is assumed safe.
-	    	long test = bb.getLong();
-	    	return (int)test;
-	    }
+		ByteOrder endian = fileFlag == FileFlag.PC ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
+		return b.length == 4 ? readInt4(b, endian) : readInt8(b, endian);
+	}
+
+	private ByteBuffer converter4 = ByteBuffer.wrap(new byte[4]);
+	private ByteBuffer converter8 = ByteBuffer.wrap(new byte[8]);
+	
+	public int readInt4(byte[] b, ByteOrder endian) {
+	    converter4.clear();
+	    converter4.mark();
+	    converter4.put(b);
+	    converter4.rewind();
+	    converter4.order(endian);
+	    return converter4.getInt();
+	}
+
+	public int readInt8(byte[] b, ByteOrder endian) {
+	    converter8.clear();
+	    converter8.mark();
+	    converter8.put(b);
+	    converter8.rewind();
+	    converter8.order(endian);
+    	// Note, it's turned into an int at some point, so this truncation is assumed safe.
+    	long test = converter8.getLong();
+    	return (int)test;
 	}
 
 	/**
