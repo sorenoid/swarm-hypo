@@ -543,18 +543,18 @@ public class HypoPanel extends JPanel {
 				if(props.get("station["+index+"].IW") != null && !props.get("station["+index+"].IW").toString().isEmpty())st.setIW(props.get("station["+index+"].IW").toString().charAt(0));
 				if(props.get("station["+index+"].NSTA") != null && !props.get("station["+index+"].NSTA").toString().isEmpty())st.setNSTA(props.get("station["+index+"].NSTA").toString());
 				if(props.get("station["+index+"].LAT1") != null && !props.get("station["+index+"].LAT1").toString().isEmpty())st.setLAT1(Integer.parseInt((String)props.get("station["+index+"].LAT1")));
-				if(props.get("station["+index+"].LAT2") != null && !props.get("station["+index+"].LAT2").toString().isEmpty())st.setLAT2(Double.parseDouble((String)props.get("station["+index+"].LAT2")));
+				if(props.get("station["+index+"].LAT2") != null && !props.get("station["+index+"].LAT2").toString().isEmpty())st.setLAT2(Float.parseFloat((String)props.get("station["+index+"].LAT2")));
 				if(props.get("station["+index+"].INS") != null && !props.get("station["+index+"].INS").toString().isEmpty())st.setINS(props.get("station["+index+"].INS").toString().charAt(0));
 				if(props.get("station["+index+"].LON1") != null && !props.get("station["+index+"].LON1").toString().isEmpty())st.setLON1(Integer.parseInt((String)props.get("station["+index+"].LON1")));
-				if(props.get("station["+index+"].LON2") != null && !props.get("station["+index+"].LON2").toString().isEmpty())st.setLON2(Double.parseDouble((String)props.get("station["+index+"].LON2")));
+				if(props.get("station["+index+"].LON2") != null && !props.get("station["+index+"].LON2").toString().isEmpty())st.setLON2(Float.parseFloat((String)props.get("station["+index+"].LON2")));
 				if(props.get("station["+index+"].IEW") != null && !props.get("station["+index+"].IEW").toString().isEmpty())st.setIEW(props.get("station["+index+"].IEW").toString().charAt(0));
 				if(props.get("station["+index+"].IELV") != null && !props.get("station["+index+"].IELV").toString().isEmpty())st.setIELV(Integer.parseInt((String)props.get("station["+index+"].IELV")));
-				if(props.get("station["+index+"].dly") != null && !props.get("station["+index+"].dly").toString().isEmpty())st.setDly(Double.parseDouble((String)props.get("station["+index+"].dly")));
-				if(props.get("station["+index+"].FMGC") != null && !props.get("station["+index+"].FMGC").toString().isEmpty())st.setFMGC(Double.parseDouble((String)props.get("station["+index+"].FMGC")));
-				if(props.get("station["+index+"].XMGC") != null && !props.get("station["+index+"].XMGC").toString().isEmpty())st.setXMGC(Double.parseDouble((String)props.get("station["+index+"].XMGC")));
+				if(props.get("station["+index+"].dly") != null && !props.get("station["+index+"].dly").toString().isEmpty())st.setDly(Float.parseFloat((String)props.get("station["+index+"].dly")));
+				if(props.get("station["+index+"].FMGC") != null && !props.get("station["+index+"].FMGC").toString().isEmpty())st.setFMGC(Float.parseFloat((String)props.get("station["+index+"].FMGC")));
+				if(props.get("station["+index+"].XMGC") != null && !props.get("station["+index+"].XMGC").toString().isEmpty())st.setXMGC(Float.parseFloat((String)props.get("station["+index+"].XMGC")));
 				if(props.get("station["+index+"].KLAS") != null && !props.get("station["+index+"].KLAS").toString().isEmpty())st.setKLAS(Integer.parseInt((String)props.get("station["+index+"].KLAS")));
-				if(props.get("station["+index+"].PRR") != null && !props.get("station["+index+"].PRR").toString().isEmpty())st.setPRR(Double.parseDouble((String)props.get("station["+index+"].PRR")));
-				if(props.get("station["+index+"].CALR") != null && !props.get("station["+index+"].CALR").toString().isEmpty())st.setCALR(Double.parseDouble((String)props.get("station["+index+"].CALR")));
+				if(props.get("station["+index+"].PRR") != null && !props.get("station["+index+"].PRR").toString().isEmpty())st.setPRR(Float.parseFloat((String)props.get("station["+index+"].PRR")));
+				if(props.get("station["+index+"].CALR") != null && !props.get("station["+index+"].CALR").toString().isEmpty())st.setCALR(Float.parseFloat((String)props.get("station["+index+"].CALR")));
 				if(props.get("station["+index+"].ICAL") != null && !props.get("station["+index+"].ICAL").toString().isEmpty())st.setICAL(Integer.parseInt((String)props.get("station["+index+"].ICAL")));
 				if(props.get("station["+index+"].NDATE") != null && !props.get("station["+index+"].NDATE").toString().isEmpty())st.setNDATE(Integer.parseInt((String)props.get("station["+index+"].NDATE")));
 				if(props.get("station["+index+"].NHRMN") != null && !props.get("station["+index+"].NHRMN").toString().isEmpty())st.setNHRMN(Integer.parseInt((String)props.get("station["+index+"].NHRMN")));
@@ -582,8 +582,8 @@ public class HypoPanel extends JPanel {
 		if(indexes.size() > 0){
 			for(Integer index : indexes){
 				CrustalModel cm = new CrustalModel();
-				if(props.get("crustal["+index+"].V") != null && !props.get("crustal["+index+"].V").toString().isEmpty())cm.setV(Double.parseDouble(props.get("crustal["+index+"].V").toString()));
-				if(props.get("crustal["+index+"].D") != null && !props.get("crustal["+index+"].D").toString().isEmpty())cm.setD(Double.parseDouble(props.get("crustal["+index+"].D").toString()));
+				if(props.get("crustal["+index+"].V") != null && !props.get("crustal["+index+"].V").toString().isEmpty())cm.setV(Float.parseFloat(props.get("crustal["+index+"].V").toString()));
+				if(props.get("crustal["+index+"].D") != null && !props.get("crustal["+index+"].D").toString().isEmpty())cm.setD(Float.parseFloat(props.get("crustal["+index+"].D").toString()));
 				crustalModelList.add(cm);
 			}
 		}

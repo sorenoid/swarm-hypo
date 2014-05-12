@@ -96,6 +96,31 @@ public class PhaseRecord {
 		QRMK = qRMK;
 		IPRO = iPRO;
 	}
+	public PhaseRecord(String mSTA, String pRMK, double w, int jTIME, int jMIN, double p, double s, String sRMK, double wS, double aMX, double pRX, double cALP, double cALX, String rMK, double dT,
+			double fMP, String aZRES, char sYM, String aS, String iCARD, char qRMK, String iPRO) {
+		MSTA = mSTA;
+		PRMK = pRMK;
+		W = (float) w;
+		JTIME = jTIME;
+		JMIN = jMIN;
+		P = (float) p;
+		S = (float) s;
+		SRMK = sRMK;
+		WS = (float) wS;
+		AMX = (float) aMX;
+		PRX = (float) pRX;
+		CALP = (float) cALP;
+		CALX = (float) cALX;
+		RMK = rMK;
+		DT = (float) dT;
+		FMP = (float) fMP;
+		AZRES = aZRES;
+		SYM = sYM;
+		AS = aS;
+		ICARD = iCARD;
+		QRMK = qRMK;
+		IPRO = iPRO;
+	}
 	@XmlElement
 	public String getMSTA() {
 		return MSTA;

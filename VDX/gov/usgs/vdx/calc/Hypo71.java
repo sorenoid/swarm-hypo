@@ -938,6 +938,7 @@ public class Hypo71 {
 		float USQ = 0;
 		int K = 0;
 		for (int I = 0; I < O1.NR; I++) { // 5 DO 300 I=1,NR
+			goto45 = false;
 			if (!goto80) {
 				if (ISW != null && !ISW.equals("1   ")) {
 					goto45 = true;
@@ -1001,17 +1002,14 @@ public class Hypo71 {
 			if (!goto100 || goto80) {
 				boolean goto90 = false;
 				if (!goto80) {
-					if (goto45) {
-						if (JL + 1 == C4.NL) {// 45
-							goto100 = true;
-						}
+					if (JL + 1 == C4.NL) {// 45
+						goto100 = true;
 					}
 					if (!goto100) {
 						for (int M = JJ; M < C4.NL; M++) {// 50 DO 60 M=JJ,NL
 							TR[M] = TINJ[M] + DELTA[I] / V[M];// 60
 						}
 						TMIN = 999.99f;
-						// K = 0;
 						for (int M = JJ; M < C4.NL; M++) {// DO 70 M=JJ,NL
 							if (TR[M] > TMIN) {
 								continue;
@@ -1030,43 +1028,45 @@ public class Hypo71 {
 						// C-----TRAVEL TIME & DERIVATIVES FOR REFRACTED WAVE
 					}
 				}
-				goto80 = false;
-				do {
-					if (!goto90) {
-						T[I] = TR[K];// 80
-						DTDD = 1.0f / V[K];
-						DTDH = -(float) Math.sqrt(VSQ[K] - VSQ[JL])
-								/ (V[K] * V[JL]);
-						ANIN[I] = -V[JL] / V[K];
-						goto260 = true;
-						break;
-					} else {
-						goto90 = false;
-					}
+				if (!goto100) {
+					do {
+						goto80 = false;
+						if (!goto90) {
+							T[I] = TR[K];// 80
+							DTDD = 1.0f / V[K];
+							DTDH = -(float) Math.sqrt(VSQ[K] - VSQ[JL])
+									/ (V[K] * V[JL]);
+							ANIN[I] = -V[JL] / V[K];
+							goto260 = true;
+							break;
+						} else {
+							goto90 = false;
+						}
 
-					// CALCULATION FOR DIRECT WAVE
-					if (JL + 1 != 1) {// 90
-						goto100 = true;
-						break;
-					}
-					SQT = (float) Math.sqrt(O2.ZSQ + DELTA[I] * DELTA[I]);
-					final float TDJ1 = SQT / V[0];
-					if (TDJ1 >= TMIN) {
-						goto80 = true;
-					}
-					if (!goto80) {
-						// C-----TRAVEL TIME & DERIVATIVES FOR DIRECT WAVE
-						// IN FIRST LAYER
-						T[I] = TDJ1;
-						DTDD = DELTA[I] / (V[0] * SQT);
-						DTDH = O2.Z / (V[0] * SQT);
-						ANIN[I] = (DELTA[I] / SQT);
-						goto260 = true;
-						break;
-						// C-----FIND A DIRECT WAVE THAT WILL EMERGE AT THE
-						// STATION
-					}
-				} while (goto80);
+						// CALCULATION FOR DIRECT WAVE
+						if (JL + 1 != 1) {// 90
+							goto100 = true;
+							break;
+						}
+						SQT = (float) Math.sqrt(O2.ZSQ + DELTA[I] * DELTA[I]);
+						final float TDJ1 = SQT / V[0];
+						if (TDJ1 >= TMIN) {
+							goto80 = true;
+						}
+						if (!goto80) {
+							// C-----TRAVEL TIME & DERIVATIVES FOR DIRECT WAVE
+							// IN FIRST LAYER
+							T[I] = TDJ1;
+							DTDD = DELTA[I] / (V[0] * SQT);
+							DTDH = O2.Z / (V[0] * SQT);
+							ANIN[I] = (DELTA[I] / SQT);
+							goto260 = true;
+							break;
+							// C-----FIND A DIRECT WAVE THAT WILL EMERGE AT THE
+							// STATION
+						}
+					} while (goto80);
+				}
 			}
 
 			goto100 = false;
@@ -1196,7 +1196,7 @@ public class Hypo71 {
 			X[2][I] = DTDH;
 			goto260 = false;
 		}// 300 CONTINUE
-			// RETURN
+			// RETURNT
 			// END
 	}
 
@@ -1413,7 +1413,7 @@ public class Hypo71 {
 
 		final float QSUM = QNO[0] + QNO[1] + QNO[2] + QNO[3];
 
-		if (QSUM != 0.) {
+		if (QSUM != 0.f) {
 			// Integration code goes here
 			results.setStats(new Stats(QNO[0], QNO[1], QNO[2], QNO[3], QSUM,
 					100. * QNO[0] / QSUM, 100. * QNO[1] / QSUM, 100. * QNO[2]
@@ -1653,7 +1653,7 @@ public class Hypo71 {
 	 */
 	public String getColumn(char[][] array, int i, int jBeg, int jEnd) {
 		char[] column = new char[jEnd - jBeg + 1];
-		//i--;
+		// i--;
 		for (int j = jBeg - 1; j < jEnd; j++) {
 			column[j] = array[j][i];
 		}
@@ -1965,9 +1965,9 @@ public class Hypo71 {
 		O2.AVRPS = 0.0f;
 		C4.IEXIT = 0;
 		LATRT = 0;
-		float ZRES = P[O1.NR];
-		O1.KNST = JMIN[O1.NR] / 10;
-		O1.INST = JMIN[O1.NR] - O1.KNST * 10;
+		float ZRES = P[O1.NR + 1 - 1];
+		O1.KNST = JMIN[O1.NR + 1 - 1] / 10;
+		O1.INST = JMIN[O1.NR + 1 - 1] - O1.KNST * 10;
 
 		// Here
 
@@ -1975,14 +1975,13 @@ public class Hypo71 {
 		boolean goto96 = false;
 		boolean goto111 = false;
 		boolean goto110 = false;
-		boolean goto575 = false;
 		boolean firstrun = true;
 		while (true) {
-			if (!firstrun & !goto110 & !goto111 & !goto575 & !goto96) {
+			if (!firstrun & !goto110 & !goto111 & !goto96) {
 				break;
 			}
 			firstrun = false;
-			if ((!goto111 && !goto110) | goto96) {
+			if ((!goto111 && !goto110) || goto96) {
 				if (!goto96) {
 					if (C4.IDXS != 0) {// 30
 						// C------- TREAT S DATA BY AUGMENTING P DATA;
@@ -2013,7 +2012,6 @@ public class Hypo71 {
 						ISKP[I] = 0;
 					}// 25 CONTINUE;
 
-					goto575 = false;
 					if (O1.INST == 9) {
 						float ORG1 = 0;
 						float ORG2 = 0;
@@ -2054,8 +2052,8 @@ public class Hypo71 {
 
 					}
 				}
-				if (O1.INST != 9 | goto96) {
-					if (goto96 | O1.NR < 3) {// 96
+				if (O1.INST != 9 || goto96) {
+					if (goto96 || O1.NR < 3) {// 96
 						goto96 = false;
 						writeln("FPRINT_WRITER",
 								data(" ***** INSUFFICIENT DATA FOR LOCATING THIS QUAKE:"),
@@ -2075,764 +2073,750 @@ public class Hypo71 {
 						if (O1.NRP == 1) {
 							return;
 						}
-						goto575 = true;
+						break;
 					}
-					if (!goto575) {
-						O2.Z = C2.ZTR;// 100
-						if (!AZRES[O1.NRP + 1 - 1].equals("")) {
-							O2.Z = ZRES;
-						}
-						O2.ORG = C5.PMIN - O2.Z / 5 - 1;
-						if (LATRT != 0) {
-							O2.LATEP = LATRT;
-							O2.LONEP = LONRT;
+					O2.Z = C2.ZTR;// 100
+					if (!AZRES[O1.NRP + 1 - 1].equals("")) {
+						O2.Z = ZRES;
+					}
+					O2.ORG = C5.PMIN - O2.Z / 5 - 1;
+					if (LATRT != 0) {
+						O2.LATEP = LATRT;
+						O2.LONEP = LONRT;
+					} else {
+						if (LATR != 0.) {// 102
+							O2.LATEP = LATR;
+							O2.LONEP = LONR;
 						} else {
-							if (LATR != 0.) {// 102
-								O2.LATEP = LATR;
-								O2.LONEP = LONR;
-							} else {
-								O2.LATEP = (LAT[K - 1] + 0.1f);// 104
-								O2.LONEP = (LON[K - 1] + 0.1f);
-							}
+							O2.LATEP = (LAT[K - 1] + 0.1f);// 104
+							O2.LONEP = (LON[K - 1] + 0.1f);
 						}
 					}
 				}
 			}
-			if (!goto575 | goto111 | goto110) {
-				if (!goto111 && !goto110) {
-					O2.ADJSQ = 0;// 105
-					O1.IPH = 0;
-					O1.NDEC = 0;
-					PRMSSQ = 100000;
-					if (ISW.equals("1    ")) {
-						KNO = MNO[K - 1];
-					}
-					if (ISW.equals("1    ")) {
-						FLTEP = FLT[KNO - 1][K - 1];
-					}
-					NIMAX = TEST[10] + .0001f;
-					// C------- GEIGER'S ITERATION TO FIND HYPOCENTRAL
-					// ADJUSTMENTS;
-					O1.NI = 1;
-					if (O1.INST == 9) {
-						O1.NI = (int) NIMAX;
-					}
+			if (!goto111 && !goto110) {
+				O2.ADJSQ = 0;// 105
+				O1.IPH = 0;
+				O1.NDEC = 0;
+				PRMSSQ = 100000;
+				if (ISW.equals("1    ")) {
+					KNO = MNO[K - 1];
 				}
-				goto111 = false;
-				if (!goto110) {
-					if (ERLMT != 0) {// 111
-						O2.LATEP = LATSV + LA[NA - 1] * DELAT;
-						O2.LONEP = LONSV + LO[NA - 1] * DELON;
+				if (ISW.equals("1    ")) {
+					FLTEP = FLT[KNO - 1][K - 1];
+				}
+				NIMAX = TEST[10] + .0001f;
+				// C------- GEIGER'S ITERATION TO FIND HYPOCENTRAL
+				// ADJUSTMENTS;
+				O1.NI = 1;
+				if (O1.INST == 9) {
+					O1.NI = (int) NIMAX;
+				}
+			}
+			goto111 = false;
+			if (!goto110) {
+				if (ERLMT != 0) {// 111
+					O2.LATEP = LATSV + LA[NA - 1] * DELAT;
+					O2.LONEP = LONSV + LO[NA - 1] * DELON;
 
-						O2.Z = ZSV + ALZ[NA - 1] * DEZ;
-						if (O2.Z < 0) {
-							O2.Z = 0;
-						}
+					O2.Z = ZSV + ALZ[NA - 1] * DEZ;
+					if (O2.Z < 0) {
+						O2.Z = 0;
 					}
 				}
-				goto110 = false;
-				float FMO = 0;// 110
-				float FNO = 0;
-				float DELMIN = 0;
-				if (singmd) {
-					DELMIN = 99999.f;
-				}
-				for (int I = 0; I < 5; I++) {// DO 112 I=1,5;
-					SUM[I] = 0;// 112
-				}
-				int JI = 0;
-				// C------- CALCULATE EPICENTRAL DISTANCE BY RICHTER'S METHOD;
-				for (int I = 0; I < O1.NR; I++) {// DO 120 I=1,O1.NR;
-					JI = KDX[I];
-					PHI = 0.0174532f * ((LAT[JI - 1] + O2.LATEP) / 120);
-					SINPHI = (float) Math.sin(PHI);
-					SINP2 = SINPHI * SINPHI;
-					SINP4 = SINP2 * SINP2;
-					CA = 1.8553654f + 0.0062792f * SINP2 + 0.0000319f * SINP4;
-					CB = 1.8428071f + 0.0187098f * SINP2 + 0.0001583f * SINP4;
-					DX[I] = ((LON[JI - 1] - O2.LONEP) * CA * (float) Math
-							.cos(PHI));
-					DY[I] = ((LAT[JI - 1] - O2.LATEP) * CB);
-					DELTA[I] = ((float) Math
-							.sqrt(DX[I] * DX[I] + DY[I] * DY[I]) + 0.000001f);
-					WT[I] = W[I];
-					if (!singmd) {
-						if (O1.NI > 1) {
-							// C------- DISTANCE WEIGHTING;
-							if (DELTA[I] > C2.XNEAR) {
-								WT[I] = W[I] * (C2.XFAR - DELTA[I]) / C5.XFN;
-								if (WT[I] < 0.005) {
-									WT[I] = 0;
-								}
-							}
-						}
-					} else {
-						DELMIN = Math.min(DELTA[I], DELMIN);
-						float YFAR = Math.max(C2.XFAR, 3 * DELMIN);
-						WT[I] = W[I];
-						if (O1.NI > 3) {
-							if (DELTA[I] > C2.XNEAR) {
-								WT[I] = W[I] * (YFAR - DELTA[I])
-										/ (YFAR - C2.XNEAR);
-							}
+			}
+			goto110 = false;
+			float FMO = 0;// 110
+			float FNO = 0;
+			float DELMIN = 0;
+			if (singmd) {
+				DELMIN = 99999.f;
+			}
+			for (int I = 0; I < 5; I++) {// DO 112 I=1,5;
+				SUM[I] = 0;// 112
+			}
+			int JI = 0;
+			// C------- CALCULATE EPICENTRAL DISTANCE BY RICHTER'S METHOD;
+			for (int I = 0; I < O1.NR; I++) {// DO 120 I=1,O1.NR;
+				JI = KDX[I];
+				PHI = 0.0174532f * ((LAT[JI - 1] + O2.LATEP) / 120);
+				SINPHI = (float) Math.sin(PHI);
+				SINP2 = SINPHI * SINPHI;
+				SINP4 = SINP2 * SINP2;
+				CA = 1.8553654f + 0.0062792f * SINP2 + 0.0000319f * SINP4;
+				CB = 1.8428071f + 0.0187098f * SINP2 + 0.0001583f * SINP4;
+				DX[I] = ((LON[JI - 1] - O2.LONEP) * CA * (float) Math.cos(PHI));
+				DY[I] = ((LAT[JI - 1] - O2.LATEP) * CB);
+				DELTA[I] = ((float) Math.sqrt(DX[I] * DX[I] + DY[I] * DY[I]) + 0.000001f);
+				WT[I] = W[I];
+				if (!singmd) {
+					if (O1.NI > 1) {
+						// C------- DISTANCE WEIGHTING;
+						if (DELTA[I] > C2.XNEAR) {
+							WT[I] = W[I] * (C2.XFAR - DELTA[I]) / C5.XFN;
 							if (WT[I] < 0.005) {
 								WT[I] = 0;
 							}
 						}
 					}
-					if (WT[I] != 0.f) {// 115
+				} else {
+					DELMIN = Math.min(DELTA[I], DELMIN);
+					float YFAR = Math.max(C2.XFAR, 3 * DELMIN);
+					WT[I] = W[I];
+					if (O1.NI > 3) {
+						if (DELTA[I] > C2.XNEAR) {
+							WT[I] = W[I] * (YFAR - DELTA[I])
+									/ (YFAR - C2.XNEAR);
+						}
+						if (WT[I] < 0.005) {
+							WT[I] = 0;
+						}
+					}
+				}
+				if (WT[I] != 0.f) {// 115
+					if (KSMP[I] == 1) {
+						FMO = FMO + 1;
+					}
+					FNO = FNO + 1;
+					SUM[3] = SUM[3] + WT[I];
+				}
+			}// 120 CONTINUE;
+
+			if (FNO < 3) {
+				goto96 = true;
+				continue;
+			}
+			float AVWT = SUM[3] / FNO;
+			// C------- NORMALIZE DISTANCE WEIGHTS;
+			SUM[3] = 0.0f;
+			for (int I = 0; I < O1.NR; I++) {// DO 122 I=1,O1.NR;
+				WT[I] = WT[I] / AVWT;// 122
+			}
+			if (!(O1.NI <= 2 || C1.KAZ == 0)) {
+				// C------- AZIMUTHAL WEIGHTING;
+				// CALL AZWTOS(DX,DY,O1.NR,WT,KDX,AZ,TEMP,KEY,INS,IEW);
+				// C------- COMPUTE TRAVEL TIMES & DERIVATIVES;
+				AZWTOS(DX, DY, WT, KDX, AZ, TEMP, KEY, INS, IEW);
+			}
+
+			O2.ZSQ = O2.Z * O2.Z;// 130
+
+			// CALL TRVDRV(ISW,V,D,DEPTH,VSQ,NL,THK,H,G,F,TID,DID,FLT,;
+			// & DELTA,DX,DY,O1.NR,KDX,KNO,FLTEP,Z,ZSQ,X,T,ANIN);
+			TRVDRV(ISW, V, D, DEPTH, VSQ, THK, H, G, F, TID, DID, FLT, DELTA,
+					DX, DY, KDX, FLTEP, X, T, ANIN);
+
+			float FDLY = 1;
+			if (ISW.equals("1   ")) {
+				FDLY = 0;
+			}
+			// C------- CALCULATE TRAVEL TIME RESIDUALS X(4,I) & MODIFY THE
+			// DERIV'S;
+			// ---;
+			for (int I = 0; I < O1.NR; I++) {// DO 150 I=1,O1.NR;
+				JI = KDX[I];
+				if (I > O1.NRP - 1) {
+					// C------- S PHASE DATA;
+					// --------------------------------------------------;
+					T[I] = C2.POS * T[I];
+					X[0][I] = C2.POS * X[0][I];
+					X[1][I] = C2.POS * X[1][I];
+					X[2][I] = C2.POS * X[2][I];
+					X[3][I] = TP[I] - T[I] - O2.ORG - C2.POS
+							* DLY[KNO - 1][JI - 1] * FDLY;
+				} else {
+					if (KSMP[I] != 0) {// 145
+						// C------- S-P DATA;
+						// ------------------------------------------------------;
+						X[0][I] = (C2.POS - 1) * X[0][I];
+						X[1][I] = (C2.POS - 1) * X[1][I];
+						X[2][I] = (C2.POS - 1) * X[2][I];
+						X[3][I] = TS[I] - TP[I] - (C2.POS - 1)
+								* (DLY[KNO - 1][JI - 1] * FDLY + T[I]);
+					} else {
+						// C------- P TRAVEL TIME RESIDUAL;
+						// ----------------------------------------;
+						X[3][I] = TP[I] - T[I] - O2.ORG - DLY[KNO - 1][JI - 1]
+								* FDLY; // 146
+					}
+				}
+			}// 150 CONTINUE;
+
+			// C------- COMPUTE AVR, AAR, RMSSQ, & SDR;
+			// --------------------------------;
+			C2.ONF = 0.0f;
+			float XWT = 0.0f;
+			for (int I = 0; I < O1.NR; I++) {// DO 152 I=1,O1.NR;
+				C2.ONF = C2.ONF + WT[I] * (1 - KSMP[I]);
+				XWT = X[3][I] * WT[I];
+				SUM[0] = SUM[0] + XWT;
+				SUM[1] = SUM[1] + Math.abs(XWT);
+				SUM[2] = SUM[2] + X[3][I] * XWT;
+				SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
+			}// 152 CONTINUE;
+
+			if (FNO > FMO) {
+				O2.AVRPS = SUM[4] / C2.ONF;
+			}
+			O2.AVR = SUM[0] / FNO;
+			O2.AAR = SUM[1] / FNO;
+			O2.RMSSQ = SUM[2] / FNO;
+			if (singmd) {
+				O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
+			}
+			final float SDR = (float) sqrt(Math.abs(O2.RMSSQ - O2.AVR * O2.AVR));
+			for (int I = 0; I < 5; I++) {// DO 153 I=1,5;
+				SUM[I] = 0.0f;
+			}// 153 CONTINUE;
+
+			boolean goto167 = false;
+			boolean goto501 = false;
+			boolean goto502 = false;
+			boolean goto165 = false;
+			if ((O2.RMSSQ < TEST[0] && !singmd)
+					|| (singmd && (O2.RMSSQ < TEST[0] || O1.NI <= 3))) {
+				if (ERLMT == 1) {
+					goto167 = true;
+				} else {
+					if (O1.INST == 9) {
+						goto501 = true;
+					} else {
+						if (O1.NI >= 2) {
+							goto167 = true;
+						} else {
+							goto165 = true;
+						}
+					}
+				}
+			}
+			boolean goto169 = false;
+			if (!goto167) {
+				if (!goto165) {
+					// JEFFREYS' WEIGHTING;
+					FMO = 0;// 154
+					FNO = 0;
+					for (int I = 0; I < O1.NR; I++) { // DO 160 I=1,O1.NR;
+						WRK[I] = "    ";
+						if (WT[I] == 0) {
+							continue;
+						}
+						K = (int) (10 * Math.abs(X[3][I] - O2.AVR) / SDR + 1.5);
+						if (K > 41) {
+							K = 41;
+						}
+						WT[I] = WT[I] * WF[K - 1];
+						if (K > 30) {
+							WRK[I] = "****";
+						}
+						if (WT[I] < 0.005) {
+							WT[I] = 0;
+						}
+						if (WT[I] == 0.) {
+							continue;
+						}
 						if (KSMP[I] == 1) {
 							FMO = FMO + 1;
 						}
 						FNO = FNO + 1;
 						SUM[3] = SUM[3] + WT[I];
+					}// 160 CONTINUE;
+
+					if (FNO < 3) {
+						goto96 = true;
+						continue;
 					}
-				}// 120 CONTINUE;
+					AVWT = SUM[3] / FNO;
+					SUM[3] = 0.0f;
+					C2.ONF = 0.0f;
+					for (int I = 0; I < O1.NR; I++) {// DO 164 I=1,O1.NR;
+						WT[I] = WT[I] / AVWT;
+						C2.ONF = C2.ONF + WT[I] * (1 - KSMP[I]);
+						XWT = X[3][I] * WT[I];
+						SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
+					}// 164 CONTINUE;
 
-				if (FNO < 3) {
-					goto96 = true;
-					continue;
-				}
-				float AVWT = SUM[3] / FNO;
-				// C------- NORMALIZE DISTANCE WEIGHTS;
-				SUM[3] = 0.0f;
-				for (int I = 0; I < O1.NR; I++) {// DO 122 I=1,O1.NR;
-					WT[I] = WT[I] / AVWT;// 122
-				}
-				if (!(O1.NI <= 2 || C1.KAZ == 0)) {
-					// C------- AZIMUTHAL WEIGHTING;
-					// CALL AZWTOS(DX,DY,O1.NR,WT,KDX,AZ,TEMP,KEY,INS,IEW);
-					// C------- COMPUTE TRAVEL TIMES & DERIVATIVES;
-					AZWTOS(DX, DY, WT, KDX, AZ, TEMP, KEY, INS, IEW);
-				}
-
-				O2.ZSQ = O2.Z * O2.Z;// 130
-
-				// CALL TRVDRV(ISW,V,D,DEPTH,VSQ,NL,THK,H,G,F,TID,DID,FLT,;
-				// & DELTA,DX,DY,O1.NR,KDX,KNO,FLTEP,Z,ZSQ,X,T,ANIN);
-				TRVDRV(ISW, V, D, DEPTH, VSQ, THK, H, G, F, TID, DID, FLT,
-						DELTA, DX, DY, KDX, FLTEP, X, T, ANIN);
-
-				float FDLY = 1;
-				if (ISW.equals("1   ")) {
-					FDLY = 0;
-				}
-				// C------- CALCULATE TRAVEL TIME RESIDUALS X(4,I) & MODIFY THE
-				// DERIV'S;
-				// ---;
-				for (int I = 0; I < O1.NR; I++) {// DO 150 I=1,O1.NR;
-					JI = KDX[I];
-					if (I > O1.NRP - 1) {
-						// C------- S PHASE DATA;
-						// --------------------------------------------------;
-						T[I] = C2.POS * T[I];
-						X[0][I] = C2.POS * X[0][I];
-						X[1][I] = C2.POS * X[1][I];
-						X[2][I] = C2.POS * X[2][I];
-						X[3][I] = TP[I] - T[I] - O2.ORG - C2.POS
-								* DLY[KNO - 1][JI - 1] * FDLY;
-					} else {
-						if (KSMP[I] != 0) {// 145
-							// C------- S-P DATA;
-							// ------------------------------------------------------;
-							X[0][I] = (C2.POS - 1) * X[0][I];
-							X[1][I] = (C2.POS - 1) * X[1][I];
-							X[2][I] = (C2.POS - 1) * X[2][I];
-							X[3][I] = TS[I] - TP[I] - (C2.POS - 1)
-									* (DLY[KNO - 1][JI - 1] * FDLY + T[I]);
-						} else {
-							// C------- P TRAVEL TIME RESIDUAL;
-							// ----------------------------------------;
-							X[3][I] = TP[I] - T[I] - O2.ORG
-									- DLY[KNO - 1][JI - 1] * FDLY; // 146
+					// C------- RECALCULATE O2.AVRPS;
+					// ---------------------------------------------;
+					if (!(ERLMT == 1 || O1.INST != 9)) {
+						O2.AVRPS = 0.0f;
+						if (FNO != FMO) {
+							O2.AVRPS = SUM[4] / C2.ONF;
 						}
+
+						goto501 = true;
 					}
-				}// 150 CONTINUE;
-
-				// C------- COMPUTE AVR, AAR, RMSSQ, & SDR;
-				// --------------------------------;
-				C2.ONF = 0.0f;
-				float XWT = 0.0f;
-				for (int I = 0; I < O1.NR; I++) {// DO 152 I=1,O1.NR;
-					C2.ONF = C2.ONF + WT[I] * (1 - KSMP[I]);
-					XWT = X[3][I] * WT[I];
-					SUM[0] = SUM[0] + XWT;
-					SUM[1] = SUM[1] + Math.abs(XWT);
-					SUM[2] = SUM[2] + X[3][I] * XWT;
-					SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
-				}// 152 CONTINUE;
-
-				if (FNO > FMO) {
-					O2.AVRPS = SUM[4] / C2.ONF;
-				}
-				O2.AVR = SUM[0] / FNO;
-				O2.AAR = SUM[1] / FNO;
-				O2.RMSSQ = SUM[2] / FNO;
-				if (singmd) {
-					O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
-				}
-				final float SDR = (float) sqrt(Math.abs(O2.RMSSQ - O2.AVR
-						* O2.AVR));
-				for (int I = 0; I < 5; I++) {// DO 153 I=1,5;
-					SUM[I] = 0.0f;
-				}// 153 CONTINUE;
-
-				boolean goto167 = false;
-				boolean goto501 = false;
-				boolean goto502 = false;
-				boolean goto165 = false;
-				if ((O2.RMSSQ < TEST[0] && !singmd)
-						|| (singmd && (O2.RMSSQ < TEST[0] || O1.NI <= 3))) {
-					if (ERLMT == 1) {
-						goto167 = true;
-					} else {
-						if (O1.INST == 9) {
-							goto501 = true;
+					if (!goto501) {
+						if (FNO == FMO) {// 163
+							O2.AVRPS = 0.0f;
+						}
+						if (FNO == FMO) {
+							goto167 = true;
 						} else {
-							if (O1.NI >= 2) {
+							O2.AVRPS = SUM[4] / C2.ONF;
+							SUM[4] = 0.0f;
+							if (ERLMT == 1) {
 								goto167 = true;
 							} else {
-								goto165 = true;
+								// C------- RESET FIRST ORIGIN TIME;
+								// ---------------------------------------;
+								if (O1.NI >= 2) {
+									goto167 = true;
+								}
 							}
 						}
 					}
 				}
-				boolean goto169 = false;
+			}
+			if (!goto501) {
 				if (!goto167) {
-					if (!goto165) {
-						// JEFFREYS' WEIGHTING;
-						FMO = 0;// 154
-						FNO = 0;
-						for (int I = 0; I < O1.NR; I++) { // DO 160 I=1,O1.NR;
-							WRK[I] = "    ";
-							if (WT[I] == 0) {
-								continue;
-							}
-							K = (int) (10 * Math.abs(X[3][I] - O2.AVR) / SDR + 1.5);
-							if (K > 41) {
-								K = 41;
-							}
-							WT[I] = WT[I] * WF[K - 1];
-							if (K > 30) {
-								WRK[I] = "****";
-							}
-							if (WT[I] < 0.005) {
-								WT[I] = 0;
-							}
-							if (WT[I] == 0.) {
-								continue;
-							}
-							if (KSMP[I] == 1) {
-								FMO = FMO + 1;
-							}
-							FNO = FNO + 1;
-							SUM[3] = SUM[3] + WT[I];
-						}// 160 CONTINUE;
+					O2.ORG = O2.ORG + O2.AVRPS;// 165
+					for (int I = 0; I < O1.NR; I++) {// DO 166
+														// I=1,O1.NR;
+						if (KSMP[I] == 0) {
+							X[3][I] = X[3][I] - O2.AVRPS;
+						}
+						XWT = WT[I] * X[3][I];
+						SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
+						SUM[1] = SUM[1] + Math.abs(XWT);
+						SUM[2] = SUM[2] + X[3][I] * XWT;
+					}// 166 CONTINUE;
 
-						if (FNO < 3) {
-							goto96 = true;
+					if (FNO > FMO) {
+						O2.AVRPS = SUM[4] / C2.ONF;
+					}
+					O2.AAR = SUM[1] / FNO;
+					if (!singmd) {
+						O2.RMSSQ = SUM[2] / FNO;
+					} else {
+						O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
+					}
+					goto169 = true;
+
+					// C------- FOR NI>1, COMPUTE AAR, & RMSSQ AS
+					// ifAVRPS=0.;
+					// -----------------;
+				}
+
+			}
+			boolean goto550 = false;
+			if (!goto501) {
+				if (!goto169) {
+					for (int I = 0; I < O1.NR; I++) {// 167 DO 168
+														// I=1,O1.NR;
+						XWT = WT[I] * (X[3][I] - O2.AVRPS * (1 - KSMP[I]));
+						SUM[1] = SUM[1] + Math.abs(XWT);
+						SUM[2] = SUM[2] + (X[3][I] - O2.AVRPS * (1 - KSMP[I]))
+								* XWT;
+					}// 168 CONTINUE;
+
+					O2.AAR = SUM[1] / FNO;
+					if (!singmd) {
+						O2.RMSSQ = SUM[2] / FNO;
+					} else {
+						O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
+					}
+					if (ERLMT != 0) {
+						// C------- OUTPUT RMS ERROR OF AUXILIARY POINTS;
+						// --------------------------;
+
+						float L = O2.LATEP / 60;
+						final float ALA = O2.LATEP - 60.f * L;
+						L = O2.LONEP / 60;
+						final float ALO = O2.LONEP - 60f * L;
+						final float RMSX = (float) sqrt(O2.RMSSQ);
+
+						final float DRMS = RMSX - RMSSV;
+						// go to (1,2,3,4,5,6,1,2,3,4), NA;
+						switch (NA) {
+						case 1:
+						case 7:
+							writeln("FPUNCH_WRITER",
+									data(ALA, ALO, O2.Z, O2.AVRPS, RMSX, DRMS),
+									"(5F10.2,10X,F6.2)");
+							break;
+						case 2:
+						case 8:
+							writeln("FPUNCH_WRITER",
+									data(ALA, ALO, O2.Z, O2.AVRPS, RMSX, DRMS),
+									"(5F10.2,28X,F6.2)");
+							break;
+						case 3:
+						case 9:
+							writeln("FPUNCH_WRITER",
+									data(ALA, ALO, O2.Z, O2.AVRPS, RMSX, "(",
+											DRMS, ")"), "(5F10.2,13X,A,F6.2,A)");
+							break;
+						case 4:
+						case 10:
+							writeln("FPUNCH_WRITER",
+									data(ALA, ALO, O2.Z, O2.AVRPS, RMSX, "(",
+											DRMS, ")"), "(5F10.2,31X,A,F6.2,A)");
+							// IF(NA == 10)
+							goto550 = true;
+							break;
+						case 5:
+							writeln("FPUNCH_WRITER",
+									data(ALA, ALO, O2.Z, O2.AVRPS, RMSX, DRMS),
+									"(/5F10.2,19X,F6.2)");
+							writeln("FPUNCH_WRITER", data(RMSSV, "0.00"),
+									"(40X,F10.2,23X,A)");
+							break;
+						case 6:
+							writeln("FPUNCH_WRITER",
+									data(ALA, ALO, O2.Z, O2.AVRPS, RMSX, "(",
+											DRMS, ")"), "(5F10.2,22X,A,F6.2,A)");
+						}
+
+						if (!goto550) {
+							NA = NA + 1; // 174
+							goto111 = true;
 							continue;
 						}
-						AVWT = SUM[3] / FNO;
-						SUM[3] = 0.0f;
-						C2.ONF = 0.0f;
-						for (int I = 0; I < O1.NR; I++) {// DO 164 I=1,O1.NR;
-							WT[I] = WT[I] / AVWT;
-							C2.ONF = C2.ONF + WT[I] * (1 - KSMP[I]);
-							XWT = X[3][I] * WT[I];
-							SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
-						}// 164 CONTINUE;
-
-						// C------- RECALCULATE O2.AVRPS;
-						// ---------------------------------------------;
-						if (!(ERLMT == 1 || O1.INST != 9)) {
-							O2.AVRPS = 0.0f;
-							if (FNO != FMO) {
-								O2.AVRPS = SUM[4] / C2.ONF;
-							}
-
-							goto501 = true;
-						}
-						if (!goto501) {
-							if (FNO == FMO) {// 163
-								O2.AVRPS = 0.0f;
-							}
-							if (FNO == FMO) {
-								goto167 = true;
-							} else {
-								O2.AVRPS = SUM[4] / C2.ONF;
-								SUM[4] = 0.0f;
-								if (ERLMT == 1) {
-									goto167 = true;
-								} else {
-									// C------- RESET FIRST ORIGIN TIME;
-									// ---------------------------------------;
-									if (O1.NI >= 2) {
-										goto167 = true;
-									}
-								}
-							}
-						}
 					}
 				}
-				if (!goto501) {
-					if (!goto167) {
-						O2.ORG = O2.ORG + O2.AVRPS;// 165
-						for (int I = 0; I < O1.NR; I++) {// DO 166
-															// I=1,O1.NR;
-							if (KSMP[I] == 0) {
-								X[3][I] = X[3][I] - O2.AVRPS;
-							}
-							XWT = WT[I] * X[3][I];
-							SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
-							SUM[1] = SUM[1] + Math.abs(XWT);
-							SUM[2] = SUM[2] + X[3][I] * XWT;
-						}// 166 CONTINUE;
-
-						if (FNO > FMO) {
-							O2.AVRPS = SUM[4] / C2.ONF;
-						}
-						O2.AAR = SUM[1] / FNO;
-						if (!singmd) {
-							O2.RMSSQ = SUM[2] / FNO;
-						} else {
-							O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
-						}
-						goto169 = true;
-
-						// C------- FOR NI>1, COMPUTE AAR, & RMSSQ AS
-						// ifAVRPS=0.;
-						// -----------------;
+				if (!goto550) {
+					// C------- CHECK ifSOLUTION IS BETTER THAN PREVIOUS
+					// ONE;
+					boolean goto170 = false;
+					boolean goto325 = false;
+					if ((O1.NI == 1 && O1.NDEC == 0) || PRMSSQ >= O2.RMSSQ) { // 169
+						goto170 = true;
 					}
 
-				}
-				boolean goto550 = false;
-				if (!goto501) {
-					if (!goto169) {
-						for (int I = 0; I < O1.NR; I++) {// 167 DO 168
-															// I=1,O1.NR;
-							XWT = WT[I] * (X[3][I] - O2.AVRPS * (1 - KSMP[I]));
-							SUM[1] = SUM[1] + Math.abs(XWT);
-							SUM[2] = SUM[2]
-									+ (X[3][I] - O2.AVRPS * (1 - KSMP[I]))
-									* XWT;
-						}// 168 CONTINUE;
+					float XADJSQ = 0;
+					if (!goto170) {
+						O1.NDEC = O1.NDEC + 1;
+						if (O1.NDEC <= 1) {
+							for (int I = 0; I < 3; I++) {// DO 177 I= 1,3;
+								B[I] = 0.0f;
+								AF[I] = -1.0f;
+								SE[I] = 0.0f;
+							}// 177 CONTINUE;
 
-						O2.AAR = SUM[1] / FNO;
-						if (!singmd) {
-							O2.RMSSQ = SUM[2] / FNO;
-						} else {
-							O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
-						}
-						if (ERLMT != 0) {
-							// C------- OUTPUT RMS ERROR OF AUXILIARY POINTS;
-							// --------------------------;
-
-							float L = O2.LATEP / 60;
-							final float ALA = O2.LATEP - 60.f * L;
-							L = O2.LONEP / 60;
-							final float ALO = O2.LONEP - 60f * L;
-							final float RMSX = (float) sqrt(O2.RMSSQ);
-
-							final float DRMS = RMSX - RMSSV;
-							// go to (1,2,3,4,5,6,1,2,3,4), NA;
-							switch (NA) {
-							case 1:
-							case 7:
-								writeln("FPUNCH_WRITER",
-										data(ALA, ALO, O2.Z, O2.AVRPS, RMSX,
-												DRMS), "(5F10.2,10X,F6.2)");
-								break;
-							case 2:
-							case 8:
-								writeln("FPUNCH_WRITER",
-										data(ALA, ALO, O2.Z, O2.AVRPS, RMSX,
-												DRMS), "(5F10.2,28X,F6.2)");
-								break;
-							case 3:
-							case 9:
-								writeln("FPUNCH_WRITER",
-										data(ALA, ALO, O2.Z, O2.AVRPS, RMSX,
-												"(", DRMS, ")"),
-										"(5F10.2,13X,A,F6.2,A)");
-								break;
-							case 4:
-							case 10:
-								writeln("FPUNCH_WRITER",
-										data(ALA, ALO, O2.Z, O2.AVRPS, RMSX,
-												"(", DRMS, ")"),
-										"(5F10.2,31X,A,F6.2,A)");
-								// IF(NA == 10)
-								goto550 = true;
-								break;
-							case 5:
-								writeln("FPUNCH_WRITER",
-										data(ALA, ALO, O2.Z, O2.AVRPS, RMSX,
-												DRMS), "(/5F10.2,19X,F6.2)");
-								writeln("FPUNCH_WRITER", data(RMSSV, "0.00"),
-										"(40X,F10.2,23X,A)");
-								break;
-							case 6:
-								writeln("FPUNCH_WRITER",
-										data(ALA, ALO, O2.Z, O2.AVRPS, RMSX,
-												"(", DRMS, ")"),
-										"(5F10.2,22X,A,F6.2,A)");
-							}
-
-							if (!goto550) {
-								NA = NA + 1; // 174
-								goto111 = true;
-								continue;
-							}
-						}
-					}
-					if (!goto550) {
-						// C------- CHECK ifSOLUTION IS BETTER THAN PREVIOUS
-						// ONE;
-						boolean goto170 = false;
-						boolean goto325 = false;
-						if ((O1.NI == 1 && O1.NDEC == 0) || PRMSSQ >= O2.RMSSQ) { // 169
-							goto170 = true;
-						}
-
-						float XADJSQ = 0;
-						if (!goto170) {
-							O1.NDEC = O1.NDEC + 1;
-							if (O1.NDEC <= 1) {
-								for (int I = 0; I < 3; I++) {// DO 177 I= 1,3;
-									B[I] = 0.0f;
-									AF[I] = -1.0f;
-									SE[I] = 0.0f;
-								}// 177 CONTINUE;
-
-								O1.NI = O1.NI - 1;
-								final float BM1 = Y[0];
-								final float BM2 = Y[1];
-								final float BM3 = Y[2];
-								float BMAX = Math.abs(Y[0]);
-								int IIMAX = 1;
-								for (int I = 1; I < 3; I++) {// DO 176 I = 2,3;
-									if (Math.abs(Y[I]) <= BMAX) {
-										continue;
-									}
-									BMAX = Math.abs(Y[I]);
-									IIMAX = I;
-								}// 176 CONTINUE;
-
-								ISKP[IIMAX] = 1;
-								Y[0] = -BM1 / 5;
-								Y[1] = -BM2 / 5;
-								Y[2] = -BM3 / 5;
-								Y[3] = -Y[0] * XMEAN[0] - Y[1] * XMEAN[1]
-										- Y[2] * XMEAN[2];
-								XADJSQ = Y[0] * Y[0] + Y[1] * Y[1] + Y[2]
-										* Y[2];
-								O1.KP = 0;
-								if (XADJSQ < 4 * TEST[3] / 25) {
-									goto170 = true;
+							O1.NI = O1.NI - 1;
+							final float BM1 = Y[0];
+							final float BM2 = Y[1];
+							final float BM3 = Y[2];
+							float BMAX = Math.abs(Y[0]);
+							int IIMAX = 1;
+							for (int I = 1; I < 3; I++) {// DO 176 I = 2,3;
+								if (Math.abs(Y[I]) <= BMAX) {
+									continue;
 								}
-							}
-							if (O1.NDEC == 5) {
+								BMAX = Math.abs(Y[I]);
+								IIMAX = I;
+							}// 176 CONTINUE;
+
+							ISKP[IIMAX] = 1;
+							Y[0] = -BM1 / 5;
+							Y[1] = -BM2 / 5;
+							Y[2] = -BM3 / 5;
+							Y[3] = -Y[0] * XMEAN[0] - Y[1] * XMEAN[1] - Y[2]
+									* XMEAN[2];
+							XADJSQ = Y[0] * Y[0] + Y[1] * Y[1] + Y[2] * Y[2];
+							O1.KP = 0;
+							if (XADJSQ < 4 * TEST[3] / 25) {
 								goto170 = true;
 							}
-							if (!goto170) {
-								goto325 = true;
-							}
-
-							// STEPWISE MULTIPLE REGRESSION ANALYSIS OF TRAVEL
-							// TIME RESIDUALS;
 						}
-						if (!goto325) {
-							if (O1.NDEC >= 1) {// 170
-								O1.NI = O1.NI + 1;
-							}
-							boolean goto300 = false;
-							boolean goto250 = false;
-							if (O1.INST == 1 | ISKP[2] == 1) {
-								goto250 = true;
-							}
-							if (!goto250 & O1.INST == 9) {
-								goto501 = true;
-							}
-							if (!goto501 & FNO == 3 && FMO < 3) {
-								goto250 = true;
-							}
-							if (!goto501) {
-								if (!goto250) {
-									// C---- FREE SOLUTION;
-									O1.KZ = 0;
-									O1.KF = 0;
+						if (O1.NDEC == 5) {
+							goto170 = true;
+						}
+						if (!goto170) {
+							goto325 = true;
+						}
 
-									SWMREG(FNO, X, WT, ISKP, XMEAN, B, SE, AF);
-									// CALL
-									// SWMREG(TEST,IPRN,O1.NR,KSMP,FNO,X,WT,ISKP,KF,KZ,XMEAN,;
-									// & B,Y,SE,AF,ONF,FLIM);
-
-									// AVOID CORRECTING DEPTH ifHORIZONTAL
-									// CHANGE IS LARGE;
-
-									if (Y[0] * Y[0] + Y[1] * Y[1] < TEST[1]) {
-										goto300 = true;
-									}
-								}
-								if (!goto300) {
-									// C---- FIXED DEPTH SOLUTION;
-									O1.KZ = 1;// 250
-									O1.KF = 0;
-
-									SWMREG(FNO, X, WT, ISKP, XMEAN, B, SE, AF);
-									// CALL
-									// SWMREG(TEST,IPRN,O1.NR,KSMP,FNO,X,WT,ISKP,KF,KZ,XMEAN,;
-									// & B,Y,SE,AF,ONF,FLIM);
-
-									// LIMIT FOCAL DEPTH CHANGE & AVOID
-									// HYPOCENTER IN THE AIR;
-
-								}
-								int I;
-								for (I = 0; I < 3; I++) {// 300 DO 275 I=
-									ISKP[I] = 0;
-								}// 275 CONTINUE;
-
-								I++;
-								final float OLDY1 = Y[0];
-								final float OLDY2 = Y[1];
-								final float OLDY3 = Y[2];
-								final float ABSY1 = abs(Y[0]);
-								final float ABSY2 = abs(Y[1]);
-								final float ABSY3 = abs(Y[2]);
-								float ABSGR;
-								if (ABSY1 <= ABSY2) {
-									ABSGR = ABSY2;
-
-								} else {
-									ABSGR = ABSY1;// 305
-								}
-								if (ABSY3 > TEST[4]) {// 308
-									I = (int) (ABSY3 / TEST[4]);
-									Y[2] = Y[2] / (I + 1);
-								}
-								if (O2.Z + Y[2] <= 0.0) {// 310
-									Y[2] = (-O2.Z * TEST[11] + 0.000001f);
-									ISKP[2] = 1;
-									// LIMIT HORIZONTAL ADJUSTMENT OF
-									// EPICENTER;
-								}
-								if (ABSGR > TEST[9]) {// 315
-									I = (int) (ABSGR / TEST[9]);
-									Y[0] = Y[0] / (I + 1);
-									Y[1] = Y[1] / (I + 1);
-								}
-								Y[3] = Y[3] - (Y[2] - OLDY3) * XMEAN[2]
-										- (Y[0] - OLDY1) * XMEAN[0]
-										- (Y[1] - OLDY2) * XMEAN[1]; // 320
-								XADJSQ = Y[0] * Y[0] + Y[1] * Y[1] + Y[2]
-										* Y[2];
-
-								O1.KP = 0;
-								O1.NDEC = 0;
-								O1.JPH = 0;
-							}
+						// STEPWISE MULTIPLE REGRESSION ANALYSIS OF TRAVEL
+						// TIME RESIDUALS;
+					}
+					if (!goto325) {
+						if (O1.NDEC >= 1) {// 170
+							O1.NI = O1.NI + 1;
+						}
+						boolean goto300 = false;
+						boolean goto250 = false;
+						if (O1.INST == 1 | ISKP[2] == 1) {
+							goto250 = true;
+						}
+						if (!goto250 & O1.INST == 9) {
+							goto501 = true;
+						}
+						if (!goto501 & FNO == 3 && FMO < 3) {
+							goto250 = true;
 						}
 						if (!goto501) {
-							if (C1.IPRN >= 1) {// 325
-								OUTPUT(IW, INS, IEW, DLY, FMGC, XMGC, KLAS,
-										PRR, CALR, ICAL, FLT, QSPA, PRMK, JMIN,
-										P, S, SRMK, AMX, PRX, CALX, RMK, DT,
-										FMP, AZRES, KDX, LDX, WT, TP, T, WRK,
-										TS, TIME1, TIME2, DELTA, DX, DY, FNO,
-										X, B, SE, AF, AZ, AIN, ANIN, TEMP, KEY);
-							}
+							if (!goto250) {
+								// C---- FREE SOLUTION;
+								O1.KZ = 0;
+								O1.KF = 0;
 
-							boolean goto500 = false;
-							if (O1.NDEC < 1) {
-								// TERMINATE ITERATION ifHYPOCENTER
-								// ADJUSTMENT < TEST(4);
-								if ((!singmd && XADJSQ < TEST[3])
-										|| (singmd && (XADJSQ < TEST[3] && O1.NI > 4))) {
-									goto500 = true;
+								SWMREG(FNO, X, WT, ISKP, XMEAN, B, SE, AF);
+								// CALL
+								// SWMREG(TEST,IPRN,O1.NR,KSMP,FNO,X,WT,ISKP,KF,KZ,XMEAN,;
+								// & B,Y,SE,AF,ONF,FLIM);
+
+								// AVOID CORRECTING DEPTH ifHORIZONTAL
+								// CHANGE IS LARGE;
+
+								if (Y[0] * Y[0] + Y[1] * Y[1] < TEST[1]) {
+									goto300 = true;
 								}
 							}
-							if (O1.NI == NIMAX) {
-								goto500 = true;
+							if (!goto300) {
+								// C---- FIXED DEPTH SOLUTION;
+								O1.KZ = 1;// 250
+								O1.KF = 0;
+
+								SWMREG(FNO, X, WT, ISKP, XMEAN, B, SE, AF);
+								// CALL
+								// SWMREG(TEST,IPRN,O1.NR,KSMP,FNO,X,WT,ISKP,KF,KZ,XMEAN,;
+								// & B,Y,SE,AF,ONF,FLIM);
+
+								// LIMIT FOCAL DEPTH CHANGE & AVOID
+								// HYPOCENTER IN THE AIR;
+
 							}
-							if (!goto500) {
-								// ADJUST HYPOCENTER;
-								PHI = 0.0174532f * (O2.LATEP / 60);
-								SINPHI = (float) Math.sin(PHI);
-								SINP2 = SINPHI * SINPHI;
-								SINP4 = SINP2 * SINP2;
-								CA = 1.8553654f + 0.0062792f * SINP2
-										+ 0.0000319f * SINP4;
-								CB = 1.8428071f + 0.0187098f * SINP2
-										+ 0.0001583f * SINP4;
-								O2.LATEP = (O2.LATEP + Y[1] / CB);
-								O2.LONEP = (O2.LONEP + Y[0]
-										/ (CA * (float) Math.cos(PHI)));
-								O2.Z = O2.Z + Y[2];
-								O2.ORG = O2.ORG + Y[3];
-								/*
-								 * SVY1 = Y[0]; SVY2 = Y[1]; SVY3 = Y[2];
-								 */
-								O2.ADJSQ = XADJSQ;
-								if (O1.NDEC == 0) {
-									PRMSSQ = O2.RMSSQ;
-								}
-								if (O1.NDEC >= 1) {
-									goto110 = true;
-									continue;
-								}
-								O1.NI = O1.NI + 1;
-								if (O1.NI <= NIMAX) {
-									goto111 = true;
-									continue;
-								}
-								// RESET ORIGIN TIME;
+							int I;
+							for (I = 0; I < 3; I++) {// 300 DO 275 I=
+								ISKP[I] = 0;
+							}// 275 CONTINUE;
+
+							I++;
+							final float OLDY1 = Y[0];
+							final float OLDY2 = Y[1];
+							final float OLDY3 = Y[2];
+							final float ABSY1 = abs(Y[0]);
+							final float ABSY2 = abs(Y[1]);
+							final float ABSY3 = abs(Y[2]);
+							float ABSGR;
+							if (ABSY1 <= ABSY2) {
+								ABSGR = ABSY2;
+
+							} else {
+								ABSGR = ABSY1;// 305
 							}
-							O2.ORG = O2.ORG + XMEAN[3];// 500
-							goto502 = true;
+							if (ABSY3 > TEST[4]) {// 308
+								I = (int) (ABSY3 / TEST[4]);
+								Y[2] = Y[2] / (I + 1);
+							}
+							if (O2.Z + Y[2] <= 0.0) {// 310
+								Y[2] = (-O2.Z * TEST[11] + 0.000001f);
+								ISKP[2] = 1;
+								// LIMIT HORIZONTAL ADJUSTMENT OF
+								// EPICENTER;
+							}
+							if (ABSGR > TEST[9]) {// 315
+								I = (int) (ABSGR / TEST[9]);
+								Y[0] = Y[0] / (I + 1);
+								Y[1] = Y[1] / (I + 1);
+							}
+							Y[3] = Y[3] - (Y[2] - OLDY3) * XMEAN[2]
+									- (Y[0] - OLDY1) * XMEAN[0]
+									- (Y[1] - OLDY2) * XMEAN[1]; // 320
+							XADJSQ = Y[0] * Y[0] + Y[1] * Y[1] + Y[2] * Y[2];
+
+							O1.KP = 0;
+							O1.NDEC = 0;
+							O1.JPH = 0;
 						}
 					}
-					if ((goto501 | goto502) & !goto550) {
-						if (!goto502) {
-							XMEAN[3] = 0.0f;// 501
+					if (!goto501) {
+						if (C1.IPRN >= 1) {// 325
+							OUTPUT(IW, INS, IEW, DLY, FMGC, XMGC, KLAS, PRR,
+									CALR, ICAL, FLT, QSPA, PRMK, JMIN, P, S,
+									SRMK, AMX, PRX, CALX, RMK, DT, FMP, AZRES,
+									KDX, LDX, WT, TP, T, WRK, TS, TIME1, TIME2,
+									DELTA, DX, DY, FNO, X, B, SE, AF, AZ, AIN,
+									ANIN, TEMP, KEY);
 						}
 
-						for (int i = 0; i < 5; i++) {// 502 DO 505 I=1,5;
-							SUM[i] = 0.0f;// 505
-						}
-
-						float SUMM = 0.0f;
-						for (int I = 0; I < O1.NR; I++) {// DO 510 I=1,O1.NR;
-							if (KSMP[I] == 0) {
-								X[3][I] = X[3][I] - XMEAN[3];
+						boolean goto500 = false;
+						if (O1.NDEC < 1) {
+							// TERMINATE ITERATION ifHYPOCENTER
+							// ADJUSTMENT < TEST(4);
+							if ((!singmd && XADJSQ < TEST[3])
+									|| (singmd && (XADJSQ < TEST[3] && O1.NI > 4))) {
+								goto500 = true;
 							}
-							if (WT[I] == 0) {
-								continue;
-							}
-							if (O1.INST == 9) {
-								float XWTS = WT[I] * (X[3][I] * X[3][I]);
-								if (KSMP[I] == 0) {
-									final float val = X[3][I] - O2.AVRPS;
-									XWTS = WT[I] * (val * val);
-								}
-								SUMM = SUMM + XWTS;
-							}
-							XWT = X[3][I] * WT[I];// 509
-							SUM[0] = SUM[0] + XWT;
-							SUM[1] = SUM[1] + Math.abs(XWT);
-							SUM[2] = SUM[2] + X[3][I] * XWT;
-							SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
-						}// 510 CONTINUE;
-
-						final float RM9SV = SUMM / FNO;
-						O2.AVR = SUM[0] / FNO;
-						O2.AVRPS = 0.0f;
-						if (FNO > FMO) {
-							O2.AVRPS = SUM[4] / C2.ONF;
 						}
-						O2.AAR = SUM[1] / FNO;
-						if (!singmd) {
-							O2.RMSSQ = SUM[2] / FNO;
-						} else {
-							O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
+						if (O1.NI == NIMAX) {
+							goto500 = true;
 						}
-						// COMPUTE ERROR ESTIMATES BY SOLVING FULL NORMAL
-						// EQUATION;
-						O1.KF = 2;
-						O1.KP = 1;
-						O1.KZ = 0;
-
-						SWMREG(FNO, X, WT, ISKP, XMEAN, B, SE, AF);
-						// CALL
-						// SWMREG(TEST,IPRN,O1.NR,KSMP,FNO,X,WT,ISKP,KF,KZ,XMEAN,;
-						// & B,Y,SE,AF,ONF,FLIM);
-
-						for (int I = 0; I < 3; I++) {// DO 521 I =1,3;
-							Y[I] = 0.0f;// 521
-						}
-						if (O1.INST == 1) {
-							O1.KZ = 1;
-						}
-
-						OUTPUT(IW, INS, IEW, DLY, FMGC, XMGC, KLAS, PRR, CALR,
-								ICAL, FLT, QSPA, PRMK, JMIN, P, S, SRMK, AMX,
-								PRX, CALX, RMK, DT, FMP, AZRES, KDX, LDX, WT,
-								TP, T, WRK, TS, TIME1, TIME2, DELTA, DX, DY,
-								FNO, X, B, SE, AF, AZ, AIN, ANIN, TEMP, KEY);
-						// CALL OUTPUT(TEST,KNO,IW,INS,IEW,DLY,FMGC,XMGC,;
-						// & KLAS,PRR,CALR,ICAL,FLT,QSPA,MSTA,;
-						// &
-						// PRMK,JMIN,P,S,SRMK,AMX,PRX,CALX,RMK,DT,FMP,AZRES,QRMK,KDX,LDX,;
-						// & WT,TP,T,WRK,KSMP,TS,TIME1,TIME2,DELTA,DX,DY,AVXM,;
-						// &
-						// XMAG,AVFM,FMAG,MAG,FNO,X,B,Y,SE,AF,AZ,AIN,ANIN,TEMP,KEY);
-
-						if (C1.KMS == 1) {
-							MISING(MAG, TEMP);
-							// CALL MISING;
-							// & (NSTA,LAT,LON,NS,MAG,TEMP,DMIN,JDX,;
-							// & JMAX,LATEP,LONEP,INS,IEW);
-						}
-						if (O1.KNST >= 5 || C1.KFM >= 1) {
-							FMPLOT(C1.KPAPER, C1.KFM, FNO, AZ, AIN, SYM, SUCARD);
-							// CALL FMPLOT;
-							// & (KPAPER,KFM,FNO,O1.NRP,AZ,AIN,SYM,SUCARD);
-						}
-						QNO[O1.JAV - 1] = QNO[O1.JAV - 1] + 1;
-						if (O1.JAV <= C1.IQ) {
-							// COMPUTE SUMMARY OF TRAVEL TIME RESIDUALS;
-
-							for (int I = 0; I < O1.NRP; I++) {// DO 522
-																// I=1,O1.NRP;
-								if (WT[I] == 0. || KSMP[I] == 1) {
-									continue;
-								}
-								JI = KDX[I];
-								NRES[KNO - 1][JI - 1] = NRES[KNO - 1][JI - 1] + 1;
-								SR[KNO - 1][JI - 1] = SR[KNO - 1][JI - 1]
-										+ X[3][I] * WT[I];
-								SRSQ[KNO - 1][JI - 1] = SRSQ[KNO - 1][JI - 1]
-										+ X[3][I] * X[3][I] * WT[I];
-								SRWT[KNO - 1][JI - 1] = SRWT[KNO - 1][JI - 1]
-										+ WT[I];
-							} // 522 CONTINUE;
-						}
-						if (C1.KTEST == 1) {// 523
-							// COMPUTE RMS AT AUXILIARY POINTS;
-							RMSSV = (float) sqrt(O2.RMSSQ);
-							if (O1.INST == 9) {
-								RMSSV = (float) sqrt(RM9SV);
-							}
-							ERLMT = 1;
-							LATSV = O2.LATEP;
-							LONSV = O2.LONEP;
-							ZSV = O2.Z;
+						if (!goto500) {
+							// ADJUST HYPOCENTER;
 							PHI = 0.0174532f * (O2.LATEP / 60);
-							SINPHI = (float) sin(PHI);
+							SINPHI = (float) Math.sin(PHI);
 							SINP2 = SINPHI * SINPHI;
 							SINP4 = SINP2 * SINP2;
 							CA = 1.8553654f + 0.0062792f * SINP2 + 0.0000319f
 									* SINP4;
 							CB = 1.8428071f + 0.0187098f * SINP2 + 0.0001583f
 									* SINP4;
-							DELAT = TEST[12] / CB;
-							DELON = TEST[12] / (CA * (float) cos(PHI));
-							DEZ = TEST[12];
-
-							writeln("FPUNCH_WRITER",
-									data(" LAT LON Z O2.AVRPS RMS DRMS"),
-									"(/,A,/)");
-							NA = 1;
-							goto111 = true;
-							continue;
+							O2.LATEP = (O2.LATEP + Y[1] / CB);
+							O2.LONEP = (O2.LONEP + Y[0]
+									/ (CA * (float) Math.cos(PHI)));
+							O2.Z = O2.Z + Y[2];
+							O2.ORG = O2.ORG + Y[3];
+							/*
+							 * SVY1 = Y[0]; SVY2 = Y[1]; SVY3 = Y[2];
+							 */
+							O2.ADJSQ = XADJSQ;
+							if (O1.NDEC == 0) {
+								PRMSSQ = O2.RMSSQ;
+							}
+							if (O1.NDEC >= 1) {
+								goto110 = true;
+								continue;
+							}
+							O1.NI = O1.NI + 1;
+							if (O1.NI <= NIMAX) {
+								goto111 = true;
+								continue;
+							}
+							// RESET ORIGIN TIME;
 						}
+						O2.ORG = O2.ORG + XMEAN[3];// 500
+						goto502 = true;
+					}
+				}
+				if ((goto501 | goto502) & !goto550) {
+					if (!goto502) {
+						XMEAN[3] = 0.0f;// 501
 					}
 
-					TIME1 = TIME2;// 550
+					for (int i = 0; i < 5; i++) {// 502 DO 505 I=1,5;
+						SUM[i] = 0.0f;// 505
+					}
 
-					// 575 CONTINUE;
+					float SUMM = 0.0f;
+					for (int I = 0; I < O1.NR; I++) {// DO 510 I=1,O1.NR;
+						if (KSMP[I] == 0) {
+							X[3][I] = X[3][I] - XMEAN[3];
+						}
+						if (WT[I] == 0) {
+							continue;
+						}
+						if (O1.INST == 9) {
+							float XWTS = WT[I] * (X[3][I] * X[3][I]);
+							if (KSMP[I] == 0) {
+								final float val = X[3][I] - O2.AVRPS;
+								XWTS = WT[I] * (val * val);
+							}
+							SUMM = SUMM + XWTS;
+						}
+						XWT = X[3][I] * WT[I];// 509
+						SUM[0] = SUM[0] + XWT;
+						SUM[1] = SUM[1] + Math.abs(XWT);
+						SUM[2] = SUM[2] + X[3][I] * XWT;
+						SUM[4] = SUM[4] + XWT * (1 - KSMP[I]);
+					}// 510 CONTINUE;
+
+					final float RM9SV = SUMM / FNO;
+					O2.AVR = SUM[0] / FNO;
+					O2.AVRPS = 0.0f;
+					if (FNO > FMO) {
+						O2.AVRPS = SUM[4] / C2.ONF;
+					}
+					O2.AAR = SUM[1] / FNO;
+					if (!singmd) {
+						O2.RMSSQ = SUM[2] / FNO;
+					} else {
+						O2.RMSSQ = SUM[2] / Math.max(1, FNO - 4);
+					}
+					// COMPUTE ERROR ESTIMATES BY SOLVING FULL NORMAL
+					// EQUATION;
+					O1.KF = 2;
+					O1.KP = 1;
+					O1.KZ = 0;
+
+					SWMREG(FNO, X, WT, ISKP, XMEAN, B, SE, AF);
+					// CALL
+					// SWMREG(TEST,IPRN,O1.NR,KSMP,FNO,X,WT,ISKP,KF,KZ,XMEAN,;
+					// & B,Y,SE,AF,ONF,FLIM);
+
+					for (int I = 0; I < 3; I++) {// DO 521 I =1,3;
+						Y[I] = 0.0f;// 521
+					}
+					if (O1.INST == 1) {
+						O1.KZ = 1;
+					}
+
+					OUTPUT(IW, INS, IEW, DLY, FMGC, XMGC, KLAS, PRR, CALR,
+							ICAL, FLT, QSPA, PRMK, JMIN, P, S, SRMK, AMX, PRX,
+							CALX, RMK, DT, FMP, AZRES, KDX, LDX, WT, TP, T,
+							WRK, TS, TIME1, TIME2, DELTA, DX, DY, FNO, X, B,
+							SE, AF, AZ, AIN, ANIN, TEMP, KEY);
+					// CALL OUTPUT(TEST,KNO,IW,INS,IEW,DLY,FMGC,XMGC,;
+					// & KLAS,PRR,CALR,ICAL,FLT,QSPA,MSTA,;
+					// &
+					// PRMK,JMIN,P,S,SRMK,AMX,PRX,CALX,RMK,DT,FMP,AZRES,QRMK,KDX,LDX,;
+					// & WT,TP,T,WRK,KSMP,TS,TIME1,TIME2,DELTA,DX,DY,AVXM,;
+					// &
+					// XMAG,AVFM,FMAG,MAG,FNO,X,B,Y,SE,AF,AZ,AIN,ANIN,TEMP,KEY);
+
+					if (C1.KMS == 1) {
+						MISING(MAG, TEMP);
+						// CALL MISING;
+						// & (NSTA,LAT,LON,NS,MAG,TEMP,DMIN,JDX,;
+						// & JMAX,LATEP,LONEP,INS,IEW);
+					}
+					if (O1.KNST >= 5 || C1.KFM >= 1) {
+						FMPLOT(C1.KPAPER, C1.KFM, FNO, AZ, AIN, SYM, SUCARD);
+						// CALL FMPLOT;
+						// & (KPAPER,KFM,FNO,O1.NRP,AZ,AIN,SYM,SUCARD);
+					}
+					QNO[O1.JAV - 1] = QNO[O1.JAV - 1] + 1;
+					if (O1.JAV <= C1.IQ) {
+						// COMPUTE SUMMARY OF TRAVEL TIME RESIDUALS;
+
+						for (int I = 0; I < O1.NRP; I++) {// DO 522
+															// I=1,O1.NRP;
+							if (WT[I] == 0. || KSMP[I] == 1) {
+								continue;
+							}
+							JI = KDX[I];
+							NRES[KNO - 1][JI - 1] = NRES[KNO - 1][JI - 1] + 1;
+							SR[KNO - 1][JI - 1] = SR[KNO - 1][JI - 1] + X[3][I]
+									* WT[I];
+							SRSQ[KNO - 1][JI - 1] = SRSQ[KNO - 1][JI - 1]
+									+ X[3][I] * X[3][I] * WT[I];
+							SRWT[KNO - 1][JI - 1] = SRWT[KNO - 1][JI - 1]
+									+ WT[I];
+						} // 522 CONTINUE;
+					}
+					if (C1.KTEST == 1) {// 523
+						// COMPUTE RMS AT AUXILIARY POINTS;
+						RMSSV = (float) sqrt(O2.RMSSQ);
+						if (O1.INST == 9) {
+							RMSSV = (float) sqrt(RM9SV);
+						}
+						ERLMT = 1;
+						LATSV = O2.LATEP;
+						LONSV = O2.LONEP;
+						ZSV = O2.Z;
+						PHI = 0.0174532f * (O2.LATEP / 60);
+						SINPHI = (float) sin(PHI);
+						SINP2 = SINPHI * SINPHI;
+						SINP4 = SINP2 * SINP2;
+						CA = 1.8553654f + 0.0062792f * SINP2 + 0.0000319f
+								* SINP4;
+						CB = 1.8428071f + 0.0187098f * SINP2 + 0.0001583f
+								* SINP4;
+						DELAT = TEST[12] / CB;
+						DELON = TEST[12] / (CA * (float) cos(PHI));
+						DEZ = TEST[12];
+
+						writeln("FPUNCH_WRITER",
+								data(" LAT LON Z O2.AVRPS RMS DRMS"), "(/,A,/)");
+						NA = 1;
+						goto111 = true;
+						continue;
+					}
 				}
+
+				TIME1 = TIME2;// 550
+
+				// 575 CONTINUE;
 			}
 		}
 
@@ -3655,7 +3639,7 @@ public class Hypo71 {
 					goto50 = true;
 					break;
 				}
-			}			
+			}
 			if (!goto50) {
 				// Integration code goes here
 				results.addToDeletedStationsList(getFormattedString(
@@ -4491,19 +4475,19 @@ public class Hypo71 {
 				C5.XFN = C2.XFAR - C2.XNEAR + 0.000001f;
 				TIME1 = 0;
 				g900: while (true) {
+					initStringArray(AZRES);
 					do {
 						INPUT2(phaseRecordsList);
-						if (MJUMP != 1) {
-							if (O1.NR < 1) {
-								writeln("FPRINT_WRITER",
-										"\n\n\n ***** EXTRA BLANK CARD ENCOUNTERED *****");
-							} else {
-								break;
-							}
-						} else {
+						if (MJUMP == 1) {
 							break g900;
 						}
-					} while (O1.NR >= 1);
+						if (O1.NR < 1) {
+							writeln("FPRINT_WRITER",
+									"\n\n\n ***** EXTRA BLANK CARD ENCOUNTERED *****");
+						} else {
+							break;
+						}
+					} while (O1.NR < 1);
 					O1.KKF = 0;
 					// int KYEAR = C4.KDATE / 10000;
 					// int KMONTH = (C4.KDATE - 10000 * KYEAR) / 100;
@@ -4512,11 +4496,6 @@ public class Hypo71 {
 						SINGLE(false);
 					} else {
 						SINGLE(true);
-					}
-					if (O1.KKF != 0) {
-						// return
-						// " *** INSUFFICIENT DATA FOR LOCATING THIS QUAKE ***";
-						break;
 					}
 					// C------- COMPUTE SUMMARY OF MAGNITUDE RESIDUALS
 					// -----------------------
