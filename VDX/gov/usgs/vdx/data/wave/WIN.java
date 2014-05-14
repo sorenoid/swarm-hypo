@@ -115,6 +115,7 @@ public class WIN
 	
 	private ByteBuffer converter2 = ByteBuffer.wrap(new byte[2]);
 	private ByteBuffer converter4 = ByteBuffer.wrap(new byte[4]);
+	private String timeZone;
 	
 	static int intFromSingleByte(byte b)
 	{
@@ -316,7 +317,7 @@ public class WIN
 	 */
 	public Date getStartTime(ChannelData c)
 	{
-		String timeZone = "GMT";
+		timeZone = "GMT";
 		if (timeZoneValue < 0) {
 			timeZone += Integer.toString(timeZoneValue)+":00";
 		} else if (timeZoneValue > 0) {
@@ -333,6 +334,10 @@ public class WIN
 		cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return cal.getTime();
 	 }
+
+	public String getTimeZone() {
+		return timeZone;
+	}
 
 //	/** just for testing. Reads the filename given as the argument,
 //	 *  writes out some header variables and then

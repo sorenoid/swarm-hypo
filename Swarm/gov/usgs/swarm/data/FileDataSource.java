@@ -189,26 +189,29 @@ public class FileDataSource extends AbstractCachingDataSource {
 	public void openFiles(File[] fs) {
 		Swarm.isAssumeSame = false;
 		FileTypeDialog dialog = null;
+		FileType ft = FileType.UNKNOWN;
 		for (int i = 0; i < fs.length; i++) {
 			if(!Swarm.cancelProcess){
-				FileType ft = FileType.fromFileExtension(fs[i]);
-				if (ft == FileType.UNKNOWN && !Swarm.isAssumeSame) {
-					if (dialog == null)
-						dialog = new FileTypeDialog();
-					if (!dialog.opened || (dialog.opened && !dialog.isAssumeSame())) {
-						dialog.setFilename(fs[i].getName());
-						dialog.setVisible(true);
+				if (!Swarm.isAssumeSame) {
+					ft = FileType.fromFileExtension(fs[i]);
+					if (ft == FileType.UNKNOWN) {
+						if (dialog == null)
+							dialog = new FileTypeDialog();
+						if (!dialog.opened || (dialog.opened && !dialog.isAssumeSame())) {
+							dialog.setFilename(fs[i].getName());
+							dialog.setVisible(true);
+						}
+		
+						if (dialog.cancelled)
+							ft = FileType.UNKNOWN;
+						else{
+							ft = dialog.getFileType();
+							Swarm.isAssumeSame = dialog.isAssumeSame();
+						}
+		
+						Swarm.logger.warning("user input file type: " + fs[i].getPath()
+								+ " -> " + ft);
 					}
-	
-					if (dialog.cancelled)
-						ft = FileType.UNKNOWN;
-					else{
-						ft = dialog.getFileType();
-						Swarm.isAssumeSame = dialog.isAssumeSame();
-					}
-	
-					Swarm.logger.warning("user input file type: " + fs[i].getPath()
-							+ " -> " + ft);
 				}
 	
 				switch (ft) {
@@ -341,6 +344,7 @@ public class FileDataSource extends AbstractCachingDataSource {
 				Metadata md = Swarm.config.getMetadata(channel,
 						true);
 				md.addGroup("WIN^" + fn);
+				md.updateTimeZone(win.getTimeZone());
 				updateChannelTimes(channel,
 						wave.getStartTime(), wave.getEndTime());
 				cacheWaveAsHelicorder(channel, wave);
