@@ -19,6 +19,7 @@ import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.heli.HelicorderViewPanelListener;
+import gov.usgs.util.Pair;
 import gov.usgs.util.Time;
 import gov.usgs.util.Util;
 import gov.usgs.util.png.PngEncoder;
@@ -1645,11 +1646,20 @@ public class WaveClipboardFrame extends SwarmFrame {
                 } else if (views.get(i).getChannel().getLastComponentCode().endsWith("E")) {
                     compData[1] = data;
                     compLabels[1] = label;
+                    Pair<Double, Double> minMax = ParticleMotionFrame.extent(compData[1]);
                 } else if (views.get(i).getChannel().getLastComponentCode().endsWith("Z")) {
                     compData[2] = data;
                     compLabels[2] = label;
                 }
             }
+
+            Pair<Double, Double> extentN = ParticleMotionFrame.extent(compData[0]);
+            Pair<Double, Double> extentE = ParticleMotionFrame.extent(compData[1]);
+            Pair<Double, Double> extentZ = ParticleMotionFrame.extent(compData[2]);
+
+            findComponentMinMax(extentE, extentN);
+            findComponentMinMax(extentN, extentZ);
+            findComponentMinMax(extentE, extentZ);
 
             pmf = new ParticleMotionFrame(views, compLabels, compData);
             pmf.setLocation(100, 100);
@@ -1657,6 +1667,11 @@ public class WaveClipboardFrame extends SwarmFrame {
         }
     }
 
+    private void findComponentMinMax(Pair<Double, Double> extent1, Pair<Double, Double> extent2) {
+        Pair<Double, Double> minMax = ParticleMotionFrame.extent(extent1, extent2);
+        double maxMagnitude = Math.max(Math.abs(minMax.item1), Math.abs(minMax.item2));
+        System.out.println("COMPONENT 1 MIN IS: " + -maxMagnitude + ", COMPONENT 1 MAX IS: " + maxMagnitude);
+    }
 
     public double[] getWaveData(Wave wave) {
         double[] data = new double[wave.numSamples()];
