@@ -211,6 +211,8 @@ public class WIN {
             dis.readFully(fourBytes);
             int accum = intFromFourBytes(fourBytes);
 
+            c.in_buf.add(accum);
+
             float[] d = new float[(int)c.sampling_rate - 1];
 
             bytesRead += 8;
