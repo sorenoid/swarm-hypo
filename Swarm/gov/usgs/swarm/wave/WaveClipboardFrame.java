@@ -1655,8 +1655,8 @@ public class WaveClipboardFrame extends SwarmFrame {
                     compData[2] = data;
                     compLabels[2] = label;
                 }
+                Swarm.getApplication().getWaveClipboard().applyConstraints(stationCode, views.get(i));
             }
-
             Pair<Double, Double> extentN = ParticleMotionFrame.extent(compData[0]);
             Pair<Double, Double> extentE = ParticleMotionFrame.extent(compData[1]);
             Pair<Double, Double> extentZ = ParticleMotionFrame.extent(compData[2]);
@@ -1822,6 +1822,13 @@ public class WaveClipboardFrame extends SwarmFrame {
                 }
             }
 
+        }
+    }
+
+    public void applyConstraints(String stationCode, WaveViewPanel wv) {
+        if (null != wv) {
+            Pair<Double, Double> p1 = wv.getWaveRenderer().getYLimits();
+            System.out.println("MIN Y= " + p1.item1 + ", MAX Y=" + p1.item2);
         }
     }
 
