@@ -158,6 +158,10 @@ public class WaveClipboardFrame extends SwarmFrame {
     private HashMap<String, ArrayList<WaveViewPanel>> stationComponentMap =
             new HashMap<String, ArrayList<WaveViewPanel>>();
 
+    public HashMap<String, ArrayList<WaveViewPanel>> getStationComponentMap() {
+        return stationComponentMap;
+    }
+
     private HelicorderViewPanelListener linkListener;
 
     private boolean heliLinked = true;
