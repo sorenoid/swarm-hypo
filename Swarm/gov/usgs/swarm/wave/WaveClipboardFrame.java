@@ -31,6 +31,7 @@ import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.SeisanFile;
 import gov.usgs.vdx.data.wave.WIN;
 import gov.usgs.vdx.data.wave.Wave;
+import gov.usgs.vdx.data.wave.plot.SliceWaveRenderer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -1628,6 +1629,20 @@ public class WaveClipboardFrame extends SwarmFrame {
         }
     }
 
+    static class WavePlotInfo {
+    	public final double[] data;
+    	public final String label;
+    	public final Pair<Double, Double> minMax;
+    	public final double bias;
+		public WavePlotInfo(double[] data, String label, Pair<Double, Double> minMax, double bias) {
+			super();
+			this.data = data;
+			this.label = label;
+			this.minMax = minMax;
+			this.bias = bias;
+		}
+    }
+
     public void plotParticleMotion(String stationCode) {
         double[] t = getMarkerTimeBoundaries(stationCode, Marker.PARTICLE_MARKER_LABEL);
         ArrayList<WaveViewPanel> views = getStationComponents(stationCode);
@@ -1638,34 +1653,24 @@ public class WaveClipboardFrame extends SwarmFrame {
             }
 
             // We'll store it in order N, E, Z
-            double[][] compData = new double[3][];
-            String[] compLabels = new String[3];
+            WavePlotInfo[] plots = new WavePlotInfo[3];
 
             for (int i = 0; i < 3; i++) {
-                double[] data = getWaveData(views.get(i).getWave().subset(t[0], t[1]));
-                String label = views.get(i).getChannel().fullComponent();
-                if (views.get(i).getChannel().getLastComponentCode().endsWith("N")) {
-                    compData[0] = data;
-                    compLabels[0] = label;
-                } else if (views.get(i).getChannel().getLastComponentCode().endsWith("E")) {
-                    compData[1] = data;
-                    compLabels[1] = label;
-                    Pair<Double, Double> minMax = ParticleMotionFrame.extent(compData[1]);
-                } else if (views.get(i).getChannel().getLastComponentCode().endsWith("Z")) {
-                    compData[2] = data;
-                    compLabels[2] = label;
+            	WaveViewPanel view = views.get(i);
+            	Wave wave = view.getWave();
+                double[] data = getWaveData(wave.subset(t[0], t[1]));
+                String label = view.getChannel().fullComponent();
+            	SliceWaveRenderer renderer = view.getWaveRenderer();
+            	double bias = renderer.isRemoveBias() ? wave.mean() : 0;
+                if (view.getChannel().getLastComponentCode().endsWith("N")) {
+                	plots[0] = new WavePlotInfo(data, label, renderer.getYLimits(), bias);
+                } else if (view.getChannel().getLastComponentCode().endsWith("E")) {
+                	plots[1] = new WavePlotInfo(data, label, renderer.getYLimits(), bias);
+                } else if (view.getChannel().getLastComponentCode().endsWith("Z")) {
+                	plots[2] = new WavePlotInfo(data, label, renderer.getYLimits(), bias);
                 }
-                Swarm.getApplication().getWaveClipboard().applyConstraints(stationCode, views.get(i));
             }
-            Pair<Double, Double> extentN = ParticleMotionFrame.extent(compData[0]);
-            Pair<Double, Double> extentE = ParticleMotionFrame.extent(compData[1]);
-            Pair<Double, Double> extentZ = ParticleMotionFrame.extent(compData[2]);
-
-            findComponentMinMax(extentE, extentN);
-            findComponentMinMax(extentN, extentZ);
-            findComponentMinMax(extentE, extentZ);
-
-            pmf = new ParticleMotionFrame(views, compLabels, compData);
+            pmf = new ParticleMotionFrame(plots);
             pmf.setLocation(100, 100);
             pmf.setVisible(true);
         }
@@ -1824,14 +1829,6 @@ public class WaveClipboardFrame extends SwarmFrame {
 
         }
     }
-
-    public void applyConstraints(String stationCode, WaveViewPanel wv) {
-        if (null != wv) {
-            Pair<Double, Double> p1 = wv.getWaveRenderer().getYLimits();
-            System.out.println("MIN Y= " + p1.item1 + ", MAX Y=" + p1.item2);
-        }
-    }
-
 
     private synchronized void deselect(final WaveViewPanel p) {
         selectedSet.remove(p);

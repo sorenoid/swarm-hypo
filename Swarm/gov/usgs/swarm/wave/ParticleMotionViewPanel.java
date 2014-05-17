@@ -1,6 +1,6 @@
 package gov.usgs.swarm.wave;
 
-import gov.usgs.util.Pair;
+import gov.usgs.swarm.wave.WaveClipboardFrame.WavePlotInfo;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,14 +26,16 @@ import javax.swing.JPanel;
  * </ul>
  * 
  * @author Chirag Patel
+ * @author Joel Shellman
  */
 @SuppressWarnings("serial")
 public class ParticleMotionViewPanel extends JPanel {
+	private WavePlotInfo xWave;
+	private WavePlotInfo yWave;
+
 	private double[] xData;
 	private double[] yData;
 
-	private Pair<Double, Double> extent;
-	private double maxMagnitude;
 	private double minX;
 	private double maxX;
 	private double minY;
@@ -51,18 +53,22 @@ public class ParticleMotionViewPanel extends JPanel {
 	private int plotBegin = PLOT_TO_TICK_DIST + TICKS_TO_LABEL_DIST
 			+ LABEL_TO_SCREEN_DIST;
 
-	public ParticleMotionViewPanel(String labelX, double[] dataX,
-			String labelY, double[] dataY, Pair<Double, Double> extent) {
-		this.xLabel = labelX;
-		this.yLabel = labelY;
-		this.xData = dataX;
-		this.yData = dataY;
-		this.extent = extent;
-		maxMagnitude = Math.max(Math.abs(extent.item1), Math.abs(extent.item2));
-		minX = -maxMagnitude;
-		maxX = maxMagnitude;
-		minY = -maxMagnitude;
-		maxY = maxMagnitude;
+	public ParticleMotionViewPanel(WavePlotInfo xWave, WavePlotInfo yWave) {
+		this.xWave = xWave;
+		this.yWave = yWave;
+		this.xLabel = xWave.label;
+		this.yLabel = yWave.label;
+		this.xData = xWave.data;
+		this.yData = yWave.data;
+//		maxMagnitude = Math.max(Math.abs(extent.item1), Math.abs(extent.item2));
+//		minX = -maxMagnitude;
+//		maxX = maxMagnitude;
+//		minY = -maxMagnitude;
+//		maxY = maxMagnitude;
+		minX = xWave.minMax.item1;
+		maxX = xWave.minMax.item2;
+		minY = yWave.minMax.item1;
+		maxY = yWave.minMax.item2;
 	}
 
 
@@ -166,10 +172,10 @@ public class ParticleMotionViewPanel extends JPanel {
 	private void drawPlot(Graphics2D g2) {
 		g2.setColor(Color.blue);
 		GeneralPath gp = new GeneralPath();
-		gp.moveTo((float) getXPixel(xData[0]), (float) (getYPixel(yData[0])));
+		gp.moveTo((float) getXPixel(xData[0] - xWave.bias), (float) (getYPixel(yData[0] - yWave.bias)));
 		for (int i = 1; i < xData.length; i++) {
 			try{
-			gp.lineTo((float) getXPixel(xData[i]), (float) getYPixel(yData[i]));
+			gp.lineTo((float) getXPixel(xData[i] - xWave.bias), (float) getYPixel(yData[i] - yWave.bias));
 			}catch(Exception e){
 				System.out.println(e.getMessage());
 			}

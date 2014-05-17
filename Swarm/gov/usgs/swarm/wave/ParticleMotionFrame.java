@@ -1,5 +1,6 @@
 package gov.usgs.swarm.wave;
 
+import gov.usgs.swarm.wave.WaveClipboardFrame.WavePlotInfo;
 import gov.usgs.util.Pair;
 
 import java.awt.GridLayout;
@@ -12,6 +13,7 @@ import javax.swing.JFrame;
  * A window that holds the three particle motion plots
  * 
  * @author Jamil Shehzad
+ * @author Joel Shellman
  */
 @SuppressWarnings("serial")
 public class ParticleMotionFrame extends JFrame {
@@ -21,30 +23,16 @@ public class ParticleMotionFrame extends JFrame {
     private ParticleMotionViewPanel component3;
 
     /**
-     * @param compLabels
-     *            labels ordered N, E, Z
-     * @param compData
-     *            wave data ordered N, E, Z
+     * @param plots data ordered N, E, Z
      */
-    public ParticleMotionFrame(ArrayList<WaveViewPanel> views, String[] compLabels, double[][] compData) {
+    public ParticleMotionFrame(WavePlotInfo[] plots) {
         super();
-        String labelN = compLabels[0];
-        String labelE = compLabels[1];
-        String labelZ = compLabels[2];
-
-        double[] dataN = compData[0];
-        double[] dataE = compData[1];
-        double[] dataZ = compData[2];
-
-        Pair<Double, Double> extentN = extent(dataN);
-        Pair<Double, Double> extentE = extent(dataE);
-        Pair<Double, Double> extentZ = extent(dataZ);
 
         // Plots should always have Z on y-axis if Z is involved and
         // Should have N on y-axis when plotting N vs E
-        component1 = new ParticleMotionViewPanel(labelE, dataE, labelN, dataN, extent(extentE, extentN));
-        component2 = new ParticleMotionViewPanel(labelN, dataN, labelZ, dataZ, extent(extentN, extentZ));
-        component3 = new ParticleMotionViewPanel(labelE, dataE, labelZ, dataZ, extent(extentE, extentZ));
+        component1 = new ParticleMotionViewPanel(plots[1], plots[0]);
+        component2 = new ParticleMotionViewPanel(plots[0], plots[2]);
+        component3 = new ParticleMotionViewPanel(plots[1], plots[2]);
 
         this.setTitle("Particle Motion Plot");
         GridLayout gr = new GridLayout(1, 3);
