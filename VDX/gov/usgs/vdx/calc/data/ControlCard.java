@@ -16,19 +16,19 @@ public class ControlCard {
 	/**
 	 * Trial focal depth in km.
 	 */
-	private float ZTR;
+	private double ZTR;
 	/**
 	 * Distance in km from epicenter where the distance weighting is 1.
 	 */
-	private float XNEAR;
+	private double XNEAR;
 	/**
 	 * Distance in km from epicenter beyond which the distance weighting is 0.
 	 */
-	private float XFAR;
+	private double XFAR;
 	/**
 	 * Ration of P-velocity to S-velocity.
 	 */
-	private float POS;
+	private double POS;
 	/**
 	 * Quality class of earthquake to be included in the summary residuals.
 	 */
@@ -88,19 +88,19 @@ public class ControlCard {
 	/**
 	 * Degree portion of the trial hypocenter longitude.
 	 */
-	private float LON1;
+	private double LON1;
 	/**
 	 * Minute portion of the trial hypocenter latitude.
 	 */
-	private float LON2;
+	private double LON2;
 
 	public ControlCard(){
 		
 	}
-	public ControlCard(int kSING, float zTR, float xNEAR, float xFAR,
-			float pOS, int iQ, int kMS, int kFM, int iPUN, int iMAG, int iR,
+	public ControlCard(int kSING, double zTR, double xNEAR, double xFAR,
+			double pOS, int iQ, int kMS, int kFM, int iPUN, int iMAG, int iR,
 			int iPRN, int kPAPER, int kTEST, int kAZ, int kSORT, int kSEL,
-			int lAT1, int lAT2, float lON1, float lON2) {
+			int lAT1, int lAT2, double lON1, double lON2) {
 		KSING = kSING;
 		ZTR = zTR;
 		XNEAR = xNEAR;
@@ -125,11 +125,11 @@ public class ControlCard {
 	}
 
 	public ControlCard(Properties properties) {
-		this(Integer.parseInt((String) properties.get("control.KSING")), Float
-				.parseFloat((String) properties.get("control.ZTR")), Float
-				.parseFloat((String) properties.get("control.XNEAR")), Float
-				.parseFloat((String) properties.get("control.XFAR")), Float
-				.parseFloat((String) properties.get("control.POS")), Integer
+		this(Integer.parseInt((String) properties.get("control.KSING")), Double
+				.parseDouble((String) properties.get("control.ZTR")), Double
+				.parseDouble((String) properties.get("control.XNEAR")), Double
+				.parseDouble((String) properties.get("control.XFAR")), Double
+				.parseDouble((String) properties.get("control.POS")), Integer
 				.parseInt((String) properties.get("control.IQ")), Integer
 				.parseInt((String) properties.get("control.KMS")), Integer
 				.parseInt((String) properties.get("control.KFM")), Integer
@@ -143,9 +143,9 @@ public class ControlCard {
 				.parseInt((String) properties.get("control.KSORT")), Integer
 				.parseInt((String) properties.get("control.KSEL")), Integer
 				.parseInt((String) properties.get("control.LAT1")), Integer
-				.parseInt((String) properties.get("control.LAT2")), Float
-				.parseFloat((String) properties.get("control.LON1")), Float
-				.parseFloat((String) properties.get("control.LON2")));
+				.parseInt((String) properties.get("control.LAT2")), Double
+				.parseDouble((String) properties.get("control.LON1")), Double
+				.parseDouble((String) properties.get("control.LON2")));
 	}
 	@XmlElement
 	public int getKSING() {
@@ -155,31 +155,31 @@ public class ControlCard {
 		KSING = kSING;
 	}
 	@XmlElement
-	public float getZTR() {
+	public double getZTR() {
 		return ZTR;
 	}
-	public void setZTR(float zTR) {
+	public void setZTR(double zTR) {
 		ZTR = zTR;
 	}
 	@XmlElement
-	public float getXNEAR() {
+	public double getXNEAR() {
 		return XNEAR;
 	}
-	public void setXNEAR(float xNEAR) {
+	public void setXNEAR(double xNEAR) {
 		XNEAR = xNEAR;
 	}
 	@XmlElement
-	public float getXFAR() {
+	public double getXFAR() {
 		return XFAR;
 	}
-	public void setXFAR(float xFAR) {
+	public void setXFAR(double xFAR) {
 		XFAR = xFAR;
 	}
 	@XmlElement
-	public float getPOS() {
+	public double getPOS() {
 		return POS;
 	}
-	public void setPOS(float pOS) {
+	public void setPOS(double pOS) {
 		POS = pOS;
 	}
 	@XmlElement
@@ -283,17 +283,17 @@ public class ControlCard {
 		LAT2 = lAT2;
 	}
 	@XmlElement
-	public float getLON1() {
+	public double getLON1() {
 		return LON1;
 	}
-	public void setLON1(float lON1) {
+	public void setLON1(double lON1) {
 		LON1 = lON1;
 	}
 	@XmlElement
-	public float getLON2() {
+	public double getLON2() {
 		return LON2;
 	}
-	public void setLON2(float lON2) {
+	public void setLON2(double lON2) {
 		LON2 = lON2;
 	}
 

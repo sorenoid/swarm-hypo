@@ -10,32 +10,32 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class CrustalModel {
-	private float V;
-	private float D;
+	private double V;
+	private double D;
 
 	public CrustalModel() {
 	}
 	
-	public CrustalModel(float v, float d) {
+	public CrustalModel(double v, double d) {
 		V = v;
 		D = d;
 	}
 
 	@XmlElement
-	public float getV() {
+	public double getV() {
 		return V;
 	}
 
-	public void setV(float v) {
+	public void setV(double v) {
 		V = v;
 	}
 
 	@XmlElement
-	public float getD() {
+	public double getD() {
 		return D;
 	}
 
-	public void setD(float d) {
+	public void setD(double d) {
 		D = d;
 	}
 }

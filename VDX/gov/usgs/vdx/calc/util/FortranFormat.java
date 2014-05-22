@@ -188,7 +188,7 @@ public class FortranFormat {
 						dfs.append('0');
 					}
 					DecimalFormat df = new DecimalFormat(dfs.toString(), DECIMAL_FORMAT_SYMBOLS);
-					df.setRoundingMode(RoundingMode.HALF_UP);
+					df.setRoundingMode(RoundingMode.HALF_EVEN);
 					s = (neg ? '-' : "")
 							+ df.format(d);
 				}

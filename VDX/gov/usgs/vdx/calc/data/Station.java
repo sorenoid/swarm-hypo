@@ -27,7 +27,7 @@ public class Station  implements Serializable{
 	/**
 	 * Minute portion of latitude.
 	 */
-	float LAT2;
+	double LAT2;
 	/**
 	 * Punch N or leave this column blank for stations in northern hemisphere. Punch S for stations in sourthern hemisphere.
 	 */
@@ -39,7 +39,7 @@ public class Station  implements Serializable{
 	/**
 	 * Minute portion of longitude.
 	 */
-	float LON2;
+	double LON2;
 	/**
 	 * Punch E for eastern longitude. W or blank for western.
 	 */
@@ -48,15 +48,15 @@ public class Station  implements Serializable{
 	 * Elevation in meters. This data is not used in the program.
 	 */
 	int IELV;
-	float dly;
+	double dly;
 	/**
 	 * Station delay in seconds.
 	 */
-	float FMGC;
+	double FMGC;
 	/**
 	 * Station correction for FMAG.
 	 */
-	float XMGC;
+	double XMGC;
 	/**
 	 * System number is assigned for each station so that the frequency response curve of the seismometer and preamp is specified for the amplitude magnitude calculation (XMAG).
 	 */
@@ -64,11 +64,11 @@ public class Station  implements Serializable{
 	/**
 	 * Standard period for XMAG.
 	 */
-	float PRR;
+	double PRR;
 	/**
 	 * Standard calibration for XMAG.
 	 */
-	float CALR;
+	double CALR;
 	/**
 	 * Calibration indicator.
 	 */
@@ -84,16 +84,16 @@ public class Station  implements Serializable{
 
 	// Missing special fields
 	// NSTA[I] - NSTA, DELI - dly, AZI, EXGAP, RDGAP
-	float AZI;
-	float EXGAP;
-	float RDGAP;
+	double AZI;
+	double EXGAP;
+	double RDGAP;
 
 	// Station output
 	// String STN - NSTA
 	/**
 	 * Epicentral distance in km.
 	 */
-	float DIST;
+	double DIST;
 	// AZM - AZI
 	/**
 	 * Angle of incidence measured with respect to downward vertical.
@@ -114,54 +114,54 @@ public class Station  implements Serializable{
 	/**
 	 * The second's portial of P-arrival time from input data.
 	 */
-	float PSEC;
+	double PSEC;
 	/**
 	 * Observed P-travet time in sec.
 	 */
-	float TPOBS;
+	double TPOBS;
 	/**
 	 * Calculated travel time in sec/
 	 */
-	float TPCAL;
+	double TPCAL;
 	/**
 	 * If the Station Delay Model is used, then DLY means the station delay in
 	 * sec from the input list. If the Variable First-Layer Model is used, then
 	 * H1 means the thickness of the first layer in km at this station.
 	 */
-	float DLYH1;
-	float PRES;
-	float PWT;
-	float AMX;
-	float PRX;
-	float CALX;
+	double DLYH1;
+	double PRES;
+	double PWT;
+	double AMX;
+	double PRX;
+	double CALX;
 	int K;
-	float XMAG;
-	float RMK;
-	float FMP;
-	float FMAG;
+	double XMAG;
+	double RMK;
+	double FMP;
+	double FMAG;
 	String SRMK;
-	float SSEC;
-	float TSOBS;
-	float SRES;
-	float SWT;
+	double SSEC;
+	double TSOBS;
+	double SRES;
+	double SWT;
 	String DT;
 
 	// Field for summary
 	TravelTimeResiduals model1;
 	TravelTimeResiduals model2;
 	int NXM;
-	float AVXM;
-	float SDXM;
+	double AVXM;
+	double SDXM;
 	int NFM;
-	float AVFM;
-	float SDFM;
+	double AVFM;
+	double SDFM;
 
 	@XmlRootElement
 	public static class TravelTimeResiduals {
 		private int NRES;
-		private float SRWT;
-		private float AVRES;
-		private float SDRES;
+		private double SRWT;
+		private double AVRES;
+		private double SDRES;
 
 		@XmlElement
 		public int getNRES() {
@@ -173,34 +173,34 @@ public class Station  implements Serializable{
 		}
 
 		@XmlElement
-		public float getSRWT() {
+		public double getSRWT() {
 			return SRWT;
 		}
 
-		public void setSRWT(float sRWT) {
+		public void setSRWT(double sRWT) {
 			SRWT = sRWT;
 		}
 
 		@XmlElement
-		public float getAVRES() {
+		public double getAVRES() {
 			return AVRES;
 		}
 
-		public void setAVRES(float aVRES) {
+		public void setAVRES(double aVRES) {
 			AVRES = aVRES;
 		}
 
 		@XmlElement		
-		public float getSDRES() {
+		public double getSDRES() {
 			return SDRES;
 		}
 
-		public void setSDRES(float sDRES) {
+		public void setSDRES(double sDRES) {
 			SDRES = sDRES;
 		}
 
-		public TravelTimeResiduals(int nRES, float sRWT, float aVRES,
-				float sDRES) {
+		public TravelTimeResiduals(int nRES, double sRWT, double aVRES,
+				double sDRES) {
 			super();
 			NRES = nRES;
 			SRWT = sRWT;
@@ -215,10 +215,10 @@ public class Station  implements Serializable{
 	public Station(){
 		
 	}
-	public Station(String NSTA, int NRES, float SRWT, float AVRES,
-			float SDRES, int NRES1, float SRWT1, float AVRES1,
-			float SDRES1, int NXM, float AVXM, float SDXM, int NFM,
-			float AVFM, float SDFM) {
+	public Station(String NSTA, int NRES, double SRWT, double AVRES,
+			double SDRES, int NRES1, double SRWT1, double AVRES1,
+			double SDRES1, int NXM, double AVXM, double SDXM, int NFM,
+			double AVFM, double SDFM) {
 		model1 = new TravelTimeResiduals(NRES, SRWT, AVRES, SDRES);
 		model2 = new TravelTimeResiduals(NRES1, SRWT1, AVRES1, SDRES1);
 		this.NXM = NXM;
@@ -229,21 +229,21 @@ public class Station  implements Serializable{
 		this.SDFM = SDFM;
 	}
 
-	public Station(String string, float d, int iAZ, int iAIN, String string2,
-			int jHR, int i, float e, float tPK, float f, float dLYK,
-			String x4kout, String string3, float g, int iAMX, int iPRX,
-			float h, int j, String xMAGOU, char rMK3, String string4,
+	public Station(String string, double d, int iAZ, int iAIN, String string2,
+			int jHR, int i, double e, double tPK, double f, double dLYK,
+			String x4kout, String string3, double g, int iAMX, int iPRX,
+			double h, int j, String xMAGOU, char rMK3, String string4,
 			String fMPOUT, String fMAGOU, char rMK4, String string5,
 			String sKOUT, String tSKOUT, String sRESOU, String rMK5,
 			String sWTOUT, String dTKOUT, char c) {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Station(String nSTA, float dIST, int aIN, String pRMK, int hR,
-			int mN, float pSEC, float tPOBS, float tPCAL, float dLYH1,
-			String pRES, String pWT, float aMX, float pRX, float cALX,
-			int k, float xMAG, float rMK, float fMP, float fMAG,
-			String sRMK, float sSEC, float tSOBS, float sRES, float sWT,
+	public Station(String nSTA, double dIST, int aIN, String pRMK, int hR,
+			int mN, double pSEC, double tPOBS, double tPCAL, double dLYH1,
+			String pRES, String pWT, double aMX, double pRX, double cALX,
+			int k, double xMAG, double rMK, double fMP, double fMAG,
+			String sRMK, double sSEC, double tSOBS, double sRES, double sWT,
 			String dT) {
 		super();
 		NSTA = nSTA;
@@ -256,8 +256,8 @@ public class Station  implements Serializable{
 		TPOBS = tPOBS;
 		TPCAL = tPCAL;
 		DLYH1 = dLYH1;
-		PRES = Float.valueOf(pRES);
-		PWT = Float.valueOf(pWT);
+		PRES = Double.valueOf(pRES);
+		PWT = Double.valueOf(pWT);
 		AMX = aMX;
 		PRX = pRX;
 		CALX = cALX;
@@ -274,8 +274,8 @@ public class Station  implements Serializable{
 		DT = dT;
 	}
 
-	public Station(String nSTA, float dly, float aZI, float eXGAP,
-			float rDGAP) {
+	public Station(String nSTA, double dly, double aZI, double eXGAP,
+			double rDGAP) {
 		this.NSTA = nSTA;
 		this.dly = dly;
 		this.AZI = aZI;
@@ -283,9 +283,9 @@ public class Station  implements Serializable{
 		this.RDGAP = rDGAP;
 	}
 	
-	public Station(char iW, String nSTA, int lAT1, float lAT2, char iNS,
-			int lON1, float lON2, char iEW, int iELV, float dly, float fMGC,
-			float xMGC, int kLAS, float pRR, float cALR, int iCAL,
+	public Station(char iW, String nSTA, int lAT1, double lAT2, char iNS,
+			int lON1, double lON2, char iEW, int iELV, double dly, double fMGC,
+			double xMGC, int kLAS, double pRR, double cALR, int iCAL,
 			int nDATE, int nHRMN) {
 		IW = iW;
 		NSTA = nSTA;
@@ -307,9 +307,9 @@ public class Station  implements Serializable{
 		NHRMN = nHRMN;
 	}
 	
-	public Station(char iW, String nSTA, int lAT1, float lAT2, char iNS,
-			int lON1, float lON2, char iEW, int iELV, int mNO, float dly, float dly1,
-			float xMGC, float fMGC, int kLAS, float pRR, int iCAL,
+	public Station(char iW, String nSTA, int lAT1, double lAT2, char iNS,
+			int lON1, double lON2, char iEW, int iELV, int mNO, double dly, double dly1,
+			double xMGC, double fMGC, int kLAS, double pRR, int iCAL,
 			int nDATE, int nHRMN) {
 		IW = iW;
 		NSTA = nSTA;
@@ -358,11 +358,11 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getLAT2() {
+	public double getLAT2() {
 		return LAT2;
 	}
 
-	public void setLAT2(float lAT2) {
+	public void setLAT2(double lAT2) {
 		LAT2 = lAT2;
 	}
 
@@ -385,11 +385,11 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getLON2() {
+	public double getLON2() {
 		return LON2;
 	}
 
-	public void setLON2(float lON2) {
+	public void setLON2(double lON2) {
 		LON2 = lON2;
 	}
 
@@ -412,29 +412,29 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getDly() {
+	public double getDly() {
 		return dly;
 	}
 
-	public void setDly(float dly) {
+	public void setDly(double dly) {
 		this.dly = dly;
 	}
 
 	@XmlElement
-	public float getFMGC() {
+	public double getFMGC() {
 		return FMGC;
 	}
 
-	public void setFMGC(float fMGC) {
+	public void setFMGC(double fMGC) {
 		FMGC = fMGC;
 	}
 
 	@XmlElement
-	public float getXMGC() {
+	public double getXMGC() {
 		return XMGC;
 	}
 
-	public void setXMGC(float xMGC) {
+	public void setXMGC(double xMGC) {
 		XMGC = xMGC;
 	}
 
@@ -448,20 +448,20 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getPRR() {
+	public double getPRR() {
 		return PRR;
 	}
 
-	public void setPRR(float pRR) {
+	public void setPRR(double pRR) {
 		PRR = pRR;
 	}
 
 	@XmlElement
-	public float getCALR() {
+	public double getCALR() {
 		return CALR;
 	}
 
-	public void setCALR(float cALR) {
+	public void setCALR(double cALR) {
 		CALR = cALR;
 	}
 
@@ -493,38 +493,38 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getAZI() {
+	public double getAZI() {
 		return AZI;
 	}
 
-	public void setAZI(float aZI) {
+	public void setAZI(double aZI) {
 		AZI = aZI;
 	}
 
 	@XmlElement
-	public float getEXGAP() {
+	public double getEXGAP() {
 		return EXGAP;
 	}
 
-	public void setEXGAP(float eXGAP) {
+	public void setEXGAP(double eXGAP) {
 		EXGAP = eXGAP;
 	}
 
 	@XmlElement
-	public float getRDGAP() {
+	public double getRDGAP() {
 		return RDGAP;
 	}
 
-	public void setRDGAP(float rDGAP) {
+	public void setRDGAP(double rDGAP) {
 		RDGAP = rDGAP;
 	}
 
 	@XmlElement
-	public float getDIST() {
+	public double getDIST() {
 		return DIST;
 	}
 
-	public void setDIST(float dIST) {
+	public void setDIST(double dIST) {
 		DIST = dIST;
 	}
 
@@ -565,83 +565,83 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getPSEC() {
+	public double getPSEC() {
 		return PSEC;
 	}
 
-	public void setPSEC(float pSEC) {
+	public void setPSEC(double pSEC) {
 		PSEC = pSEC;
 	}
 
 	@XmlElement
-	public float getTPOBS() {
+	public double getTPOBS() {
 		return TPOBS;
 	}
 
-	public void setTPOBS(float tPOBS) {
+	public void setTPOBS(double tPOBS) {
 		TPOBS = tPOBS;
 	}
 
 	@XmlElement
-	public float getTPCAL() {
+	public double getTPCAL() {
 		return TPCAL;
 	}
 
-	public void setTPCAL(float tPCAL) {
+	public void setTPCAL(double tPCAL) {
 		TPCAL = tPCAL;
 	}
 
 	@XmlElement
-	public float getDLYH1() {
+	public double getDLYH1() {
 		return DLYH1;
 	}
 
-	public void setDLYH1(float dLYH1) {
+	public void setDLYH1(double dLYH1) {
 		DLYH1 = dLYH1;
 	}
 
 	@XmlElement
-	public float getPRES() {
+	public double getPRES() {
 		return PRES;
 	}
 
-	public void setPRES(float pRES) {
+	public void setPRES(double pRES) {
 		PRES = pRES;
 	}
 
 	@XmlElement
-	public float getPWT() {
+	public double getPWT() {
 		return PWT;
 	}
 
-	public void setPWT(float pWT) {
+	public void setPWT(double pWT) {
 		PWT = pWT;
 	}
 
 	@XmlElement
-	public float getAMX() {
+	public double getAMX() {
 		return AMX;
 	}
 
-	public void setAMX(float aMX) {
+	public void setAMX(double aMX) {
 		AMX = aMX;
 	}
 
 	@XmlElement
-	public float getPRX() {
+	public double getPRX() {
 		return PRX;
 	}
 
-	public void setPRX(float pRX) {
+	public void setPRX(double pRX) {
 		PRX = pRX;
 	}
 
 	@XmlElement
-	public float getCALX() {
+	public double getCALX() {
 		return CALX;
 	}
 
-	public void setCALX(float cALX) {
+	public void setCALX(double cALX) {
 		CALX = cALX;
 	}
 
@@ -655,38 +655,38 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getXMAG() {
+	public double getXMAG() {
 		return XMAG;
 	}
 
-	public void setXMAG(float xMAG) {
+	public void setXMAG(double xMAG) {
 		XMAG = xMAG;
 	}
 
 	@XmlElement
-	public float getRMK() {
+	public double getRMK() {
 		return RMK;
 	}
 
-	public void setRMK(float rMK) {
+	public void setRMK(double rMK) {
 		RMK = rMK;
 	}
 
 	@XmlElement
-	public float getFMP() {
+	public double getFMP() {
 		return FMP;
 	}
 
-	public void setFMP(float fMP) {
+	public void setFMP(double fMP) {
 		FMP = fMP;
 	}
 
 	@XmlElement
-	public float getFMAG() {
+	public double getFMAG() {
 		return FMAG;
 	}
 
-	public void setFMAG(float fMAG) {
+	public void setFMAG(double fMAG) {
 		FMAG = fMAG;
 	}
 
@@ -700,38 +700,38 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getSSEC() {
+	public double getSSEC() {
 		return SSEC;
 	}
 
-	public void setSSEC(float sSEC) {
+	public void setSSEC(double sSEC) {
 		SSEC = sSEC;
 	}
 
 	@XmlElement
-	public float getTSOBS() {
+	public double getTSOBS() {
 		return TSOBS;
 	}
 
-	public void setTSOBS(float tSOBS) {
+	public void setTSOBS(double tSOBS) {
 		TSOBS = tSOBS;
 	}
 
 	@XmlElement
-	public float getSRES() {
+	public double getSRES() {
 		return SRES;
 	}
 
-	public void setSRES(float sRES) {
+	public void setSRES(double sRES) {
 		SRES = sRES;
 	}
 
 	@XmlElement
-	public float getSWT() {
+	public double getSWT() {
 		return SWT;
 	}
 
-	public void setSWT(float sWT) {
+	public void setSWT(double sWT) {
 		SWT = sWT;
 	}
 
@@ -772,20 +772,20 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getAVXM() {
+	public double getAVXM() {
 		return AVXM;
 	}
 
-	public void setAVXM(float aVXM) {
+	public void setAVXM(double aVXM) {
 		AVXM = aVXM;
 	}
 
 	@XmlElement
-	public float getSDXM() {
+	public double getSDXM() {
 		return SDXM;
 	}
 
-	public void setSDXM(float sDXM) {
+	public void setSDXM(double sDXM) {
 		SDXM = sDXM;
 	}
 
@@ -799,20 +799,20 @@ public class Station  implements Serializable{
 	}
 
 	@XmlElement
-	public float getAVFM() {
+	public double getAVFM() {
 		return AVFM;
 	}
 
-	public void setAVFM(float aVFM) {
+	public void setAVFM(double aVFM) {
 		AVFM = aVFM;
 	}
 
 	@XmlElement
-	public float getSDFM() {
+	public double getSDFM() {
 		return SDFM;
 	}
 
-	public void setSDFM(float sDFM) {
+	public void setSDFM(double sDFM) {
 		SDFM = sDFM;
 	}
 	
