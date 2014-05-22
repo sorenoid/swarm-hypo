@@ -55,6 +55,7 @@ public class SeisanChannel {
 		numberOfSamples = header.substring(43,50).trim().length()==0?null:Integer.parseInt(header.substring(43,50).trim());
 		
 		Calendar c  = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c.setTimeInMillis(0);
 		year = year+1900;
 		c.set(Calendar.YEAR, (year));
 		c.set(Calendar.MONTH, month-1);
