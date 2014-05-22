@@ -537,7 +537,7 @@ public class WaveViewPanel extends JComponent {
                         		* timeDiffFromSToPInSec;*/
                         double distanceFromPToS = Swarm.config.ansv * timeDiffFromSToPInSec;
                         SwarmMenu.getDataRecord().getEventCalculationPanel()
-                                .setPToSDistanceValue(Double.toString(distanceFromPToS) + " m");
+                                .setPToSDistanceValue(Double.toString(distanceFromPToS) + " km");
                     }
                 }
                 if (stationCount == 3) {

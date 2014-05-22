@@ -327,7 +327,7 @@ public class FileDataSource extends AbstractCachingDataSource {
                 final Wave wave = waves[i];
                 Metadata md = Swarm.config.getMetadata(channel, true);
                 md.addGroup("WIN^" + fn);
-                md.updateTimeZone(win.getTimeZone().toString());
+                md.updateTimeZone(win.getTimeZone().getID());
                 updateChannelTimes(channel, wave.getStartTime(), wave.getEndTime());
                 cacheWaveAsHelicorder(channel, wave);
                 putWave(channel, wave);

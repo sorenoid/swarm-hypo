@@ -309,7 +309,7 @@ public class WIN {
         cal.set(Calendar.HOUR_OF_DAY, c.hour);
         cal.set(Calendar.MINUTE, c.minute);
         cal.set(Calendar.SECOND, c.second);
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+//        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
         return cal.getTime();
     }
 

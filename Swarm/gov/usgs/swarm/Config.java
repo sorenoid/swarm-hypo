@@ -282,7 +282,7 @@ public class Config {
         clipboardVisible = Util.stringToBoolean(config.getString("clipboardVisible"), true);
         clipboardX = Util.stringToInt(config.getString("clipboardX"), 25);
         clipboardY = Util.stringToInt(config.getString("clipboardY"), 25);
-        clipboardWidth = Util.stringToInt(config.getString("clipboardSizeX"), 600);
+        clipboardWidth = Util.stringToInt(config.getString("clipboardSizeX"), 780);
         clipboardHeight = Util.stringToInt(config.getString("clipboardSizeY"), 600);
         clipboardMaximized = Util.stringToBoolean(config.getString("clipboardMaximized"), false);
 

@@ -1,6 +1,7 @@
 package gov.usgs.swarm.wave;
 
 import gov.usgs.swarm.wave.WaveClipboardFrame.WavePlotInfo;
+import gov.usgs.util.Pair;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -65,12 +66,21 @@ public class ParticleMotionViewPanel extends JPanel {
 //		maxX = maxMagnitude;
 //		minY = -maxMagnitude;
 //		maxY = maxMagnitude;
-		minX = xWave.minMax.item1;
-		maxX = xWave.minMax.item2;
-		minY = yWave.minMax.item1;
-		maxY = yWave.minMax.item2;
+		
+//		minX = xWave.minMax.item1;
+//		maxX = xWave.minMax.item2;
+//		minY = yWave.minMax.item1;
+//		maxY = yWave.minMax.item2;
+		
+		Pair<Double, Double> xExtent = ParticleMotionFrame.extent(this.xData);
+		Pair<Double, Double> yExtent = ParticleMotionFrame.extent(this.yData);
+		double xMaxMag = Math.max(Math.abs(xExtent.item1 - xWave.bias), Math.abs(xExtent.item2 - xWave.bias));
+		minX = -xMaxMag;
+		maxX = xMaxMag;
+		double yMaxMag = Math.max(Math.abs(yExtent.item1 - yWave.bias), Math.abs(yExtent.item2 - yWave.bias));
+		minY = -yMaxMag;
+		maxY = yMaxMag;
 	}
-
 
 	@Override
 	public void paint(Graphics g) {

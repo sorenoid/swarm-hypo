@@ -1676,12 +1676,6 @@ public class WaveClipboardFrame extends SwarmFrame {
         }
     }
 
-    private void findComponentMinMax(Pair<Double, Double> extent1, Pair<Double, Double> extent2) {
-        Pair<Double, Double> minMax = ParticleMotionFrame.extent(extent1, extent2);
-        double maxMagnitude = Math.max(Math.abs(minMax.item1), Math.abs(minMax.item2));
-        System.out.println("COMPONENT 1 MIN IS: " + -maxMagnitude + ", COMPONENT 1 MAX IS: " + maxMagnitude);
-    }
-
     public double[] getWaveData(Wave wave) {
         double[] data = new double[wave.numSamples()];
         for (int i = 0; i < wave.numSamples(); i++) {
