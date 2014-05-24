@@ -503,6 +503,9 @@ public class WaveViewPanel extends JComponent {
         }
     }
 
+    public static String roundTo(double value, int ths) {
+    	return Float.toString((float)Math.round(value*ths)/ths);
+    }
 
     public void setEventCalculations() {
         if (SwarmMenu.DataRecordState()) {
@@ -527,9 +530,9 @@ public class WaveViewPanel extends JComponent {
                     long sMarkerTime = sMarker.getMarkerTime().getTime();
                     long pMarkerTime = pMarker.getMarkerTime().getTime();
                     long timeDiffFromSToP = Math.abs(sMarkerTime - pMarkerTime);
-                    long timeDiffFromSToPInSec = timeDiffFromSToP / 1000;
+                    double timeDiffFromSToPInSec = (double)timeDiffFromSToP / 1000;
                     SwarmMenu.getDataRecord().getEventCalculationPanel()
-                            .setPToSTimeValue(Long.toString(timeDiffFromSToPInSec) + " s");
+                            .setPToSTimeValue(roundTo(timeDiffFromSToPInSec, 100) + " s");
 
                     double ansv = Swarm.config.ansv;
                     if (ansv != 0 && ansv != Double.NaN) {
@@ -537,7 +540,7 @@ public class WaveViewPanel extends JComponent {
                         		* timeDiffFromSToPInSec;*/
                         double distanceFromPToS = Swarm.config.ansv * timeDiffFromSToPInSec;
                         SwarmMenu.getDataRecord().getEventCalculationPanel()
-                                .setPToSDistanceValue(Double.toString(distanceFromPToS) + " km");
+                                .setPToSDistanceValue(roundTo(distanceFromPToS, 100) + " km");
                     }
                 }
                 if (stationCount == 3) {
@@ -567,9 +570,9 @@ public class WaveViewPanel extends JComponent {
                                     .setAzimuthValue(
                                             Integer.toString((int)Math.round(azimuth)) +
                                                     ", velocity: " +
-                                                    Double.toString(Math.round(10 * azimuthCalculator.getVelocity()) / 10.0) +
+                                                    roundTo(azimuthCalculator.getVelocity(), 10) +
                                                     ", coherence: " +
-                                                    Double.toString(Math.round(10 * azimuthCalculator.getCoherence()) / 10.0));
+                                                    roundTo(azimuthCalculator.getCoherence(), 10));
                         } else {
                             System.out.println("cannot ger boundaries");
                         }
