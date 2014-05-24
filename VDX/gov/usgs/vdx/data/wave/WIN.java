@@ -77,8 +77,7 @@ public class WIN {
         }
     }
 
-    private Map<Integer, ChannelData> channelMap = new TreeMap<Integer, ChannelData>();
-    private List<ChannelData> channelData;
+    private Map<Integer, List<ChannelData>> channelMap = new TreeMap<Integer, List<ChannelData>>();
     public static TimeZone timeZoneValue;
     public static boolean useBatch;
     public static boolean isWIN;
@@ -89,7 +88,7 @@ public class WIN {
      * @throws IOException
      *             if not found or some read error
      */
-    public List<ChannelData> read(String filename) throws IOException {
+    public int read(String filename) throws IOException {
         FileInputStream fis = new FileInputStream(filename);
         BufferedInputStream buf = new BufferedInputStream(fis);
         DataInputStream dis = new DataInputStream(buf);
@@ -99,8 +98,7 @@ public class WIN {
             readData(cur, dis);
         }
         dis.close();
-        channelData = new ArrayList<ChannelData>(channelMap.values());// This is in order.
-        return channelData;
+        return channelMap.size();
     }
 
 
@@ -200,6 +198,11 @@ public class WIN {
 
             dis.readFully(oneByte);
             c.channel_num = intFromSingleByte(oneByte[0]);
+            
+            if (c.channel_num == 102 && header.second > 24) {
+            	System.out.println("found it");
+            }
+            
             dis.readFully(oneByte);
             byte sampleRateUpperBits = (byte)(oneByte[0] & 0xF);
             c.data_size = intFromSingleByte(oneByte[0]) >> 4;
@@ -256,13 +259,12 @@ public class WIN {
                     bytesRead += 4;
                 }
             }
-            ChannelData check = channelMap.get(c.channel_num);
-            if (null == check) {
-                channelMap.put(c.channel_num, c);
-            } else {
-                // TODO: check that new buffer is immediately after previous one... probably 1 second is ok to assume.
-                check.in_buf.addAll(c.in_buf);
+            List<ChannelData> list = channelMap.get(c.channel_num);
+            if (list == null) {
+            	list = new ArrayList<ChannelData>();
+                channelMap.put(c.channel_num, list);
             }
+            list.add(c);
         } while (bytesRead < header.packetSize);
     }
 
@@ -272,22 +274,29 @@ public class WIN {
      * @return wave created
      */
     public Wave[] toWave() {
-        Wave[] waves = new Wave[channelData.size()];
-        for (int i = 0; i < waves.length; i++) {
-            Wave sw = new Wave();
-            ChannelData c = channelData.get(i);
-            sw.setStartTime(Util.dateToJ2K(getStartTime(c)));
-            sw.setSamplingRate(c.sampling_rate);
-            sw.buffer = new int[c.in_buf.size()];
-            for (int j = 0; j < c.in_buf.size(); j++) {
-                sw.buffer[j] = Math.round(c.in_buf.get(j));
-            }
-            waves[i] = sw;
+        Wave[] waves = new Wave[channelMap.size()];
+        int i=0;
+        for (List<ChannelData> channels : channelMap.values()) {
+        	List<Wave> subParts = new ArrayList<Wave>(channels.size());
+        	for (ChannelData c : channels) {
+        		subParts.add(toWave(c));
+        	}
+        	waves[i++] = Wave.join(subParts);
         }
-
         return waves;
     }
 
+    private Wave toWave(ChannelData c) {
+        Wave sw = new Wave();
+        sw.setStartTime(Util.dateToJ2K(getStartTime(c)));
+        sw.setSamplingRate(c.sampling_rate);
+        sw.buffer = new int[c.in_buf.size()];
+        for (int j = 0; j < c.in_buf.size(); j++) {
+            sw.buffer[j] = Math.round(c.in_buf.get(j));
+        }
+        return sw;
+    }
+    
     /**
      * Get start time of data
      * 

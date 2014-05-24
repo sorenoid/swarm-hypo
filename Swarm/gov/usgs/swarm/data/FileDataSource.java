@@ -252,9 +252,9 @@ public class FileDataSource extends AbstractCachingDataSource {
         fireChannelsProgress(fn, 0);
         try {
             WIN win = new WIN();
-            final List<WIN.ChannelData> channelData = win.read(fn);
+            final int numWaves = win.read(fn);
             fireChannelsProgress(fn, 0.5);
-            ArrayList<FileSpec> fss = getRelatedFileSpecs(channelData.size());
+            ArrayList<FileSpec> fss = getRelatedFileSpecs(numWaves);
             if (!WIN.useBatch) {
                 wvd = new WaveLabelDialog("Time Zone");
                 wvd.setActionAfterFinish(new Callable<Object>() {
@@ -275,7 +275,7 @@ public class FileDataSource extends AbstractCachingDataSource {
             Object[][] tData = null;
             SimpleChannel sc = new SimpleChannel(null, prevNetwork, prevStation, prevComp);
             if (null == Swarm.fileSpec) editLabels(sc, fss, fName, fileIndex + 1);
-            for (int i = 0; i < channelData.size(); i++) {
+            for (int i = 0; i < numWaves; i++) {
                 if (wvd.getSelectedFileSpec() == null && null == Swarm.fileSpec) {
                     if (null == tData) tData = wvd.getTableData();
                     if (wvd.getSelectedFileSpec() == null) {
@@ -331,7 +331,7 @@ public class FileDataSource extends AbstractCachingDataSource {
                 updateChannelTimes(channel, wave.getStartTime(), wave.getEndTime());
                 cacheWaveAsHelicorder(channel, wave);
                 putWave(channel, wave);
-                fireChannelsProgress(fn, 0.5 + 0.5 * ((float)i / channelData.size()));
+                fireChannelsProgress(fn, 0.5 + 0.5 * ((float)i / numWaves));
             }
             openFiles.add(fn);
         } catch (Throwable t) {
