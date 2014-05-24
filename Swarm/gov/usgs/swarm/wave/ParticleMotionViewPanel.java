@@ -74,12 +74,24 @@ public class ParticleMotionViewPanel extends JPanel {
 		
 		Pair<Double, Double> xExtent = ParticleMotionFrame.extent(this.xData);
 		Pair<Double, Double> yExtent = ParticleMotionFrame.extent(this.yData);
-		double xMaxMag = Math.max(Math.abs(xExtent.item1 - xWave.bias), Math.abs(xExtent.item2 - xWave.bias));
-		minX = -xMaxMag;
-		maxX = xMaxMag;
-		double yMaxMag = Math.max(Math.abs(yExtent.item1 - yWave.bias), Math.abs(yExtent.item2 - yWave.bias));
-		minY = -yMaxMag;
-		maxY = yMaxMag;
+//		double xMaxMag = Math.max(Math.abs(xExtent.item1 - xWave.bias), Math.abs(xExtent.item2 - xWave.bias));
+//		minX = -xMaxMag;
+//		maxX = xMaxMag;
+//		double yMaxMag = Math.max(Math.abs(yExtent.item1 - yWave.bias), Math.abs(yExtent.item2 - yWave.bias));
+//		minY = -yMaxMag;
+//		maxY = yMaxMag;
+		
+		Pair<Double, Double> extent = ParticleMotionFrame.extent(add(xExtent, -xWave.bias), add(yExtent, -yWave.bias));
+		double maxMagnitude = Math.max(Math.abs(extent.item1), Math.abs(extent.item2));
+		minX = -maxMagnitude;
+		maxX = maxMagnitude;
+		minY = -maxMagnitude;
+		maxY = maxMagnitude;
+	
+	}
+
+	private Pair<Double, Double> add(Pair<Double, Double> pair, double add) {
+		return new Pair<Double, Double>(pair.item1 + add, pair.item2 + add);
 	}
 
 	@Override

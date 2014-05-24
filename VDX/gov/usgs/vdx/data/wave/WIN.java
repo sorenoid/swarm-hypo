@@ -43,6 +43,8 @@ import java.util.logging.Logger;
 
 /**
  * A class to read WIN files, adapted from Fissures code, via WIN.java
+ * 
+ * @author Joel Shellman
  */
 public class WIN {
     protected final static Logger logger = Log.getLogger("gov.usgs.vdx.data.wave.WIN");
