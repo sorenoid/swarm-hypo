@@ -145,7 +145,11 @@ public class SeisanChannel {
 //        }
         
         public String generateString() {
-    		return stationCode.trim() + "_" + fullComponent.trim() + "_" + networkName.trim();
+    		return trim(stationCode) + "_" + trim(fullComponent) + "_" + trim(networkName);
+        }
+        
+        public static String trim(String in) {
+        	return in != null ? in.trim() : "";
         }
 
 //        public static SimpleChannel parse(String channel) {
