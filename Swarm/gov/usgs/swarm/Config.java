@@ -83,7 +83,8 @@ public class Config {
     public double durationB;
 
     public double ansv;
-
+    public double azimuthPvel;
+    
     public int span;
     public int timeChunk;
     public boolean showClip;
@@ -272,7 +273,9 @@ public class Config {
 
         durationEnabled = Util.stringToBoolean(config.getString("durationEnabled"), false);
         durationA = Util.stringToDouble(config.getString("durationA"), 1.86);
-        ansv = Util.stringToDouble(config.getString("ansv"), 6);// Default should be 6
+        ansv = Util.stringToDouble(config.getString("ansv"), 6);
+        azimuthPvel = Util.stringToDouble(config.getString("azimuthPvel"), 5);
+        
         durationB = Util.stringToDouble(config.getString("durationB"), -0.85);
 
         showClip = Util.stringToBoolean(config.getString("showClip"), true);

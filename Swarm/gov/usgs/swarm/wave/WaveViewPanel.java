@@ -562,7 +562,7 @@ public class WaveViewPanel extends JComponent {
                             double[][] dataMatrix = Swarm.getApplication().getWaveClipboard().generateDataMatrix(waves);
 
                             double azimuth =
-                                    azimuthCalculator.calculate(dataMatrix, 0, dataMatrix[0].length, Swarm.config.ansv);
+                                    azimuthCalculator.calculate(dataMatrix, 0, dataMatrix[0].length, Swarm.config.azimuthPvel);
                             // Azimuth: integer, velocity: tenths, coherence: tenths
                             SwarmMenu
                                     .getDataRecord()

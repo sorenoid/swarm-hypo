@@ -37,6 +37,8 @@ public class OptionsDialog extends SwarmDialog {
     private JTextField durationA;
     private JTextField durationB;
     private JTextField distanceValue;
+    private JTextField azimuthPvelValue;
+    
     private JLabel jLabel;
     private JCheckBox useLargeCursor;
 
@@ -66,6 +68,7 @@ public class OptionsDialog extends SwarmDialog {
         durationA = new JTextField();
         durationB = new JTextField();
         distanceValue = new JTextField(Double.toString(Swarm.config.ansv));
+        azimuthPvelValue = new JTextField(Double.toString(Swarm.config.azimuthPvel));
         jLabel = new JLabel("km/s * ts-p");
         useLargeCursor = new JCheckBox("Large Helicorder Cursor");
         tzInstrument = new JCheckBox("Use instrument time zone if available");
@@ -123,9 +126,13 @@ public class OptionsDialog extends SwarmDialog {
         builder.append("* Log(t) +", durationB);
 
         builder.appendSeparator("Distance from Station");
-        builder.append("d=", distanceValue);
+        builder.append("d =", distanceValue);
         builder.append(jLabel, 3);
         builder.nextLine();
+
+        builder.appendSeparator("Azimuth");
+        builder.append("pvel =", azimuthPvelValue);
+        builder.append(jLabel, 3);
 
         builder.appendSeparator("Maps");
         builder.append(useMapPacks, 7);
@@ -211,6 +218,7 @@ public class OptionsDialog extends SwarmDialog {
         Swarm.config.durationA = Double.parseDouble(durationA.getText().trim());
         Swarm.config.durationB = Double.parseDouble(durationB.getText().trim());
         Swarm.config.ansv = Double.parseDouble(distanceValue.getText().trim());
+        Swarm.config.azimuthPvel = Double.parseDouble(azimuthPvelValue.getText().trim());
         Swarm.config.useInstrumentTimeZone = tzInstrument.isSelected();
         Swarm.config.useLocalTimeZone = tzLocal.isSelected();
         Swarm.config.specificTimeZone = TimeZone.getTimeZone((String)timeZones.getSelectedItem());

@@ -35,6 +35,7 @@ public class ThreeComponentParametersCalculator {
     	ThreeComponentParametersCalculator tt2 = new ThreeComponentParametersCalculator();
     	System.out.println(tt.calculate(data24, 0, 24, 1.86));
     	System.out.println(tt2.calculate(data50, 0, 50, 1.86));
+    	System.out.println(tt.getVelocity());
     }
     
 
@@ -94,12 +95,16 @@ public class ThreeComponentParametersCalculator {
             err += cc * cc;
         }
 
-        coherence = 1 - err / zz;
+        coherence = 1.0 - err / zz;
 
         // Simple biased velocity estimation (to obtain an unbiased estimate one need to know the noise amplitude)
+
+//        SVEL=PVEL/PSRAT
+//        AI=ATAN(1./ZOVERR)
+//        VELO=SVEL/SIN(AI/2.)
         double svel = pvel / PSRAT;
-        double ai = Math.atan(1 / zoverr);
-        velocity = svel / Math.sin(ai / 2);
+        double ai = Math.atan(1.0 / zoverr);
+        velocity = svel / Math.sin(ai / 2.0);
 
         return azimuth;
     }
