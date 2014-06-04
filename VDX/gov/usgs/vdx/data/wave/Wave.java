@@ -793,7 +793,7 @@ public class Wave implements BinaryDataSet, Comparable<Wave>, Cloneable {
 		// .getSamplingRate());
 		int samples = (int) ((maxt - mint) * sr);
 
-		int[] buffer = new int[samples + 1];
+		int[] buffer = new int[samples]; // Removed +1 because it was adding extra sample
 		Arrays.fill(buffer, NO_DATA);
 
 		for (Wave sw : waves) {
