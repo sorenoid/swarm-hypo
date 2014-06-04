@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
@@ -408,7 +409,29 @@ public class WaveLabelDialog extends SwarmDialog {
             e.printStackTrace();
         }
         if (existingFileSpecCheckBox.isSelected()) {
-            Swarm.fileSpec = selectedFileSpec;
+            if (null != selectedFileSpec) Swarm.fileSpec = selectedFileSpec;
+            else {
+                FileSpec fSpec = new FileSpec();
+                fSpec.setFileName(fileNameValue.getText().toString());
+                List<Component> comps = new ArrayList<Component>();
+                if (null != table) {
+                    DefaultTableModel dtm1 = (DefaultTableModel)table.getModel();
+                    // int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
+                    int nRow1 = rows;
+                    for (int i = 0; i < nRow1; i++) {
+                        Component co = new Component();
+                        co.setIndex(Integer.parseInt((String)dtm1.getValueAt(i, 0)));
+                        co.setStationCode((String)dtm1.getValueAt(i, 1));
+                        co.setNetworkCode((String)dtm1.getValueAt(i, 2));
+                        co.setComponentCode((String)dtm1.getValueAt(i, 3));
+                        co.setLastComponentCode((String)dtm1.getValueAt(i, 4));
+                        comps.add(co);
+                    }
+                    fSpec.setComponents(comps);
+                }
+                Swarm.fileSpec = fSpec;
+            }
+
         }
         isOK = true;
         hide();
