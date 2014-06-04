@@ -201,10 +201,6 @@ public class WIN {
             dis.readFully(oneByte);
             c.channel_num = intFromSingleByte(oneByte[0]);
             
-            if (c.channel_num == 102 && header.second > 24) {
-            	System.out.println("found it");
-            }
-            
             dis.readFully(oneByte);
             byte sampleRateUpperBits = (byte)(oneByte[0] & 0xF);
             c.data_size = intFromSingleByte(oneByte[0]) >> 4;
