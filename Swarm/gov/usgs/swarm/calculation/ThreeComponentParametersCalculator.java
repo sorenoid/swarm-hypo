@@ -84,7 +84,7 @@ public class ThreeComponentParametersCalculator {
         if (azimuth < 0) {
             azimuth += 360;
         }
-        double zoverr = zz / Math.sqrt(xz * xz + yz * yz);
+        double zoverr = (zz/1.0E5) / Math.sqrt((xz/1.0E5) * (xz/1.0E5) + (yz/1.0E5) * (yz/1.0E5));
         double a = -zoverr * Math.cos(azi);
         double b = -zoverr * Math.sin(azi);
 
