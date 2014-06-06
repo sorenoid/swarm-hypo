@@ -262,44 +262,38 @@ public class WaveClipboardFrame extends SwarmFrame {
                 SwarmUtil.createToolBarButton(Icons.edit_server,
                         "Edit location, station and component legend for each wave", new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                // WaveClipboardFrame.this.getSingleSelected();
-                                // WaveViewPanel vp =
-                                // WaveClipboardFrame.this.getSingleSelected();
                                 Swarm.isCancelled = false;
-                                WaveViewPanel vp = selectedSet.iterator().next();
-                                int index = getIndexOfWave(vp);
-                                if (index != -1) {
-                                    editLabelsWaveEdit(vp, null);
-                                    String stationText = editWaveData[0];
-                                    String firstTwoComponent = editWaveData[2];
-                                    String network = editWaveData[1];
-                                    String lastComponent = editWaveData[3];
-                                    editData[index - 1][1] = stationText;
-                                    editData[index - 1][2] = firstTwoComponent;
-                                    editData[index - 1][3] = network;
-                                    editData[index - 1][4] = lastComponent;
-                                    fType = FileType.fromFile(vp.getFileType());
-
-                                    for (int i = 0; i < WaveLabelDialog.rows; i++) {
-                                        WaveViewPanel po =
-                                                getWave(new File(vp.getFilePath()).getAbsolutePath(), (i + 1));
-                                        if (i == index - 1) {
-                                            po.setStationInfo(stationText, firstTwoComponent, network, lastComponent);
-                                        }
-                                        if (null != po) po.fireClose();
-                                    }
-                                    isEdit = true;
-                                    openFile(new File(vp.getFilePath()));
-                                    isEdit = false;
-                                    /*
-                                    Component comp = new Component();
-                                    comp.setIndex(i + 1);
-                                    comp.setComponentCode(po.getChannel().firstTwoComponentCode);
-                                    comp.setLastComponentCode(po.getChannel().lastComponentCode);
-                                    comp.setNetworkCode(po.getChannel().networkName);
-                                    comp.setStationCode(po.getChannel().stationCode);
-                                    components.add(comp);*/
+                                isEdit = true;
+                                if (selectedSet.size() > 0) {
+	                                WaveViewPanel vp = selectedSet.iterator().next();
+	                                int index = getIndexOfWave(vp);
+	                                if (index != -1) {
+	                                    boolean isOK = editLabelsWaveEdit(vp, null);
+	                                    if (isOK) {
+		                                    String stationText = editWaveData[0];
+		                                    String firstTwoComponent = editWaveData[2];
+		                                    String network = editWaveData[1];
+		                                    String lastComponent = editWaveData[3];
+		                                    if (isEdit) index = 1;
+		                                    editData[index - 1][1] = stationText;
+		                                    editData[index - 1][2] = network;
+		                                    editData[index - 1][3] = firstTwoComponent;
+		                                    editData[index - 1][4] = lastComponent;
+		                                    fType = FileType.fromFile(vp.getFileType());
+		
+		                                    for (int i = 0; i < WaveLabelDialog.rows; i++) {
+		                                        WaveViewPanel po =
+		                                                getWave(new File(vp.getFilePath()).getAbsolutePath(), (i + 1));
+		                                        if (i == index - 1) {
+		                                            po.setStationInfo(stationText, firstTwoComponent, network, lastComponent);
+		                                        }
+		                                        if (null != po) po.fireClose();
+		                                    }
+		                                    openFile(new File(vp.getFilePath()));
+	                                    }
+	                                }
                                 }
+                                isEdit = false;
                             }
                         });
         // editLabelButton.setEnabled(false);

@@ -121,28 +121,6 @@ public class WaveLabelDialog extends SwarmDialog {
         builder.addLabel("File :", "1,7,1,1,FILL,FILL");
         builder.add(fileNameValue, "3,7,3,1,FILL,FILL");
 
-
-        /*channelLabelValue = new JLabel("", JLabel.LEFT);
-        builder.addLabel("Wave Channel index:", "1,7,1,1,FILL,FILL");
-        builder.add(channelLabelValue, "3,7,3,1,FILL,FILL");
-
-        stationText = new JTextField();
-        builder.addLabel("Station :", "1,9,1,1,FILL,FILL");
-        builder.add(stationText, "3,9,3,1,FILL,FILL");
-
-        networkText = new JTextField();
-        builder.addLabel("Network :", "1,11,1,1,FILL,FILL");
-        builder.add(networkText, "3,11,3,1,FILL,FILL");
-
-        componentText = new JTextField();
-        builder.addLabel("Component :", "1,13,1,1,FILL,FILL");
-        builder.add(componentText, "3,13,1,1,FILL,FILL");
-
-        String[] specifications = { "Z", "E", "N" };
-        lastCompCombo = new JComboBox(specifications);
-        builder.add(lastCompCombo, "5,13,1,1,FILL,FILL");*/
-
-
         ComboTableCellRenderer renderer = new ComboTableCellRenderer();
         String[] specifications = { "SELECT", "Z", "E", "N" };
         lastCompCombo = new JComboBox(specifications);
@@ -370,7 +348,7 @@ public class WaveLabelDialog extends SwarmDialog {
 
     public void wasCancelled() {
         selectedFileSpec = null;
-        if (existingFileSpecCheckBox.isSelected()) {
+        if (existingFileSpecCheckBox != null && existingFileSpecCheckBox.isSelected()) {
             Swarm.fileSpec = selectedFileSpec;
         }
         isOK = false;
@@ -408,7 +386,7 @@ public class WaveLabelDialog extends SwarmDialog {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (existingFileSpecCheckBox.isSelected()) {
+        if (existingFileSpecCheckBox != null && existingFileSpecCheckBox.isSelected()) {
             if (null != selectedFileSpec) Swarm.fileSpec = selectedFileSpec;
             else {
                 FileSpec fSpec = new FileSpec();
