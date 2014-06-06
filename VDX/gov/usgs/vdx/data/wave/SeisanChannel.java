@@ -168,7 +168,15 @@ public class SeisanChannel {
 //        }
 
       public static SimpleChannel parse(String channel) {
-    	  String[] values = channel.split("_");
+    	  String[] values;
+    	  if (channel.contains("_")) {
+    		  values = channel.split("_");
+    	  } else {
+    		  values = channel.split(" ");
+    	  }
+    	  if (values.length < 2) {
+    		  throw new UnsupportedOperationException("Could not parse channel info: "+channel);
+    	  }
     	  String station = values[0];
     	  String fullComponent = values[1];
     	  String network = values.length >= 3 ? values[2] : "";
