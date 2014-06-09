@@ -504,15 +504,17 @@ public class FileDataSource extends AbstractCachingDataSource {
                             prevComp = c.channel.firstTwoComponentCode;
                         }
 
-                        Metadata md = Swarm.config.getMetadata(channel, true);
-                        md.addGroup("SEISAN^" + fn);
-
-                        // Wave wave = seisan.toWave();
-                        Wave wave = c.toWave();
-                        updateChannelTimes(channel, wave.getStartTime(), wave.getEndTime());
-                        cacheWaveAsHelicorder(channel, wave);
-                        putWave(channel, wave);
-                        openFiles.add(fn);
+                        synchronized (channelTimes) {
+	                        Metadata md = Swarm.config.getMetadata(channel, true);
+	                        md.addGroup("SEISAN^" + fn);
+	
+	                        // Wave wave = seisan.toWave();
+	                        Wave wave = c.toWave();
+	                        updateChannelTimes(channel, wave.getStartTime(), wave.getEndTime());
+	                        cacheWaveAsHelicorder(channel, wave);
+	                        putWave(channel, wave);
+	                        openFiles.add(fn);
+                        }
                     }
                 } catch (Throwable t) {
                     t.printStackTrace();
