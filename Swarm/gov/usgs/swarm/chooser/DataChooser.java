@@ -159,46 +159,54 @@ public class DataChooser extends JPanel {
 			progressNodes = new HashMap<String, ProgressNode>();
 		}
 
-		public synchronized void channelsUpdated() {
-			List<String> ch = filesNode.getSource().getChannels();
-			if (ch == null && filesNodeInTree) {
-				filesNode.removeAllChildren();
-				removeServer(filesNode);
-				filesNodeInTree = false;
-			} else if (ch != null) {
-				if (!filesNodeInTree) {
-					model.insertNodeInto(filesNode, rootNode, 0);
+		public void channelsUpdated() {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					List<String> ch = filesNode.getSource().getChannels();
+					if (ch == null && filesNodeInTree) {
+						filesNode.removeAllChildren();
+						removeServer(filesNode);
+						filesNodeInTree = false;
+					} else if (ch != null) {
+						if (!filesNodeInTree) {
+							model.insertNodeInto(filesNode, rootNode, 0);
+						}
+		
+						populateServer(filesNode, ch, true, true);
+		
+						filesNodeInTree = true;
+					}
 				}
-
-				populateServer(filesNode, ch, true, true);
-
-				filesNodeInTree = true;
-			}
+			});
 		}
 
-		public synchronized void channelsProgress(String id, double p) {
-			ProgressNode pn = progressNodes.get(id);
-			boolean ins = false;
-			if (pn == null) {
-				pn = new ProgressNode();
-				progressNodes.put(id, pn);
-				ins = true;
-			}
-			if (!filesNodeInTree) {
-				model.insertNodeInto(filesNode, rootNode, 0);
-				filesNodeInTree = true;
-				ins = true;
-			}
-			pn.setProgress(p);
-			if (ins) {
-				model.insertNodeInto(pn, filesNode, 0);
-				dataTree.expandPath(new TreePath(filesNode.getPath()));
-			}
-			if (p == 1) {
-				progressNodes.remove(id);
-				filesNode.remove(pn);
-			}
-			dataTree.repaint();
+		public void channelsProgress(final String id, final double p) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					ProgressNode pn = progressNodes.get(id);
+					boolean ins = false;
+					if (pn == null) {
+						pn = new ProgressNode();
+						progressNodes.put(id, pn);
+						ins = true;
+					}
+					if (!filesNodeInTree) {
+						model.insertNodeInto(filesNode, rootNode, 0);
+						filesNodeInTree = true;
+						ins = true;
+					}
+					pn.setProgress(p);
+					if (ins) {
+						model.insertNodeInto(pn, filesNode, 0);
+						dataTree.expandPath(new TreePath(filesNode.getPath()));
+					}
+					if (p == 1) {
+						progressNodes.remove(id);
+						filesNode.remove(pn);
+					}
+					dataTree.repaint();
+				}
+			});
 		}
 
 		public void helicorderProgress(String channel, double progress) {
