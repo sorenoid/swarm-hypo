@@ -45,8 +45,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Panel that is used to do hypo calculation
  * 
- * @author Chirag Patel
- *
+ * @author Joel Shellman
  */
 public class HypoPanel extends JPanel {
 
@@ -338,97 +337,112 @@ public class HypoPanel extends JPanel {
 
 	
 	/**
-	 * 
 	 * Generates hypo inputs either from an archived file or from objects in memory
-	 * 
-	 * @param archiveFile
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws JAXBException
-	 * @throws Exception
 	 */
 	private void generateHypoInputs(String archiveFile) throws FileNotFoundException, IOException, JAXBException, Exception {
-
-		if(archiveFile == null){
-		Properties props = new Properties();
-		props.load(new FileInputStream(hypoInputPath.getText()));
-		controlCard = new ControlCard(props);
-		loadCrustalModelList();
-		List<String> stations = Marker.listStationByAttempt(Swarm
-				.getSelectedAttempt().getId());
+		if (archiveFile == null) {
+			Properties props = new Properties();
+			props.load(new FileInputStream(hypoInputPath.getText()));
+			controlCard = new ControlCard(props);
+			loadCrustalModelList();
+			List<String> stations = Marker.listStationByAttempt(Swarm
+					.getSelectedAttempt().getId());
+			
+			loadStationList(stations);
+			phaseRecordsList.clear();
+			for (String st : stations) {
+				List<Marker> pmarkers = Marker.listByStationAndTypeAndAttempt(Swarm
+						.getSelectedAttempt().getId(), st,
+						Marker.P_MARKER_LABEL);
+				
+				List<Marker> smarkers = Marker.listByStationAndTypeAndAttempt(Swarm
+						.getSelectedAttempt().getId(), st,
+						Marker.S_MARKER_LABEL);
+				
+				
+				List<Marker> codaMarkers = Marker.listByStationAndTypeAndAttempt(Swarm
+						.getSelectedAttempt().getId(), st,
+						Marker.CODA_MARKER_LABEL);
+				
+				if (pmarkers.size() == 0 && smarkers.size() == 0) {
+					throw new Exception("Must have at least one p or s marker for each station. None found for station: "+st);
+				}
+				
+				if (codaMarkers.size() > 0 && pmarkers.size() == 0) {
+					throw new Exception("Must have a p marker with coda marker. No p marker found for coda marker for station: "+st);
+				}
+				
+				String prmk = null;
+				float pkDate = 0f;
+				int pHour = 0;
+				int pMin = 0;
+				float pSec = 0f;
+				
+				String smrk = null;
+				float sSec = 0f;
+				
+				float timeDiffFromCodaToPInSec = 0;
+				
+				if (pmarkers.size() > 0) {
+					Marker pMarker = pmarkers.get(0);
+					prmk = pMarker.getIp_ep() + pMarker.getUpDownUnknown() + (pMarker.getWeight() == null?"0":pMarker.getWeight().toString());
 		
-		loadStationList(stations);
-		phaseRecordsList.clear();
-		for (String st : stations) {
-			List<Marker> pmarkers = Marker.listByStationAndTypeAndAttempt(Swarm
-					.getSelectedAttempt().getId(), st,
-					Marker.P_MARKER_LABEL);
-			
-			List<Marker> smarkers = Marker.listByStationAndTypeAndAttempt(Swarm
-					.getSelectedAttempt().getId(), st,
-					Marker.S_MARKER_LABEL);
-			
-			
-			List<Marker> codaMarkers = Marker.listByStationAndTypeAndAttempt(Swarm
-					.getSelectedAttempt().getId(), st,
-					Marker.CODA_MARKER_LABEL);
-			
-			
-			if (pmarkers.size() == 1 && smarkers.size() == 1 && codaMarkers.size() == 1) {
+					Calendar c = Calendar.getInstance();
+					c.setTimeInMillis(pMarker.getMarkerTime().getTime());
+					int pmonth = c.get(Calendar.MONTH);
+					int pyear = c.get(Calendar.YEAR);
+					int pday = c.get(Calendar.DAY_OF_MONTH);
+					pHour = c.get(Calendar.HOUR_OF_DAY);
+					pMin = c.get(Calendar.MINUTE);
+					pSec = c.get(Calendar.SECOND);
+		
+					pkDate = Float.parseFloat(Integer.toString(pyear - 1900)
+							+ (pmonth < 10 ? "0" + Integer.toString(pmonth)
+									: Integer.toString(pmonth))
+							+ (pday < 10 ? "0" + Integer.toString(pday) : Integer
+									.toString(pday)));
 
-				Marker pMarker = pmarkers.get(0);
-
-				Calendar c = Calendar.getInstance();
-				c.setTimeInMillis(pMarker.getMarkerTime().getTime());
-				int pmonth = c.get(Calendar.MONTH);
-				int pyear = c.get(Calendar.YEAR);
-				int pday = c.get(Calendar.DAY_OF_MONTH);
-				int pHour = c.get(Calendar.HOUR_OF_DAY);
-				int pMin = c.get(Calendar.MINUTE);
-				int pSec = c.get(Calendar.SECOND);
-
-				String pkDate = Integer.toString(pyear - 1900)
-						+ (pmonth < 10 ? "0" + Integer.toString(pmonth)
-								: Integer.toString(pmonth))
-						+ (pday < 10 ? "0" + Integer.toString(pday) : Integer
-								.toString(pday));
-
-				Marker sMarker = smarkers.get(0);
-				c.setTimeInMillis(sMarker.getMarkerTime().getTime());
+					if (codaMarkers.size() > 0) {
+						Marker codaMarker = codaMarkers.get(0);
+						long codaMarkerTime = codaMarker.getMarkerTime().getTime();
+						long pMarkerTime = pMarker.getMarkerTime().getTime();
+						long timeDiffFromCodaToP = Math.abs(codaMarkerTime
+								- pMarkerTime);
+						timeDiffFromCodaToPInSec = timeDiffFromCodaToP / 1000;
+					}
+				}
+	
+				if (smarkers.size() > 0) {
+					Marker sMarker = smarkers.get(0);
+					Calendar c = Calendar.getInstance();
+					c.setTimeInMillis(sMarker.getMarkerTime().getTime());
+					
+					smrk = sMarker.getIs_es() + sMarker.getUpDownUnknown() + (sMarker.getWeight() == null ? "0" : sMarker.getWeight().toString());
+					
+					sSec = c.get(Calendar.SECOND);
+				}
 				
-				int sSec = c.get(Calendar.SECOND);
-				
-				Marker codaMarker = codaMarkers.get(0);
-				long codaMarkerTime = codaMarker.getMarkerTime().getTime();
-				long pMarkerTime = pMarker.getMarkerTime().getTime();
-				long timeDiffFromCodaToP = Math.abs(codaMarkerTime
-						- pMarkerTime);
-				long timeDiffFromCodaToPInSec = timeDiffFromCodaToP / 1000;
-
 				phaseRecordsList.add(new PhaseRecord(st,
-                        pMarker.getIp_ep() + pMarker.getUpDownUnknown() + (pMarker.getWeight() == null?"0":pMarker.getWeight().toString()), // PRMK
-                        Float.parseFloat(pkDate),
-                        pHour, pMin,
-                        (float)pSec, (float)sSec,
-                        sMarker.getIs_es() + sMarker.getUpDownUnknown() + (pMarker.getWeight() == null?"0":pMarker.getWeight().toString()), // SMRK
-                        0.0f, // WS
-                        0.0f, // AMX TODO: calc this
-                        0.0f, // PRX
-                        0.0f, // CALC
+	                    prmk, // PRMK
+	                    pkDate, pHour, pMin, pSec,
+	                    sSec,
+	                    smrk, // SMRK
+	                    0.0f, // WS
+	                    0.0f, // AMX TODO: calc this
+	                    0.0f, // PRX
+	                    0.0f, // CALC
 						0.0f, // CALX
-                        "", // RMK
-                        0.0f, // DT
-                        (float)timeDiffFromCodaToPInSec, // FMP TODO: calc this
-                        "", //"1.22",
+	                    "", // RMK
+	                    0.0f, // DT
+	                    timeDiffFromCodaToPInSec, // FMP
+	                    "", //"1.22",
 						'D', "",
 						"", //"SR01IPD0 691005120651.22",
 						' ',
-                        "" //"IPD0"
-                        ));
+	                    "" //"IPD0"
+	                    ));
 			}
-
-		}
-		}else{
+		} else {
 			File file = new File(archiveFile);
 			JAXBContext jaxbContext = JAXBContext
 					.newInstance(HypoArchiveOutput.class);
@@ -440,9 +454,7 @@ public class HypoPanel extends JPanel {
 			phaseRecordsList = h.getPhasRecords();
 			stationsList = h.getStations();
 		}
-		
 	}
-	
 	
 
 	/**
@@ -627,5 +639,4 @@ public class HypoPanel extends JPanel {
 		}
 		return indexes;
 	}
-	
 }

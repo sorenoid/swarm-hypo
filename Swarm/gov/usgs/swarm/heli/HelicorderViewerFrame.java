@@ -65,7 +65,7 @@ import javax.swing.event.InternalFrameEvent;
 /**
  * <code>JInternalFrame</code> that holds a helicorder.
  * 
- * @author Chirag Patel
+ * @author Dan Cervelli
  */
 public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 	public static final long serialVersionUID = -1;
@@ -742,20 +742,11 @@ public class HelicorderViewerFrame extends SwarmFrame implements Kioskable {
 						// forcably returned a different time than asked
 						// for -- like in the case of a miniSEED.
 						double dt = end - before;
-						before = hd.getStartTime() - dt / 2;
+						before = hd.getEndTime() - dt / 2;
 						end = hd.getEndTime() + dt / 2;
 						settings.setBottomTime(end);
-					} else if (hd != null) {
-						before = hd.getStartTime();
-						end  = hd.getEndTime();
 					}
-					
-					double spanend = end + ((settings.span * 60)/2);
-					double spanbefore = before - ((settings.span * 60)/2);
-					
-					settings.setBottomTime(spanend);
-					
-					helicorderViewPanel.setHelicorder(hd, spanbefore,  spanend);
+					helicorderViewPanel.setHelicorder(hd, before, end);
 					repaintHelicorder();
 				}
 			}

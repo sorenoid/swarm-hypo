@@ -51,7 +51,7 @@ import javax.swing.event.EventListenerList;
 /**
  * A <code>JComponent</code> for displaying and interacting with a helicorder.
  * 
- * @author Chirag Patel
+ * @author Dan Cervelli
  */
 public class HelicorderViewPanel extends JComponent
 {

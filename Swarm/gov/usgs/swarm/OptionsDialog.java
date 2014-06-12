@@ -132,7 +132,7 @@ public class OptionsDialog extends SwarmDialog {
 
         builder.appendSeparator("Azimuth");
         builder.append("pvel =", azimuthPvelValue);
-        builder.append(jLabel, 3);
+        builder.append(new JLabel("km/s"), 3);
 
         builder.appendSeparator("Maps");
         builder.append(useMapPacks, 7);
