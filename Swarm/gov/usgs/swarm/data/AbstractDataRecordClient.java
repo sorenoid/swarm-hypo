@@ -139,6 +139,6 @@ public abstract class AbstractDataRecordClient
 	public Wave join(List<Wave> waves)
 	{
 		// TODO ensure index is good and no gaps?
-		return Wave.join(waves);
+		return Wave.join(waves, true);
 	}
 }

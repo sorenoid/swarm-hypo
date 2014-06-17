@@ -647,7 +647,7 @@ public class FileDataSource extends AbstractCachingDataSource {
                             ns += parts.get(i).numSamples();
                             subParts.add(parts.get(i));
                             if (ns > 3600 * 100 || i == parts.size() - 1) {
-                                Wave wave = Wave.join(subParts);
+                                Wave wave = Wave.join(subParts, true);
                                 updateChannelTimes(code, wave.getStartTime(), wave.getEndTime());
                                 cacheWaveAsHelicorder(code, wave);
                                 putWave(code, wave);

@@ -91,7 +91,7 @@ public class FullSeedDataSource extends SeismicDataSource
 			for (String key : tempStationMap.keySet())
 			{
 				List<Wave> parts = tempStationMap.get(key);
-				Wave wave = Wave.join(parts);
+				Wave wave = Wave.join(parts, true);
 				
 				CachedDataSource cache = CachedDataSource.getInstance();
 				cache.cacheWaveAsHelicorder(key, wave);

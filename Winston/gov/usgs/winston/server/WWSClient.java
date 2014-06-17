@@ -411,7 +411,7 @@ public class WWSClient extends WaveServer
 		if (wavelet != null)
 			waves.add(wavelet);
 
-    	Wave wave = Wave.join(waves);
+    	Wave wave = Wave.join(waves, true);
     	
         if (wave != null)
         {

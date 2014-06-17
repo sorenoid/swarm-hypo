@@ -10,7 +10,7 @@ import gov.usgs.swarm.Metadata;
 import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.SwarmMenu;
 import gov.usgs.swarm.SwingWorker;
-import gov.usgs.swarm.calculation.ThreeComponentParametersCalculator;
+import gov.usgs.swarm.calculation.AzimuthCalculator;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.database.model.Marker;
@@ -61,7 +61,9 @@ import javax.swing.event.EventListenerList;
  * TODO: move filter method
  * 
  * 
- * @author Chirag Patel
+ * @author Dan Cervelli
+ * @author Jamil Shehzad
+ * @author Joel Shellman
  */
 public class WaveViewPanel extends JComponent {
     public static final long serialVersionUID = -1;
@@ -546,23 +548,13 @@ public class WaveViewPanel extends JComponent {
                 if (stationCount == 3) {
                     double[] markerBoundaries = getMarkerTimeBoundaries(Marker.AZIMUTH_MARKER_LABEL);
                     if (markerBoundaries != null) {
+                        Wave[] waves = Swarm.getApplication().getWaveClipboard().getWaveDataSectionFromStationComponents(channel.stationCode, markerBoundaries[0], markerBoundaries[1]);
 
-                        HashMap<String, Wave> wavesComponentMap =
-                                Swarm.getApplication()
-                                        .getWaveClipboard()
-                                        .getWaveDataSectionFromStationComponents(channel.stationCode,
-                                                markerBoundaries[0], markerBoundaries[1]);
-
-                        if (wavesComponentMap != null) {
-                            ArrayList<Wave> waves = new ArrayList<Wave>();
-                            waves.addAll(wavesComponentMap.values());
-
-                            ThreeComponentParametersCalculator azimuthCalculator =
-                                    new ThreeComponentParametersCalculator();
+                        if (waves != null) {
+                            AzimuthCalculator azimuthCalculator = new AzimuthCalculator();
                             double[][] dataMatrix = Swarm.getApplication().getWaveClipboard().generateDataMatrix(waves);
 
-                            double azimuth =
-                                    azimuthCalculator.calculate(dataMatrix, 0, dataMatrix[0].length, Swarm.config.azimuthPvel);
+                            double azimuth = azimuthCalculator.calculate(dataMatrix, 0, dataMatrix[0].length, Swarm.config.azimuthPvel);
                             // Azimuth: integer, velocity: tenths, coherence: tenths
                             SwarmMenu
                                     .getDataRecord()
@@ -574,7 +566,7 @@ public class WaveViewPanel extends JComponent {
                                                     ", coherence: " +
                                                     roundTo(azimuthCalculator.getCoherence(), 10));
                         } else {
-                            System.out.println("cannot ger boundaries");
+                            System.out.println("Cannot get waves for azimuth");
                         }
                     }
                 }

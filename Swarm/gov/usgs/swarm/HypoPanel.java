@@ -365,11 +365,12 @@ public class HypoPanel extends JPanel {
 						Marker.CODA_MARKER_LABEL);
 				
 				if (pmarkers.size() == 0 && smarkers.size() == 0) {
-					throw new Exception("Must have at least one p or s marker for each station. None found for station: "+st);
+					System.out.println("WARNING: Marker (p or s) not found for station "+st+" using file "+hypoInputPath.getText()+". Skipping this station.");
+					continue;
 				}
 				
 				if (codaMarkers.size() > 0 && pmarkers.size() == 0) {
-					throw new Exception("Must have a p marker with coda marker. No p marker found for coda marker for station: "+st);
+					throw new Exception("Must have a p marker with coda marker. No p marker found for coda marker for station: "+st+" using file "+hypoInputPath.getText());
 				}
 				
 				String prmk = null;

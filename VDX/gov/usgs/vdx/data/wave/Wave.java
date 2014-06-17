@@ -768,9 +768,10 @@ public class Wave implements BinaryDataSet, Comparable<Wave>, Cloneable {
 	 * 
 	 * @param waves
 	 *            the list of <code>Wave</code> s
+	 * @param extraSample TODO
 	 * @return the new joined wave
 	 */
-	public static Wave join(List<Wave> waves) {
+	public static Wave join(List<Wave> waves, boolean extraSample) {
 		if (waves == null || waves.size() == 0)
 			return null;
 
@@ -793,7 +794,7 @@ public class Wave implements BinaryDataSet, Comparable<Wave>, Cloneable {
 		// .getSamplingRate());
 		int samples = (int) ((maxt - mint) * sr);
 
-		int[] buffer = new int[samples]; // Removed +1 because it was adding extra sample
+		int[] buffer = new int[samples + (extraSample ? 1 : 0)]; // SEED expects extra sample, WIN doesn't want one
 		Arrays.fill(buffer, NO_DATA);
 
 		for (Wave sw : waves) {

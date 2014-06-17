@@ -303,7 +303,7 @@ public class SeedLinkClient extends BaseSLClient
 		waveList = new ArrayList<Wave>();
 		init(scnl, t1, t2);
 		runAndWait();
-		final Wave wave = Wave.join(waveList);
+		final Wave wave = Wave.join(waveList, true);
 		waveList = null;
 		return wave;
 	}

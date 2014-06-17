@@ -279,7 +279,7 @@ public class WIN {
         	for (ChannelData c : channels) {
         		subParts.add(toWave(c));
         	}
-        	waves[i++] = Wave.join(subParts);
+        	waves[i++] = Wave.join(subParts, false);
         }
         return waves;
     }

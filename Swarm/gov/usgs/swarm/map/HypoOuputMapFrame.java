@@ -8,6 +8,7 @@ import gov.usgs.vdx.calc.data.HypoArchiveOutput;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -76,11 +77,9 @@ public class HypoOuputMapFrame extends JFrame{
 	
 
 	public HypoOuputMapFrame() {
-		setAlwaysOnTop(true);
 		setTitle("Hypo Output");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		createUI();
-
 	}
 	
 	
@@ -93,8 +92,9 @@ public class HypoOuputMapFrame extends JFrame{
 		mapPanel = new HypoOutputMapPanel();
 		
 		dataArea = new JTextPane();
-		dataArea.setText("Meme");
+		dataArea.setText("");
 		dataArea.setEditable(false);
+		dataArea.setFont(Font.getFont(Font.MONOSPACED));
 		JScrollPane scrollPane = new JScrollPane(dataArea);
 		
 		

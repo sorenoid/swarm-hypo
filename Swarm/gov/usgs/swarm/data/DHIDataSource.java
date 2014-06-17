@@ -243,7 +243,7 @@ public class DHIDataSource extends SeismicDataSource
 			            waves.add(wave);
 			        }
 		        }
-		        wave = Wave.join(waves);
+		        wave = Wave.join(waves, true);
 		        if (wave != null && useCache)
 		        {
 			        cache.cacheWaveAsHelicorder(station, wave);

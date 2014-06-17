@@ -27,6 +27,7 @@ import gov.usgs.util.png.PngEncoderB;
 import gov.usgs.util.ui.ExtensionFileFilter;
 import gov.usgs.vdx.data.wave.SAC;
 import gov.usgs.vdx.data.wave.SeisanChannel;
+import gov.usgs.vdx.data.wave.SeisanChannel.ComponentDirection;
 import gov.usgs.vdx.data.wave.SeisanChannel.SimpleChannel;
 import gov.usgs.vdx.data.wave.SeisanFile;
 import gov.usgs.vdx.data.wave.WIN;
@@ -59,7 +60,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -95,9 +95,8 @@ import javax.xml.bind.JAXBException;
 /**
  * The wave clipboard internal frame.
  * 
- * 
- * 
- * @author chirag patel
+ * @author Dan Cervelli
+ * @author Jamil Shehzad
  * @version $Id: WaveClipboardFrame.java,v 1.10 2014-03-14 02:46:14 cpatel Exp $
  */
 public class WaveClipboardFrame extends SwarmFrame {
@@ -1678,12 +1677,15 @@ public class WaveClipboardFrame extends SwarmFrame {
         return data;
     }
 
-    public double[][] generateDataMatrix(ArrayList<Wave> waves) {
-        int dataLength = waves.get(0).numSamples();
-        double[][] matrix = new double[3][waves.get(0).numSamples()];
-        for (int i = 0; i < waves.size(); i++) {
+    /**
+     * @param waves [VERTICAL, NORTH, EAST]
+     */
+    public double[][] generateDataMatrix(Wave[] waves) {
+        int dataLength = waves[0].numSamples();
+        double[][] matrix = new double[3][waves[0].numSamples()];
+        for (int i = 0; i < waves.length; i++) {
             for (int j = 0; j < dataLength; j++) {
-                matrix[i][j] = waves.get(i).buffer[j];
+                matrix[i][j] = waves[i].buffer[j];
             }
         }
         return matrix;
@@ -1727,27 +1729,31 @@ public class WaveClipboardFrame extends SwarmFrame {
         return null;
     }
 
-    public LinkedHashMap<String, Wave>
-            getWaveDataSectionFromStationComponents(String stationCode, double t1, double t2) {
-        LinkedHashMap<String, Wave> waveData = new LinkedHashMap<String, Wave>();
+    public Wave[] getWaveDataSectionFromStationComponents(String stationCode, double t1, double t2) {
+    	Wave[] result = new Wave[3]; // { vertical, north, east }
         if (waves != null) {
             for (int i = 0; i < waves.size(); i++) {
-                // System.out.println(i + " : " + waves.get(i).component);
                 WaveViewPanel wvp = waves.get(i);
                 if (wvp.getStationCode().equalsIgnoreCase(stationCode)) {
                     if (t1 < wvp.getWave().getStartTime() || t2 > wvp.getWave().getEndTime() || t2 < t1) {
                         System.out.println("out of bounds");
                         return null;
                     }
-                    Wave waveSectionFromTimeBoundaries = wvp.getWave().subset(t1, t2);
-                    waveData.put(wvp.getChannel().fullComponent(),// wvp.component
-                                                                  // +
-                                                                  // wvp.lastComponentCode,
-                            waveSectionFromTimeBoundaries);
+
+                    Wave w = wvp.getWave().subset(t1, t2);
+                    SimpleChannel channel = wvp.getChannel();
+
+                    if (channel.isDirection(ComponentDirection.VERTICAL)) {
+                		result[0] = w;
+                	} else if (channel.isDirection(ComponentDirection.NORTH)) {
+                		result[1] = w;
+                	} else if (channel.isDirection(ComponentDirection.EAST)) {
+                		result[2] = w;
+                	}
                 }
             }
         }
-        return waveData;
+        return result;
     }
 
     public ArrayList<WaveViewPanel> getStationComponents(String stationCode) {

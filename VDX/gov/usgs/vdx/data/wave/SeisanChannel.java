@@ -1,6 +1,7 @@
 package gov.usgs.vdx.data.wave;
 
 import gov.usgs.util.Util;
+import gov.usgs.vdx.data.wave.SeisanChannel.ComponentDirection;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -103,9 +104,41 @@ public class SeisanChannel {
 		return channel.stationCode + ", " + channel.firstTwoComponentCode + ", "+ firstLocationCode + ","+channel.lastComponentCode+","+sampleRate+","+numberOfSamples;
 	}
 	
+	public static enum ComponentDirection {
+		VERTICAL, NORTH, EAST;
+
+		public static ComponentDirection fromString(String comp) {
+			if ("Z".equals(comp)) {
+				return VERTICAL;
+			} else if ("N".equals(comp)) {
+				return NORTH;
+			} else if ("E".equals(comp)) {
+				return EAST;
+			} else {
+				throw new IllegalArgumentException("Unknown component code: "+comp);
+			}
+		}
+	}
 	
 	public static class SimpleChannel {
-        public final String networkName;
+		public static SimpleChannel parse(String channel) {
+			String[] values;
+			if (channel.contains("_")) {
+				values = channel.split("_");
+			} else {
+				values = channel.split(" ");
+			}
+			if (values.length < 2) {
+				throw new UnsupportedOperationException(
+						"Could not parse channel info: " + channel);
+			}
+			String station = values[0];
+			String fullComponent = values[1];
+			String network = values.length >= 3 ? values[2] : "";
+			return new SimpleChannel(channel, network, station, fullComponent);
+		}
+
+		public final String networkName;
         public final String stationCode;
         public final String fullComponent;
         public final String firstTwoComponentCode;
@@ -127,23 +160,6 @@ public class SeisanChannel {
             return toString;
         }
 
-        // TODO: should do generateString for display only. Should see how SCNL does parsing and follow that convention
-        // for toString and parse
-//        public String generateString() {
-//            return (((stationCode == null || stationCode.trim().length() == 0) ? "--": stationCode)
-//                    + "  "
-//					+ ((firstTwoComponentCode == null || firstTwoComponentCode.trim().length() == 0) ? ((lastComponentCode == null || lastComponentCode
-//                    .trim().length() == 0) ? "--"
-//                    : lastComponentCode+"///")
-//                    : ((lastComponentCode == null || lastComponentCode
-//                    .trim().length() == 0) ? firstTwoComponentCode
-//                    : firstTwoComponentCode+lastComponentCode))
-//					+" "
-//					+((networkName == null || networkName.trim().length() == 0) ? "--": networkName+"//")
-//					+" ");
-//					
-//        }
-        
         public String generateString() {
     		return trim(stationCode) + "_" + trim(fullComponent) + "_" + trim(networkName);
         }
@@ -151,37 +167,6 @@ public class SeisanChannel {
         public static String trim(String in) {
         	return in != null ? in.trim() : "";
         }
-
-//        public static SimpleChannel parse(String channel) {
-//            try {
-//                String compressed = channel.replace("  ", " ");
-//                String[] split = compressed.split(" ");
-//                String network = "--".equals(split[0]) ? null : split[0];
-//                int len = split[2].length();
-//                String c1 = split[2].substring(0, len-1);
-//                String c2 = split[2].substring(len-1, len);
-//                return new SimpleChannel(channel, network, split[1], c1, c2);
-//            } catch (Exception e) {
-//                System.out.println("Could not parse channel: "+channel);
-//                return new SimpleChannel(channel, null, null, null, null);
-//            }
-//        }
-
-      public static SimpleChannel parse(String channel) {
-    	  String[] values;
-    	  if (channel.contains("_")) {
-    		  values = channel.split("_");
-    	  } else {
-    		  values = channel.split(" ");
-    	  }
-    	  if (values.length < 2) {
-    		  throw new UnsupportedOperationException("Could not parse channel info: "+channel);
-    	  }
-    	  String station = values[0];
-    	  String fullComponent = values[1];
-    	  String network = values.length >= 3 ? values[2] : "";
-    	  return new SimpleChannel(channel, network, station, fullComponent);
-      }
 
         public void populateSAC(SAC sac) {
             sac.kstnm = stationCode;
@@ -217,9 +202,13 @@ public class SeisanChannel {
         public String getLastComponentCode(){
         	return lastComponentCode;
         }
+
+		public boolean isDirection(ComponentDirection direction) {
+			return direction == ComponentDirection.fromString(getLastComponentCode());
+		}
+
+		public ComponentDirection getDirection() {
+			return ComponentDirection.fromString(getLastComponentCode());
+		}
     }
-
-    
-
-	
 }
