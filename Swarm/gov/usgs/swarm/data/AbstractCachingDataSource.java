@@ -19,6 +19,7 @@ import cern.colt.matrix.DoubleMatrix2D;
  * 
  * Mostly build with Dan's code pulled from CachedDataSource
  * 
+ * @author Tom Parker
  * @author Chirag Patel
  */
 public abstract class AbstractCachingDataSource extends SeismicDataSource {

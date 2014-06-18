@@ -5,6 +5,7 @@ import javax.swing.ImageIcon;
 /**
  * Class to return icons
  *
+ * @author Tom Parker
  * @author Chirag Patel
  */
 public class Icons 

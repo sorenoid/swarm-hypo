@@ -27,6 +27,7 @@ import javax.swing.event.InternalFrameEvent;
 
 /**
  * 
+ * @author Dan Cervelli
  * @author Chirag Patel
  */
 public class WaveViewerFrame extends JInternalFrame implements Runnable

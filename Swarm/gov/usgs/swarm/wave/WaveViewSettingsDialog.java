@@ -32,6 +32,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * Revision 1.4  2006/06/05 18:06:49  dcervelli
  * Major 1.3 changes.
  *
+ * @author Dan Cervelli
  * @author Chirag Patel
  */
 public class WaveViewSettingsDialog extends SwarmDialog

@@ -51,6 +51,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 /**
  *
+ * @author Dan Cervelli
  * @author Chirag Patel
  */
 public class MapMiniPanel extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener
