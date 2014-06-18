@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -191,7 +192,7 @@ public class HypoPanel extends JPanel {
 				if (error == null) {
 					try {
 						Results hypoResult = null;
-						hypoResult = ruHypo();
+						hypoResult = runHypo();
 						
 						HypoResults hr = new HypoResults();
 						hr.setAdjustmentsOutput(hypoResult
@@ -212,7 +213,7 @@ public class HypoPanel extends JPanel {
 								&& hr.getHypocenterOuput().size() > 0) {
 
 							List<Hypocenter> centers = hr.getHypocenterOuput();
-							if(centers.size() > 0){
+							if (centers.size() > 0){
 								Swarm.getSelectedAttempt().setLatitude((double)centers.get(0).getLAT1());
 								Swarm.getSelectedAttempt().setLongitude((double)centers.get(0).getLON1());
 								Swarm.getSelectedAttempt().setDepth(centers.get(0).getZ());
@@ -223,7 +224,7 @@ public class HypoPanel extends JPanel {
 						if (Swarm.getSelectedAttempt() != null) {
 							Swarm.getSelectedAttempt()
 									.setHypoResultsAsBytes(hr);
-							if(archiveCheck.isSelected()){
+							if (archiveCheck.isSelected()){
 								Swarm.getSelectedAttempt().setHypoInputArchiveFilePath(hypoTotalInputPath.getText());
 							}
 							Swarm.getSelectedAttempt()
@@ -452,7 +453,7 @@ public class HypoPanel extends JPanel {
 
 			controlCard = h.getControlCard();
 			crustalModelList = h.getCrustalModel();
-			phaseRecordsList = h.getPhasRecords();
+			phaseRecordsList = h.getPhaseRecords();
 			stationsList = h.getStations();
 		}
 	}
@@ -465,12 +466,12 @@ public class HypoPanel extends JPanel {
 	 */
 	public void enableFields() {
 		runHypoButton.setEnabled(true);
-		if(inputCheck.isSelected()){
-		hypoInputPath.setEnabled(true);
-		browseHypoInputButton.setEnabled(true);
-		hypoTotalInputPath.setEnabled(false);
-		browseHypoTotalInputButton.setEnabled(false);
-		}else{
+		if (inputCheck.isSelected()) {
+			hypoInputPath.setEnabled(true);
+			browseHypoInputButton.setEnabled(true);
+			hypoTotalInputPath.setEnabled(false);
+			browseHypoTotalInputButton.setEnabled(false);
+		} else {
 			hypoInputPath.setEnabled(false);
 			browseHypoInputButton.setEnabled(false);
 			hypoTotalInputPath.setEnabled(true);
@@ -511,13 +512,13 @@ public class HypoPanel extends JPanel {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	private Results ruHypo() throws IOException, ParseException {
+	private Results runHypo() throws IOException, ParseException {
 		Hypo71 hypoCalculator = new Hypo71();
 		
 		hy = new HypoArchiveOutput();
 		hy.setControlCard(controlCard);
 		for (PhaseRecord o : phaseRecordsList) {
-			hy.getPhasRecords().add(o);
+			hy.getPhaseRecords().add(o);
 		}
 
 		for (Station o : stationsList) {
@@ -528,8 +529,7 @@ public class HypoPanel extends JPanel {
 			hy.getCrustalModel().add(o);
 		}
 
-		hypoCalculator.calculateHypo71(
-				"SOME SANTA ROSA QUAKES FOR TESTING HYPO71", null,
+		hypoCalculator.calculateHypo71("", null,
 				stationsList, crustalModelList, controlCard, phaseRecordsList, null);
 		Results result = hypoCalculator.getResults();
 
@@ -546,32 +546,32 @@ public class HypoPanel extends JPanel {
 	 */
 	private void loadStationList(List<String> stations) throws FileNotFoundException, IOException{
 		stationsList.clear();
-		ArrayList<Integer> indexes = getIndexes("station");
+		List<Integer> indexes = getIndexes("station");
 		Properties props = new Properties();
 		props.load(new FileInputStream(hypoInputPath.getText()));
 		
-		if(indexes.size() > 0){
+		if (indexes.size() > 0) {
 			for(Integer index : indexes){
 				Station st = new Station();
-				if(props.get("station["+index+"].IW") != null && !props.get("station["+index+"].IW").toString().isEmpty())st.setIW(props.get("station["+index+"].IW").toString().charAt(0));
-				if(props.get("station["+index+"].NSTA") != null && !props.get("station["+index+"].NSTA").toString().isEmpty())st.setNSTA(props.get("station["+index+"].NSTA").toString());
-				if(props.get("station["+index+"].LAT1") != null && !props.get("station["+index+"].LAT1").toString().isEmpty())st.setLAT1(Integer.parseInt((String)props.get("station["+index+"].LAT1")));
-				if(props.get("station["+index+"].LAT2") != null && !props.get("station["+index+"].LAT2").toString().isEmpty())st.setLAT2(Float.parseFloat((String)props.get("station["+index+"].LAT2")));
-				if(props.get("station["+index+"].INS") != null && !props.get("station["+index+"].INS").toString().isEmpty())st.setINS(props.get("station["+index+"].INS").toString().charAt(0));
-				if(props.get("station["+index+"].LON1") != null && !props.get("station["+index+"].LON1").toString().isEmpty())st.setLON1(Integer.parseInt((String)props.get("station["+index+"].LON1")));
-				if(props.get("station["+index+"].LON2") != null && !props.get("station["+index+"].LON2").toString().isEmpty())st.setLON2(Float.parseFloat((String)props.get("station["+index+"].LON2")));
-				if(props.get("station["+index+"].IEW") != null && !props.get("station["+index+"].IEW").toString().isEmpty())st.setIEW(props.get("station["+index+"].IEW").toString().charAt(0));
-				if(props.get("station["+index+"].IELV") != null && !props.get("station["+index+"].IELV").toString().isEmpty())st.setIELV(Integer.parseInt((String)props.get("station["+index+"].IELV")));
-				if(props.get("station["+index+"].dly") != null && !props.get("station["+index+"].dly").toString().isEmpty())st.setDly(Float.parseFloat((String)props.get("station["+index+"].dly")));
-				if(props.get("station["+index+"].FMGC") != null && !props.get("station["+index+"].FMGC").toString().isEmpty())st.setFMGC(Float.parseFloat((String)props.get("station["+index+"].FMGC")));
-				if(props.get("station["+index+"].XMGC") != null && !props.get("station["+index+"].XMGC").toString().isEmpty())st.setXMGC(Float.parseFloat((String)props.get("station["+index+"].XMGC")));
-				if(props.get("station["+index+"].KLAS") != null && !props.get("station["+index+"].KLAS").toString().isEmpty())st.setKLAS(Integer.parseInt((String)props.get("station["+index+"].KLAS")));
-				if(props.get("station["+index+"].PRR") != null && !props.get("station["+index+"].PRR").toString().isEmpty())st.setPRR(Float.parseFloat((String)props.get("station["+index+"].PRR")));
-				if(props.get("station["+index+"].CALR") != null && !props.get("station["+index+"].CALR").toString().isEmpty())st.setCALR(Float.parseFloat((String)props.get("station["+index+"].CALR")));
-				if(props.get("station["+index+"].ICAL") != null && !props.get("station["+index+"].ICAL").toString().isEmpty())st.setICAL(Integer.parseInt((String)props.get("station["+index+"].ICAL")));
-				if(props.get("station["+index+"].NDATE") != null && !props.get("station["+index+"].NDATE").toString().isEmpty())st.setNDATE(Integer.parseInt((String)props.get("station["+index+"].NDATE")));
-				if(props.get("station["+index+"].NHRMN") != null && !props.get("station["+index+"].NHRMN").toString().isEmpty())st.setNHRMN(Integer.parseInt((String)props.get("station["+index+"].NHRMN")));
-				if(stations.contains(st.getNSTA())){
+				if (props.get("station["+index+"].IW") != null && !props.get("station["+index+"].IW").toString().isEmpty()) st.setIW(props.get("station["+index+"].IW").toString().charAt(0));
+				if (props.get("station["+index+"].NSTA") != null && !props.get("station["+index+"].NSTA").toString().isEmpty()) st.setNSTA(props.get("station["+index+"].NSTA").toString());
+				if (props.get("station["+index+"].LAT1") != null && !props.get("station["+index+"].LAT1").toString().isEmpty()) st.setLAT1(Integer.parseInt((String)props.get("station["+index+"].LAT1")));
+				if (props.get("station["+index+"].LAT2") != null && !props.get("station["+index+"].LAT2").toString().isEmpty()) st.setLAT2(Float.parseFloat((String)props.get("station["+index+"].LAT2")));
+				if (props.get("station["+index+"].INS") != null && !props.get("station["+index+"].INS").toString().isEmpty()) st.setINS(props.get("station["+index+"].INS").toString().charAt(0));
+				if (props.get("station["+index+"].LON1") != null && !props.get("station["+index+"].LON1").toString().isEmpty()) st.setLON1(Integer.parseInt((String)props.get("station["+index+"].LON1")));
+				if (props.get("station["+index+"].LON2") != null && !props.get("station["+index+"].LON2").toString().isEmpty()) st.setLON2(Float.parseFloat((String)props.get("station["+index+"].LON2")));
+				if (props.get("station["+index+"].IEW") != null && !props.get("station["+index+"].IEW").toString().isEmpty()) st.setIEW(props.get("station["+index+"].IEW").toString().charAt(0));
+				if (props.get("station["+index+"].IELV") != null && !props.get("station["+index+"].IELV").toString().isEmpty()) st.setIELV(Integer.parseInt((String)props.get("station["+index+"].IELV")));
+				if (props.get("station["+index+"].dly") != null && !props.get("station["+index+"].dly").toString().isEmpty()) st.setDly(Float.parseFloat((String)props.get("station["+index+"].dly")));
+				if (props.get("station["+index+"].FMGC") != null && !props.get("station["+index+"].FMGC").toString().isEmpty()) st.setFMGC(Float.parseFloat((String)props.get("station["+index+"].FMGC")));
+				if (props.get("station["+index+"].XMGC") != null && !props.get("station["+index+"].XMGC").toString().isEmpty()) st.setXMGC(Float.parseFloat((String)props.get("station["+index+"].XMGC")));
+				if (props.get("station["+index+"].KLAS") != null && !props.get("station["+index+"].KLAS").toString().isEmpty()) st.setKLAS(Integer.parseInt((String)props.get("station["+index+"].KLAS")));
+				if (props.get("station["+index+"].PRR") != null && !props.get("station["+index+"].PRR").toString().isEmpty()) st.setPRR(Float.parseFloat((String)props.get("station["+index+"].PRR")));
+				if (props.get("station["+index+"].CALR") != null && !props.get("station["+index+"].CALR").toString().isEmpty()) st.setCALR(Float.parseFloat((String)props.get("station["+index+"].CALR")));
+				if (props.get("station["+index+"].ICAL") != null && !props.get("station["+index+"].ICAL").toString().isEmpty()) st.setICAL(Integer.parseInt((String)props.get("station["+index+"].ICAL")));
+				if (props.get("station["+index+"].NDATE") != null && !props.get("station["+index+"].NDATE").toString().isEmpty()) st.setNDATE(Integer.parseInt((String)props.get("station["+index+"].NDATE")));
+				if (props.get("station["+index+"].NHRMN") != null && !props.get("station["+index+"].NHRMN").toString().isEmpty()) st.setNHRMN(Integer.parseInt((String)props.get("station["+index+"].NHRMN")));
+				if (stations.contains(st.getNSTA())) {
 					stationsList.add(st);
 				}
 			}
@@ -585,23 +585,21 @@ public class HypoPanel extends JPanel {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	
 	private void loadCrustalModelList() throws FileNotFoundException, IOException{
 		crustalModelList.clear();
-		ArrayList<Integer> indexes = getIndexes("crustal");
+		List<Integer> indexes = getIndexes("crustal");
 		Properties props = new Properties();
 		props.load(new FileInputStream(hypoInputPath.getText()));
 		
-		if(indexes.size() > 0){
-			for(Integer index : indexes){
+		if (indexes.size() > 0) {
+			for (Integer index : indexes) {
 				CrustalModel cm = new CrustalModel();
-				if(props.get("crustal["+index+"].V") != null && !props.get("crustal["+index+"].V").toString().isEmpty())cm.setV(Float.parseFloat(props.get("crustal["+index+"].V").toString()));
-				if(props.get("crustal["+index+"].D") != null && !props.get("crustal["+index+"].D").toString().isEmpty())cm.setD(Float.parseFloat(props.get("crustal["+index+"].D").toString()));
+				if (props.get("crustal["+index+"].V") != null && !props.get("crustal["+index+"].V").toString().isEmpty()) cm.setV(Float.parseFloat(props.get("crustal["+index+"].V").toString()));
+				if (props.get("crustal["+index+"].D") != null && !props.get("crustal["+index+"].D").toString().isEmpty()) cm.setD(Float.parseFloat(props.get("crustal["+index+"].D").toString()));
 				crustalModelList.add(cm);
 			}
 		}
 	}
-
 	
 	/**
 	 * 
@@ -619,25 +617,26 @@ public class HypoPanel extends JPanel {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private ArrayList<Integer> getIndexes(String property) throws FileNotFoundException, IOException{
+	private List<Integer> getIndexes(String property) throws FileNotFoundException, IOException {
 		Properties props = new Properties();
 		props.load(new FileInputStream(hypoInputPath.getText()));
 		Set<Object> keys = props.keySet();
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		
-		for(Object k : keys){
+		List<Integer> indexes = new ArrayList<Integer>();
+
+		for(Object k : keys) {
 			String keyAsString = k.toString();
-			if(keyAsString.toLowerCase().startsWith(property)){
-				try{
+			if (keyAsString.toLowerCase().startsWith(property)) {
+				try {
 					int index = Integer.parseInt(keyAsString.substring(property.length()+1, keyAsString.indexOf(']')));
-					if(!indexes.contains(index)){
+					if (!indexes.contains(index)) {
 						indexes.add(index);
 					}
-				}catch(Exception e){
-					
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
+		Collections.sort(indexes);
 		return indexes;
 	}
 }

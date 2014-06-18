@@ -16,7 +16,7 @@ public class HypoArchiveOutput {
 
 	private LinkedList<Station> stations = new LinkedList<Station>();
 	private ControlCard controlCard;
-	private LinkedList<PhaseRecord> phasRecords = new LinkedList<PhaseRecord>();
+	private LinkedList<PhaseRecord> phaseRecords = new LinkedList<PhaseRecord>();
 	private LinkedList<CrustalModel> crustalModel = new LinkedList<CrustalModel>();
 	
 	@XmlElements(value = { @XmlElement })
@@ -36,11 +36,11 @@ public class HypoArchiveOutput {
 	}
 	
 	@XmlElements(value = { @XmlElement })
-	public LinkedList<PhaseRecord> getPhasRecords() {
-		return phasRecords;
+	public LinkedList<PhaseRecord> getPhaseRecords() {
+		return phaseRecords;
 	}
-	public void setPhasRecords(LinkedList<PhaseRecord> phasRecords) {
-		this.phasRecords = phasRecords;
+	public void setPhaseRecords(LinkedList<PhaseRecord> phasRecords) {
+		this.phaseRecords = phasRecords;
 	}
 	
 	@XmlElements(value = { @XmlElement })

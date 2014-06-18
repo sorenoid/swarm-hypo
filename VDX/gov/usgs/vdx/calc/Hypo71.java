@@ -4566,147 +4566,147 @@ public class Hypo71 {
 		runWithFileInput(args[0]);
 	}
 
-	public static void hypoCalc() {
-		// System.out.println("DATA INPUT");
-		Hypo71 hypoCalculator = new Hypo71();
-		Queue<Station> stationsList = new LinkedList<Station>();
-		Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
-		Queue<PhaseRecord> phaseRecordsList = new LinkedList<PhaseRecord>();
-		// ControlCard controlCard = new ControlCard(0, 5.0, 50.0, 100.0, 1.78,
-		// 2, 0, 18, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0);
-		Properties props = new Properties();
-		try {
-			props.load(new FileInputStream("hypo71Constants.properties"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		ControlCard controlCard = new ControlCard(props);
-
-		// Filling stations list
-		stationsList.add(new Station(' ', "SR01", 38, 42.55f, ' ', 122, 59.17f,
-				' ', 0, -0.15f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR02", 38, 27.28f, ' ', 123, 04.80f,
-				' ', 0, 0.09f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR03", 38, 14.15f, ' ', 122, 51.29f,
-				' ', 0, 0.12f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR04", 38, 17.20f, ' ', 122, 31.92f,
-				' ', 0, 0.14f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR05", 38, 29.55f, ' ', 122, 24.33f,
-				' ', 0, 0.07f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR06", 38, 42.58f, ' ', 122, 32.22f,
-				' ', 0, -0.19f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR07", 38, 32.20f, ' ', 122, 42.78f,
-				' ', 0, 0.03f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR8A", 38, 35.50f, ' ', 122, 49.38f,
-				' ', 0, 0.04f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR08", 38, 35.92f, ' ', 122, 48.25f,
-				' ', 0, 0.07f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR09", 38, 29.42f, ' ', 122, 51.00f,
-				' ', 0, -0.19f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR10", 38, 25.00f, ' ', 122, 38.75f,
-				' ', 0, -0.16f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR11", 38, 33.58f, ' ', 122, 39.48f,
-				' ', 0, 0.02f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR12", 38, 33.95f, ' ', 122, 46.20f,
-				' ', 0, 0.19f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR13", 38, 28.50f, ' ', 122, 41.10f,
-				' ', 0, -0.01f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR14", 38, 23.08f, ' ', 122, 49.38f,
-				' ', 0, 0.01f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR15", 38, 29.40f, ' ', 122, 35.95f,
-				' ', 0, 0.07f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR16", 38, 32.02f, ' ', 122, 58.55f,
-				' ', 0, 0.04f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR17", 38, 45.95f, ' ', 122, 48.35f,
-				' ', 0, 0, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR18", 38, 17.75f, ' ', 122, 44.48f,
-				' ', 0, -0.11f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-		stationsList.add(new Station(' ', "SR19", 38, 40.25f, ' ', 122, 40.08f,
-				' ', 0, -0.05f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
-
-		// Filling phase records list
-		phaseRecordsList.add(new PhaseRecord("SR01", "IPD0", 0.0f, 69100512, 6,
-				51.22f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"1.22", 'D', "", "SR01IPD0 691005120651.22", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR02", "IPU0", 0.0f, 69100512, 6,
-				51.02f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"1.02", 'U', "", "SR02IPU0 691005120651.02", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR03", "IPD0", 0.0f, 69100512, 6,
-				50.49f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"0.49", 'D', "", "SR03IPD0 691005120650.49", ' ', "IPD0"));
-		phaseRecordsList
-				.add(new PhaseRecord("SR04", "IPU0", 0.0f, 69100512, 6, 49.66f,
-						0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
-						16.0f, "9.66", 'U', "", "SR04IPU0 691005120649.66",
-						' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR05", "IPU0", 0.0f, 69100512, 6,
-				49.72f, 53.7f, "ES 2", 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
-				0.0f, "9.72", 'U', "53.70", "SR05IPU0 691005120649.72", ' ',
-				"IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR06", "IPD0", 0.0f, 69100512, 6,
-				50.10f, 54.20f, "ESN4", 4.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
-				0.0f, "0.10", 'D', "54.20", "SR06IPD0 691005120650.10", ' ',
-				"IPD0"));
-		phaseRecordsList
-				.add(new PhaseRecord("SR07", "IPD0", 0.0f, 69100512, 6, 46.38f,
-						0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
-						18.0f, "6.38", 'D', "", "SR07IPD0 691005120646.38",
-						' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR8A", "IPU0", 0.0f, 69100512, 6,
-				48.09f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"8.09", 'U', "", "SR8AIPU0 691005120648.09", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR09", "IPU0", 0.0f, 69100512, 6,
-				47.23f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"7.23", 'U', "", "SR09IPU0 691005120647.23", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR10", "IPU0", 0.0f, 69100512, 6,
-				46.40f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"6.40", 'U', "", "SR10IPU0 691005120646.40", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR11", "IPD0", 0.0f, 69100512, 6,
-				46.89f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"6.89", 'D', "", "SR11IPD0 691005120646.89", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR12", "IPD0", 0.0f, 69100512, 6,
-				47.32f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"7.32", 'D', "", "SR12IPD0 691005120647.32", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR20", "IPD0", 0.0f, 69100512, 6,
-				48.88f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"8.88", 'D', "", "SR20IPD0 691005120648.88", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR13", "IPD0", 0.0f, 69100512, 6,
-				45.46f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"5.46", 'D', "", "SR13IPD0 691005120645.46", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR14", "IPD0", 0.0f, 69100512, 6,
-				57.78f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"7.78", 'D', "", "SR14IPD0 691005120657.78", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR15", "IPU0", 0.0f, 69100512, 6,
-				46.80f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"6.80", 'U', "", "SR15IPU0 691005120646.80", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR16", "IPU0", 0.0f, 69100512, 6,
-				49.47f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"9.47", 'U', "", "SR16IPU0 691005120649.47", ' ', "IPU0"));
-		phaseRecordsList.add(new PhaseRecord("SR18", "IPD0", 0.0f, 69100512, 6,
-				48.55f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"8.55", 'D', "", "SR18IPD0 691005120648.55", ' ', "IPD0"));
-		phaseRecordsList.add(new PhaseRecord("SR19", "IPD0", 0.0f, 69100512, 6,
-				48.88f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
-				"8.88", 'D', "", "SR19IPD0 691005120648.88", ' ', "IPD0"));
-
-		// Filling crustal model list
-		crustalModelList.add(new CrustalModel(3.3f, 0.0f));
-		crustalModelList.add(new CrustalModel(5.0f, 1.0f));
-		crustalModelList.add(new CrustalModel(5.7f, 4.0f));
-		crustalModelList.add(new CrustalModel(6.7f, 15.0f));
-		crustalModelList.add(new CrustalModel(8.0f, 25.0f));
-
-		try {
-			hypoCalculator.calculateHypo71(
-					"SOME SANTA ROSA QUAKES FOR TESTING HYPO71", null,
-					stationsList, crustalModelList, controlCard,
-					phaseRecordsList, null);
-			System.out.println(hypoCalculator.getResults().getOutput());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void hypoCalc() {
+//		// System.out.println("DATA INPUT");
+//		Hypo71 hypoCalculator = new Hypo71();
+//		Queue<Station> stationsList = new LinkedList<Station>();
+//		Queue<CrustalModel> crustalModelList = new LinkedList<CrustalModel>();
+//		Queue<PhaseRecord> phaseRecordsList = new LinkedList<PhaseRecord>();
+//		// ControlCard controlCard = new ControlCard(0, 5.0, 50.0, 100.0, 1.78,
+//		// 2, 0, 18, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+//		Properties props = new Properties();
+//		try {
+//			props.load(new FileInputStream("hypo71Constants.properties"));
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		ControlCard controlCard = new ControlCard(props);
+//
+//		// Filling stations list
+//		stationsList.add(new Station(' ', "SR01", 38, 42.55f, ' ', 122, 59.17f,
+//				' ', 0, -0.15f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR02", 38, 27.28f, ' ', 123, 04.80f,
+//				' ', 0, 0.09f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR03", 38, 14.15f, ' ', 122, 51.29f,
+//				' ', 0, 0.12f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR04", 38, 17.20f, ' ', 122, 31.92f,
+//				' ', 0, 0.14f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR05", 38, 29.55f, ' ', 122, 24.33f,
+//				' ', 0, 0.07f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR06", 38, 42.58f, ' ', 122, 32.22f,
+//				' ', 0, -0.19f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR07", 38, 32.20f, ' ', 122, 42.78f,
+//				' ', 0, 0.03f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR8A", 38, 35.50f, ' ', 122, 49.38f,
+//				' ', 0, 0.04f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR08", 38, 35.92f, ' ', 122, 48.25f,
+//				' ', 0, 0.07f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR09", 38, 29.42f, ' ', 122, 51.00f,
+//				' ', 0, -0.19f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR10", 38, 25.00f, ' ', 122, 38.75f,
+//				' ', 0, -0.16f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR11", 38, 33.58f, ' ', 122, 39.48f,
+//				' ', 0, 0.02f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR12", 38, 33.95f, ' ', 122, 46.20f,
+//				' ', 0, 0.19f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR13", 38, 28.50f, ' ', 122, 41.10f,
+//				' ', 0, -0.01f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR14", 38, 23.08f, ' ', 122, 49.38f,
+//				' ', 0, 0.01f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR15", 38, 29.40f, ' ', 122, 35.95f,
+//				' ', 0, 0.07f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR16", 38, 32.02f, ' ', 122, 58.55f,
+//				' ', 0, 0.04f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR17", 38, 45.95f, ' ', 122, 48.35f,
+//				' ', 0, 0, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR18", 38, 17.75f, ' ', 122, 44.48f,
+//				' ', 0, -0.11f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//		stationsList.add(new Station(' ', "SR19", 38, 40.25f, ' ', 122, 40.08f,
+//				' ', 0, -0.05f, 0.4f, 0.25f, 8, 0.0f, 0.0f, 0, 0, 0));
+//
+//		// Filling phase records list
+//		phaseRecordsList.add(new PhaseRecord("SR01", "IPD0", 0.0f, 69100512, 6,
+//				51.22f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"1.22", 'D', "", "SR01IPD0 691005120651.22", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR02", "IPU0", 0.0f, 69100512, 6,
+//				51.02f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"1.02", 'U', "", "SR02IPU0 691005120651.02", ' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR03", "IPD0", 0.0f, 69100512, 6,
+//				50.49f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"0.49", 'D', "", "SR03IPD0 691005120650.49", ' ', "IPD0"));
+//		phaseRecordsList
+//				.add(new PhaseRecord("SR04", "IPU0", 0.0f, 69100512, 6, 49.66f,
+//						0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
+//						16.0f, "9.66", 'U', "", "SR04IPU0 691005120649.66",
+//						' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR05", "IPU0", 0.0f, 69100512, 6,
+//				49.72f, 53.7f, "ES 2", 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
+//				0.0f, "9.72", 'U', "53.70", "SR05IPU0 691005120649.72", ' ',
+//				"IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR06", "IPD0", 0.0f, 69100512, 6,
+//				50.10f, 54.20f, "ESN4", 4.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
+//				0.0f, "0.10", 'D', "54.20", "SR06IPD0 691005120650.10", ' ',
+//				"IPD0"));
+//		phaseRecordsList
+//				.add(new PhaseRecord("SR07", "IPD0", 0.0f, 69100512, 6, 46.38f,
+//						0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f,
+//						18.0f, "6.38", 'D', "", "SR07IPD0 691005120646.38",
+//						' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR8A", "IPU0", 0.0f, 69100512, 6,
+//				48.09f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"8.09", 'U', "", "SR8AIPU0 691005120648.09", ' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR09", "IPU0", 0.0f, 69100512, 6,
+//				47.23f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"7.23", 'U', "", "SR09IPU0 691005120647.23", ' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR10", "IPU0", 0.0f, 69100512, 6,
+//				46.40f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"6.40", 'U', "", "SR10IPU0 691005120646.40", ' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR11", "IPD0", 0.0f, 69100512, 6,
+//				46.89f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"6.89", 'D', "", "SR11IPD0 691005120646.89", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR12", "IPD0", 0.0f, 69100512, 6,
+//				47.32f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"7.32", 'D', "", "SR12IPD0 691005120647.32", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR20", "IPD0", 0.0f, 69100512, 6,
+//				48.88f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"8.88", 'D', "", "SR20IPD0 691005120648.88", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR13", "IPD0", 0.0f, 69100512, 6,
+//				45.46f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"5.46", 'D', "", "SR13IPD0 691005120645.46", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR14", "IPD0", 0.0f, 69100512, 6,
+//				57.78f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"7.78", 'D', "", "SR14IPD0 691005120657.78", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR15", "IPU0", 0.0f, 69100512, 6,
+//				46.80f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"6.80", 'U', "", "SR15IPU0 691005120646.80", ' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR16", "IPU0", 0.0f, 69100512, 6,
+//				49.47f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"9.47", 'U', "", "SR16IPU0 691005120649.47", ' ', "IPU0"));
+//		phaseRecordsList.add(new PhaseRecord("SR18", "IPD0", 0.0f, 69100512, 6,
+//				48.55f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"8.55", 'D', "", "SR18IPD0 691005120648.55", ' ', "IPD0"));
+//		phaseRecordsList.add(new PhaseRecord("SR19", "IPD0", 0.0f, 69100512, 6,
+//				48.88f, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", 0.0f, 0.0f,
+//				"8.88", 'D', "", "SR19IPD0 691005120648.88", ' ', "IPD0"));
+//
+//		// Filling crustal model list
+//		crustalModelList.add(new CrustalModel(3.3f, 0.0f));
+//		crustalModelList.add(new CrustalModel(5.0f, 1.0f));
+//		crustalModelList.add(new CrustalModel(5.7f, 4.0f));
+//		crustalModelList.add(new CrustalModel(6.7f, 15.0f));
+//		crustalModelList.add(new CrustalModel(8.0f, 25.0f));
+//
+//		try {
+//			hypoCalculator.calculateHypo71(
+//					"SOME SANTA ROSA QUAKES FOR TESTING HYPO71", null,
+//					stationsList, crustalModelList, controlCard,
+//					phaseRecordsList, null);
+//			System.out.println(hypoCalculator.getResults().getOutput());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public static void runWithFileInput(String finputName) {
 		try {
