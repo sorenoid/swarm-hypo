@@ -102,12 +102,16 @@ public class ParticleMotionViewPanel extends JPanel {
 		g2.fillRect(0, 0, getWidth(), getHeight());
 
 		g2.setColor(Color.red);
-		drawYLabel(g2);
-		drawXLabel(g2);
+		Font font = new Font("Serif", Font.PLAIN, 11);
+		g2.setFont(font);
+
 		drawXAndYAxis(g2);
+		drawAxisMarks(g2);
 
 		drawPlot(g2);
-		drawAxisMarks(g2);
+
+		drawYLabel(g2);
+		drawXLabel(g2);
 	}
 	
 	public double getXPixel(double x) {
@@ -128,7 +132,6 @@ public class ParticleMotionViewPanel extends JPanel {
 
 	
 	private void drawAxisMarks(Graphics2D g2) {
-		g2.setColor(Color.red);
 		// drawing Y -marks
 		double Ydiff = maxY - minY;
 		double yunit = Ydiff / 4;
@@ -145,10 +148,7 @@ public class ParticleMotionViewPanel extends JPanel {
 			DecimalFormat format = new DecimalFormat("0.0E0");
 			labelString = format.format(bd);
 			}
-			Font font = new Font("Serif", Font.PLAIN, 11);
-
-			g2.setFont(font);
-			FontMetrics fm = g2.getFontMetrics(font);
+			FontMetrics fm = g2.getFontMetrics(g2.getFont());
 			g2.drawString(
 					labelString,
 					((LABEL_TO_SCREEN_DIST + TICKS_TO_LABEL_DIST) - fm
@@ -192,6 +192,7 @@ public class ParticleMotionViewPanel extends JPanel {
 	}
 
 	private void drawPlot(Graphics2D g2) {
+		Color origColor = g2.getColor();
 		g2.setColor(Color.blue);
 		GeneralPath gp = new GeneralPath();
 		gp.moveTo((float) getXPixel(xData[0] - xWave.bias), (float) (getYPixel(yData[0] - yWave.bias)));
@@ -203,10 +204,10 @@ public class ParticleMotionViewPanel extends JPanel {
 			}
 		}
 		g2.draw(gp);
+		g2.setColor(origColor);
 	}
 
 	private void drawXAndYAxis(Graphics2D g2) {
-
 		g2.drawRect(plotBegin, 20, getWidth() - (plotBegin + 20), getHeight()
 				- (plotBegin + 20));
 	}
@@ -219,7 +220,7 @@ public class ParticleMotionViewPanel extends JPanel {
 		Font theFont = g2.getFont();
 
 		// Derive a new font using a rotatation transform
-		fontAT.rotate(270 * java.lang.Math.PI / 180);
+		fontAT.rotate(3.0 * java.lang.Math.PI / 2.0);
 		Font theDerivedFont = theFont.deriveFont(fontAT);
 
 		FontMetrics fm = g2.getFontMetrics(theDerivedFont);
