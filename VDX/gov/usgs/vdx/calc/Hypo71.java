@@ -3624,14 +3624,16 @@ public class Hypo71 {
 				goto300 = true;
 				break;
 			}
-			if (MSTA[l].equals("    ") || MSTA[l].length() == 0) {
+//			if (MSTA[l].equals("    ") || MSTA[l].length() == 0) {
+			if (MSTA[l].equals("    ") || MSTA[l].trim().length() == 0) {
 				goto350 = true;
 				break;
 			}
 			if (CALX[l] < 0.01) {
 				CALX[l] = CALP;
 			}
-			if (AS.equals("    ") || AS.length() == 0) {
+//			if (AS.equals("    ") || AS.length() == 0) {
+			if (AS.equals("    ") || AS.trim().length() == 0) {
 				S[l] = 999.99f;
 			}
 			boolean goto50 = false;
@@ -3711,7 +3713,8 @@ public class Hypo71 {
 				}
 				if (!goto95) {
 					// Label 90
-					if (!AS.equals("    ") && AS.length() != 0) {
+//					if (!AS.equals("    ") && AS.length() != 0) {
+					if (!AS.equals("    ") && AS.trim().length() != 0) {
 						C4.IDXS = 1;
 						LDX[l] = 1;
 						WS[l] = (4 - WS[l]) / 4;
@@ -3942,7 +3945,8 @@ public class Hypo71 {
 
 			KNO = 0;
 
-			if (!ISW.equals("1   ")) {
+//			if (!ISW.equals("1   ")) {
+			if (!ISW.trim().equals("1")) {
 				KNO = 1;
 				writeln("FPRINT_WRITER",
 						data("L     STN     LAT     LONG    ELV DELAY",
@@ -4062,7 +4066,8 @@ public class Hypo71 {
 					IEW[i] = 'W';
 				}
 
-				if (!ISW.equals("1   ")) {
+//				if (!ISW.equals("1   ")) {
+				if (!ISW.trim().equals("1")) {
 					writeln("FPRINT_WRITER",
 							data(L, IW[i], NSTA[i], (int) LAT1, LAT2, INS[i],
 									(int) LON1, LON2, IEW[i], IELV[i],
