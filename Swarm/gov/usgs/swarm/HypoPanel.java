@@ -444,6 +444,9 @@ public class HypoPanel extends JPanel {
 	                    "" //"IPD0"
 	                    ));
 			}
+			PhaseRecord lastRecordIndicator = new PhaseRecord();
+			lastRecordIndicator.setMSTA("");
+			phaseRecordsList.add(lastRecordIndicator);
 		} else {
 			File file = new File(archiveFile);
 			JAXBContext jaxbContext = JAXBContext
