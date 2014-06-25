@@ -18,6 +18,7 @@ import gov.usgs.swarm.Throbber;
 import gov.usgs.swarm.TimeListener;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.database.model.Attempt;
+import gov.usgs.swarm.database.model.HypoResults;
 import gov.usgs.swarm.map.MapMiniPanel.Position;
 import gov.usgs.swarm.wave.WaveClipboardFrame;
 import gov.usgs.swarm.wave.WaveViewPanel;
@@ -25,6 +26,7 @@ import gov.usgs.util.CodeTimer;
 import gov.usgs.util.ConfigFile;
 import gov.usgs.util.Pair;
 import gov.usgs.util.Util;
+import gov.usgs.vdx.calc.data.Hypocenter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -53,6 +55,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -179,7 +182,7 @@ public class MapPanel extends JPanel
 	
 	private LabelSetting labelSetting = LabelSetting.SOME;
 	
-	private List<? extends ClickableGeoLabel> clickableLabels;
+	private List<ClickableGeoLabel> clickableLabels;
 	
 	public MapPanel(MapFrame f)
 	{
@@ -196,6 +199,10 @@ public class MapPanel extends JPanel
 		this.setCursor(crosshair);
 		
 		createUI();
+		
+		if (clickableLabels == null) {
+			clickableLabels = new ArrayList<ClickableGeoLabel>();
+		}
 	}
 
 	
@@ -490,7 +497,7 @@ public class MapPanel extends JPanel
 		{
 			Class<?> cl = Class.forName(Swarm.config.labelSource);
 			LabelSource src = (LabelSource)cl.newInstance();
-			clickableLabels = src.getLabels();
+			clickableLabels = (List<ClickableGeoLabel>) src.getLabels();
 			repaint();
 		}
 		catch (Exception e)
@@ -1313,5 +1320,13 @@ public class MapPanel extends JPanel
 			this.attempt = attempt;
 			super.repaint();
 		}
+	}
+
+	public void addMarkers(List<ClickableGeoLabel> markers) {
+		clickableLabels.addAll(markers);
+	}
+
+	public void moveToMarker(ClickableGeoLabel marker) {
+		setCenterAndScale(marker.location, 673.4);
 	}
 }

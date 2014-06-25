@@ -377,7 +377,6 @@ public class SwarmMenu extends JMenuBar {
                     if (!dataQueryOpened) {
                         dataQueryOpened = true;
                         dataSearchDialog = dataSearchDialog != null ? dataSearchDialog : new DataSearchDialog();
-                        dataSearchDialog.setAlwaysOnTop(true);
                         dataSearchDialog.centerOnScreen();
                         // dataQuery.setLocationByPlatform(true);
                         // dataQuery.setBounds(40, 40, 350, 200);

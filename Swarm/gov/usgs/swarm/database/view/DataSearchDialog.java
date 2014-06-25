@@ -6,7 +6,6 @@ import gov.usgs.swarm.database.model.Attempt;
 import gov.usgs.swarm.database.model.Event;
 import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.database.model.SearchQueryCriteria;
-import gov.usgs.swarm.map.LocationPickerMapFrame;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -23,7 +22,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Point2D;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -35,7 +33,7 @@ import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -78,7 +76,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  * 
  * @author Chirag Patel
  */
-public class DataSearchDialog extends JDialog
+public class DataSearchDialog extends JFrame
 {
 	private static final long serialVersionUID = 1L;
    
@@ -89,10 +87,10 @@ public class DataSearchDialog extends JDialog
 	private JLabel timestammpToLabel;
 	private DataSearchTextField<Timestamp> timestampStartField;
 	private DataSearchTextField<Timestamp> timestampEndField;
-	private JLabel durationMagnitudeLabel;
-	private DataSearchTextField<Long> durationMagnitudeMinField;
-	private JLabel durationMagnitudeToLabel;
-	private DataSearchTextField<Long> durationMagnitudeMaxField;
+//	private JLabel durationMagnitudeLabel;
+//	private DataSearchTextField<Long> durationMagnitudeMinField;
+//	private JLabel durationMagnitudeToLabel;
+//	private DataSearchTextField<Long> durationMagnitudeMaxField;
 	private DataSearchResultPanel dataSearchResultPanel = null;
 	private Dimension sizeBeforeFullScreen;
 	private Point locationBeforeFullScreen;
@@ -101,8 +99,7 @@ public class DataSearchDialog extends JDialog
 
 	public DataSearchDialog()
 	{
-		super(Swarm.getApplication(), "Data search", false);
-
+		super("Data search");
 		JPanel contentPane = (JPanel) super.getContentPane();
 
 		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -188,6 +185,8 @@ public class DataSearchDialog extends JDialog
 				eventTypeField.requestFocusInWindow();
 			}
 		});
+
+		setAlwaysOnTop(false);
 	}
 
 	private JSplitPane createSplitPane()
@@ -234,12 +233,12 @@ public class DataSearchDialog extends JDialog
 				datePattern, 15, Color.GRAY));
 		timestampEndField = this.createDataSearchTextField(new DataSearchTextField<Timestamp>(Timestamp.class,
 				datePattern, 15, Color.GRAY));
-		durationMagnitudeLabel = new JLabel("Duration Magnitude : ");
-		durationMagnitudeMinField = this.createDataSearchTextField(new DataSearchTextField<Long>(Long.class,
-				"min duration", 15, Color.GRAY));
-		durationMagnitudeToLabel = new JLabel("to");
-		durationMagnitudeMaxField = this.createDataSearchTextField(new DataSearchTextField<Long>(Long.class,
-				"max duration", 15, Color.GRAY));
+//		durationMagnitudeLabel = new JLabel("Duration Magnitude : ");
+//		durationMagnitudeMinField = this.createDataSearchTextField(new DataSearchTextField<Long>(Long.class,
+//				"min duration", 15, Color.GRAY));
+//		durationMagnitudeToLabel = new JLabel("to");
+//		durationMagnitudeMaxField = this.createDataSearchTextField(new DataSearchTextField<Long>(Long.class,
+//				"max duration", 15, Color.GRAY));
 		return layoutSearchPanel(initSearchPanel());
 	}
 
@@ -263,10 +262,10 @@ public class DataSearchDialog extends JDialog
 		searchPanel.add(timestampStartField, updateGridBagConstraints(gbc, 1, 1, 1, 1, 0f, 0f));
 		searchPanel.add(timestammpToLabel, updateGridBagConstraints(gbc, 2, 1, 1, 1, 0f, 0f));
 		searchPanel.add(timestampEndField, updateGridBagConstraints(gbc, 3, 1, 1, 1, 0f, 0f));
-		searchPanel.add(durationMagnitudeLabel, updateGridBagConstraints(gbc, 0, 2, 1, 1, 0f, 0f));
-		searchPanel.add(durationMagnitudeMinField, updateGridBagConstraints(gbc, 1, 2, 1, 1, 0f, 0f));
-		searchPanel.add(durationMagnitudeToLabel, updateGridBagConstraints(gbc, 2, 2, 1, 1, 0f, 0f));
-		searchPanel.add(durationMagnitudeMaxField, updateGridBagConstraints(gbc, 3, 2, 1, 1, 0f, 0f));
+//		searchPanel.add(durationMagnitudeLabel, updateGridBagConstraints(gbc, 0, 2, 1, 1, 0f, 0f));
+//		searchPanel.add(durationMagnitudeMinField, updateGridBagConstraints(gbc, 1, 2, 1, 1, 0f, 0f));
+//		searchPanel.add(durationMagnitudeToLabel, updateGridBagConstraints(gbc, 2, 2, 1, 1, 0f, 0f));
+//		searchPanel.add(durationMagnitudeMaxField, updateGridBagConstraints(gbc, 3, 2, 1, 1, 0f, 0f));
 		searchPanel.add(searchByEventCheckBox);
 		gbc = updateGridBagConstraints(gbc, 0, 4, 4, 1, 0f, 0f);
 		gbc.fill = GridBagConstraints.NONE;
@@ -278,7 +277,7 @@ public class DataSearchDialog extends JDialog
 		
 		searchPanel.add(createSearchButton(), gbc);
 		gbc.insets = new Insets(15, 205, 0, 0);
-		searchPanel.add(createSearchLocationButton(),gbc);
+//		searchPanel.add(createSearchLocationButton(),gbc);
 
 		return searchPanel;
 	}
@@ -296,11 +295,11 @@ public class DataSearchDialog extends JDialog
 			{
 				try {
 					if (eventTypeField.isValueValid() && timestampStartField.isValueValid()
-							&& timestampEndField.isValueValid() && durationMagnitudeMinField.isValueValid()
-							&& durationMagnitudeMaxField.isValueValid())
+							&& timestampEndField.isValueValid())
+//						&& durationMagnitudeMinField.isValueValid() && durationMagnitudeMaxField.isValueValid())
 						doSearch(new SearchQueryCriteria(eventTypeField.validValue(),
-								timestampStartField.validValue(), timestampEndField.validValue(),
-								durationMagnitudeMinField.validValue(), durationMagnitudeMaxField.validValue()));
+								timestampStartField.validValue(), timestampEndField.validValue(), Long.MIN_VALUE, Long.MAX_VALUE));
+//								durationMagnitudeMinField.validValue(), durationMagnitudeMaxField.validValue()));
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -310,38 +309,38 @@ public class DataSearchDialog extends JDialog
 	}
 	
 	
-	private JButton createSearchLocationButton()
-	{
-		JButton searchButton = new JButton("Search By location");
-		searchButton.setMnemonic(KeyEvent.VK_S);
-		searchButton.setToolTipText("Press to search for attempts by location");
-		searchButton.setMultiClickThreshhold(800);
-		searchButton.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				
-				if(Swarm.getApplication().getLocationMapFrame() == null){
-					Swarm.getApplication().setLocationMapFrame(new LocationPickerMapFrame());
-				}
-				Swarm.getApplication().getLocationMapFrame().setVisible(true);
-				
-				if(!Swarm.getApplication().getLocationMapFrame().isVisible()){
-					Point2D.Double longLat = Swarm.getApplication().getLocationMapFrame().getLongLat();
-					Double minD = Swarm.getApplication().getLocationMapFrame().getMinD();
-					Double maxD = Swarm.getApplication().getLocationMapFrame().getMaxD();
-					
-					
-					dataSearchResultPanel.isEventList = false;
-					List<Attempt> attempts = Marker.getAttemptsByPMarkerAndLocationAndDepth(minD, maxD, longLat);
-					dataSearchResultPanel.updateDataSearchTableModel(attempts);
-					
-				}
-			}
-		});
-		return searchButton;
-	}
+//	private JButton createSearchLocationButton()
+//	{
+//		JButton searchButton = new JButton("Search By location");
+//		searchButton.setMnemonic(KeyEvent.VK_S);
+//		searchButton.setToolTipText("Press to search for attempts by location");
+//		searchButton.setMultiClickThreshhold(800);
+//		searchButton.addActionListener(new ActionListener()
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				
+//				if(Swarm.getApplication().getLocationMapFrame() == null){
+//					Swarm.getApplication().setLocationMapFrame(new LocationPickerMapFrame());
+//				}
+//				Swarm.getApplication().getLocationMapFrame().setVisible(true);
+//				
+//				if(!Swarm.getApplication().getLocationMapFrame().isVisible()){
+//					Point2D.Double longLat = Swarm.getApplication().getLocationMapFrame().getLongLat();
+//					Double minD = Swarm.getApplication().getLocationMapFrame().getMinD();
+//					Double maxD = Swarm.getApplication().getLocationMapFrame().getMaxD();
+//					
+//					
+//					dataSearchResultPanel.isEventList = false;
+//					List<Attempt> attempts = Marker.getAttemptsByPMarkerAndLocationAndDepth(minD, maxD, longLat);
+//					dataSearchResultPanel.updateDataSearchTableModel(attempts);
+//					
+//				}
+//			}
+//		});
+//		return searchButton;
+//	}
 
 	private <T> DataSearchTextField<T> createDataSearchTextField(final DataSearchTextField<T> textField)
 	{

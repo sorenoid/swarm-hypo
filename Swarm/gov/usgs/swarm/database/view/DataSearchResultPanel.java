@@ -225,22 +225,12 @@ public class DataSearchResultPanel extends JPanel {
 					Attempt attempt = Attempt.find(id);
 					byte[] hypo = attempt.getHypoResults();
 					if (hypo != null && hypo.length > 0) {
-						try {
-							HypoResults hr = attempt.getHypoResultsAsObject();
-							if(Swarm.getApplication().getHypoOuputMapFrame() == null){
-								Swarm.getApplication().setHypoOuputMapFrame(new HypoOuputMapFrame());
-							}
-							
-							
-							Swarm.getApplication().getHypoOuputMapFrame().setResultText(hr.getPrintOutput());
-							Swarm.getApplication().getHypoOuputMapFrame().setVisible(true);
-							
-							
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						} catch (ClassNotFoundException e1) {
-							e1.printStackTrace();
+						HypoResults hr = attempt.getHypoResultsAsObject();
+						if(Swarm.getApplication().getHypoOuputMapFrame() == null){
+							Swarm.getApplication().setHypoOuputMapFrame(new HypoOuputMapFrame());
 						}
+						Swarm.getApplication().getHypoOuputMapFrame().setResultText(hr.getPrintOutput());
+						Swarm.getApplication().getHypoOuputMapFrame().setVisible(true);
 					} else {
 						JOptionPane.showMessageDialog(null, "Hypo has not been run for this attempt", "Error", JOptionPane.ERROR_MESSAGE);
 					}

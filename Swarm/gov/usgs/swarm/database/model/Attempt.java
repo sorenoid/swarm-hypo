@@ -73,8 +73,13 @@ public class Attempt {
 	
 	
 	
-	public HypoResults getHypoResultsAsObject() throws IOException, ClassNotFoundException {
-        return (HypoResults) SerializationHelper.deserialize(this.hypoResults);
+	public HypoResults getHypoResultsAsObject() {
+        try {
+			return (HypoResults) SerializationHelper.deserialize(this.hypoResults);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not read hypo results");
+		}
     }
 
     public void setHypoResultsAsBytes(HypoResults reults) throws IOException {
