@@ -2076,7 +2076,7 @@ public class Hypo71 {
 						break;
 					}
 					O2.Z = C2.ZTR;// 100
-					if (!AZRES[O1.NRP + 1 - 1].equals("")) {
+					if (!isBlank(AZRES[O1.NRP + 1 - 1])) {
 						O2.Z = ZRES;
 					}
 					O2.ORG = C5.PMIN - O2.Z / 5 - 1;
@@ -2870,6 +2870,10 @@ public class Hypo71 {
 		 * if (CHECK != "    " && CHECK.length() != 0) { break; }
 		 */
 
+	}
+
+	private boolean isBlank(String value) {
+		return value == null || value.trim().isEmpty();
 	}
 
 	/*

@@ -961,8 +961,6 @@ public class WaveClipboardFrame extends SwarmFrame {
                 if (markers.size() > 0) {
                     wvp.removeAllMarkersFromView();
                     for (Marker marker : markers) {
-                        System.out.println(marker.getId() + " =========================== " +
-                                           Time.format(DATE_FORMAT, marker.getMarkerTime()));
                         wvp.addMarker(marker.getMarkerTime(), marker);
                     }
                     wvp.paintnow = true;

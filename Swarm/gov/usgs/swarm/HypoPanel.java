@@ -251,7 +251,7 @@ public class HypoPanel extends JPanel {
 						JOptionPane
 								.showMessageDialog(
 										null,
-										"Cannot run hypo, please verify hypo has all neccessary inputs",
+										"Cannot run hypo, please verify hypo has all neccessary inputs: "+e1.getMessage(),
 										"Error", JOptionPane.ERROR_MESSAGE);
 					}
 
