@@ -44,7 +44,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -335,8 +334,12 @@ public class WaveViewPanel extends JComponent {
      */
     public void paintMarker(Graphics g) {
         super.paintComponent(g);
+        if (null != Swarm.allMarkers) {
+            Swarm.allMarkers.clear();
+        }
+        Swarm.allMarkers = Marker.listByAttempt(Swarm.getSelectedAttempt().getId());
         double[] t = getTranslation();
-        Collection<Marker> markerCollection = markers;
+        Collection<Marker> markerCollection = Swarm.allMarkers;
         for (Marker marker : markerCollection) {
             if (t != null) {
                 double j2k = Util.dateToJ2K(marker.getMarkerTime());
@@ -506,7 +509,7 @@ public class WaveViewPanel extends JComponent {
     }
 
     public static String roundTo(double value, int ths) {
-    	return Float.toString((float)Math.round(value*ths)/ths);
+        return Float.toString((float)Math.round(value * ths) / ths);
     }
 
     public void setEventCalculations() {
@@ -539,7 +542,7 @@ public class WaveViewPanel extends JComponent {
                     double ansv = Swarm.config.ansv;
                     if (ansv != 0 && ansv != Double.NaN) {
                         /*double distanceFromPToS = 1.366 * ansv
-                        		* timeDiffFromSToPInSec;*/
+                                * timeDiffFromSToPInSec;*/
                         double distanceFromPToS = Swarm.config.ansv * timeDiffFromSToPInSec;
                         SwarmMenu.getDataRecord().getEventCalculationPanel()
                                 .setPToSDistanceValue(roundTo(distanceFromPToS, 100) + " km");
@@ -548,22 +551,26 @@ public class WaveViewPanel extends JComponent {
                 if (stationCount == 3) {
                     double[] markerBoundaries = getMarkerTimeBoundaries(Marker.AZIMUTH_MARKER_LABEL);
                     if (markerBoundaries != null) {
-                        Wave[] waves = Swarm.getApplication().getWaveClipboard().getWaveDataSectionFromStationComponents(channel.stationCode, markerBoundaries[0], markerBoundaries[1]);
+                        Wave[] waves =
+                                Swarm.getApplication()
+                                        .getWaveClipboard()
+                                        .getWaveDataSectionFromStationComponents(channel.stationCode,
+                                                markerBoundaries[0], markerBoundaries[1]);
 
                         if (waves != null) {
                             AzimuthCalculator azimuthCalculator = new AzimuthCalculator();
                             double[][] dataMatrix = Swarm.getApplication().getWaveClipboard().generateDataMatrix(waves);
 
-                            double azimuth = azimuthCalculator.calculate(dataMatrix, 0, dataMatrix[0].length, Swarm.config.azimuthPvel);
+                            double azimuth =
+                                    azimuthCalculator.calculate(dataMatrix, 0, dataMatrix[0].length,
+                                            Swarm.config.azimuthPvel);
                             // Azimuth: integer, velocity: tenths, coherence: tenths
                             SwarmMenu
                                     .getDataRecord()
                                     .getEventCalculationPanel()
                                     .setAzimuthValue(
-                                            Integer.toString((int)Math.round(azimuth)) +
-                                                    ", velocity: " +
-                                                    roundTo(azimuthCalculator.getVelocity(), 10) +
-                                                    ", coherence: " +
+                                            Integer.toString((int)Math.round(azimuth)) + ", velocity: " +
+                                                    roundTo(azimuthCalculator.getVelocity(), 10) + ", coherence: " +
                                                     roundTo(azimuthCalculator.getCoherence(), 10));
                         } else {
                             System.out.println("Cannot get waves for azimuth");
@@ -698,9 +705,9 @@ public class WaveViewPanel extends JComponent {
 
                         if (timeSeries)
                         /* System.out.printf("%s UTC: %s j2k: %.3f ew: %.3f\n",
-                        		channel,
-                        		Time.format(DATE_FORMAT, Util.j2KToDate(j2k)),
-                        		j2k, Util.j2KToEW(j2k)); */
+                                channel,
+                                Time.format(DATE_FORMAT, Util.j2KToDate(j2k)),
+                                j2k, Util.j2KToEW(j2k)); */
 
                         if (SwingUtilities.isRightMouseButton(e)) {
                             settings.cycleType();

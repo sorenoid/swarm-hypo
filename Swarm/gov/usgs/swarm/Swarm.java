@@ -7,6 +7,7 @@ import gov.usgs.swarm.data.FileDataSource.FileType;
 import gov.usgs.swarm.data.SeismicDataSource;
 import gov.usgs.swarm.database.model.Attempt;
 import gov.usgs.swarm.database.model.Event;
+import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.heli.HelicorderViewerFrame;
 import gov.usgs.swarm.map.HypoOuputMapFrame;
 import gov.usgs.swarm.map.LocationPickerMapFrame;
@@ -106,6 +107,7 @@ public class Swarm extends JFrame {
     public static FileType fileType = null;
     public static boolean cancelProcess = false;
     public static FileSpec fileSpec = null;
+    public static List<Marker> allMarkers = null;
 
     static {
         String[] ss = Util.getVersion("gov.usgs.swarm");
@@ -434,24 +436,24 @@ public class Swarm extends JFrame {
         // disable dragging in fullscreen mode
         /*
         desktop.setDesktopManager(new DefaultDesktopManager()
-        		{
-        			private static final long serialVersionUID = -1;
-        			public void beginDraggingFrame(JComponent f)
-        			{
-        				if (fullScreen)
-        					return;
-        				else
-        					super.beginDraggingFrame(f);
-        			}
-        			
-        			public void dragFrame(JComponent f, int x, int y)
-        			{
-        				if (fullScreen)
-        					return;
-        				else
-        					super.dragFrame(f, x, y);
-        			}
-        		});
+                {
+                    private static final long serialVersionUID = -1;
+                    public void beginDraggingFrame(JComponent f)
+                    {
+                        if (fullScreen)
+                            return;
+                        else
+                            super.beginDraggingFrame(f);
+                    }
+                    
+                    public void dragFrame(JComponent f, int x, int y)
+                    {
+                        if (fullScreen)
+                            return;
+                        else
+                            super.dragFrame(f, x, y);
+                    }
+                });
         */
         this.setSize(config.windowWidth, config.windowHeight);
         this.setLocation(config.windowX, config.windowY);
