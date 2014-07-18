@@ -157,7 +157,7 @@ public class Station  implements Serializable{
 	double SDFM;
 
 	@XmlRootElement
-	public static class TravelTimeResiduals {
+	public static class TravelTimeResiduals implements Serializable{
 		private int NRES;
 		private double SRWT;
 		private double AVRES;
