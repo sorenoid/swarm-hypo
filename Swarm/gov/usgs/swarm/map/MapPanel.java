@@ -1327,6 +1327,6 @@ public class MapPanel extends JPanel
 	}
 
 	public void moveToMarker(ClickableGeoLabel marker) {
-		setCenterAndScale(marker.location, 673.4);
+		setCenterAndScale(marker.location, 593.6);
 	}
 }

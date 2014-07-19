@@ -185,7 +185,7 @@ public class HypoOuputMapFrame extends JFrame {
 			double lat = h.getLAT1() + h.getLAT2();
 			double lon = h.getLON1() + h.getLON2();
 			marker.text = lat + "," + lon;
-			marker.location = new Point2D.Double(lat, lon);
+			marker.location = new Point2D.Double(lon, lat);
 			result.add(marker);
 		}
 		return result;
