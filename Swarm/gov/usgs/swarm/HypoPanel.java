@@ -176,7 +176,7 @@ public class HypoPanel extends JPanel {
 						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
-						error = "cannot run hypo please ensure input file have correct data";
+						error = "Cannot run hypo please ensure input file has correct data";
 					}
 
 				}
@@ -190,7 +190,7 @@ public class HypoPanel extends JPanel {
 						hr.setAdjustmentsOutput(hypoResult
 								.getAdjustmentIterations());
 						hr.setDeletedStationsList(hypoResult
-								.getDeletedStationsList());
+								.getDeletedStationsList()); 
 						hr.setHypocenterOuput(hypoResult.getHypocenterOutput());
 						hr.setMissingStationsList(hypoResult
 								.getMissingStationsList());
@@ -431,8 +431,9 @@ public class HypoPanel extends JPanel {
 
 				phaseRecordsList.add(new PhaseRecord(st,
 						prmk, // PRMK
-						(prmk.length() > 3) ? Float.parseFloat(prmk.substring(3, 4)) : 0, (int) pkDate, pMin,
-						pSec, sSec, smrk, // SMRK
+						(prmk != null && prmk.length() > 3) ? Float.parseFloat(prmk.substring(3, 4)) : 0,
+						(int) pkDate, pMin, pSec,
+						sSec, smrk, // SMRK
 						0.0f, // WS
 						0.0f, // AMX TODO: calc this
 						0.0f, // PRX
@@ -442,7 +443,7 @@ public class HypoPanel extends JPanel {
 						0.0f, // DT
 						timeDiffFromCodaToPInSec, // FMP
 						"", // "1.22",
-						'D', "", "", // "SR01IPD0 691005120651.22",
+						'D', smrk != null ? "1" : "", "", // "SR01IPD0 691005120651.22",
 						' ', "" // "IPD0"
 				));
 			}
