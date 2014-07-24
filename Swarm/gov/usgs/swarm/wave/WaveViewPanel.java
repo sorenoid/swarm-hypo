@@ -13,6 +13,7 @@ import gov.usgs.swarm.SwingWorker;
 import gov.usgs.swarm.calculation.AzimuthCalculator;
 import gov.usgs.swarm.data.CachedDataSource;
 import gov.usgs.swarm.data.SeismicDataSource;
+import gov.usgs.swarm.database.model.Attempt;
 import gov.usgs.swarm.database.model.Marker;
 import gov.usgs.swarm.wave.WaveViewSettings.ViewType;
 import gov.usgs.util.Time;
@@ -334,34 +335,35 @@ public class WaveViewPanel extends JComponent {
      */
     public void paintMarker(Graphics g) {
         super.paintComponent(g);
+        Attempt selectedAttempt = Swarm.getSelectedAttempt();
         if (null != Swarm.allMarkers) {
             Swarm.allMarkers.clear();
         }
-        Swarm.allMarkers = Marker.listByAttempt(Swarm.getSelectedAttempt().getId());
-        double[] t = getTranslation();
-        Collection<Marker> markerCollection = Swarm.allMarkers;
-        for (Marker marker : markerCollection) {
-            if (t != null) {
-                double j2k = Util.dateToJ2K(marker.getMarkerTime());
-                int x = (int)((j2k - t[1]) / t[0]);
-
-                if (marker.getMarkerType().equalsIgnoreCase(Marker.P_MARKER_LABEL)) {
-                    g.setColor(Marker.P_MARKER_COLOR);
-                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.S_MARKER_LABEL)) {
-                    g.setColor(Marker.S_MARKER_COLOR);
-                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.CODA_MARKER_LABEL)) {
-                    g.setColor(Marker.CODA_MARKER_COLOR);
-                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.AZIMUTH_MARKER_LABEL)) {
-                    g.setColor(Marker.AZIMUTH_MARKER_COLOR);
-                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.PARTICLE_MARKER_LABEL)) {
-                    g.setColor(Marker.PARTICLE_MARKER_COLOR);
-                }
-                g.drawLine(x, plotHeight, x, -plotHeight);
-                paintMarkerLabel(g, marker, x);
-
-            }
+        if (selectedAttempt != null) {
+			Swarm.allMarkers = Marker.listByAttempt(selectedAttempt.getId());
+	        double[] t = getTranslation();
+	        Collection<Marker> markerCollection = Swarm.allMarkers;
+	        for (Marker marker : markerCollection) {
+	            if (t != null && this.getStationCode().equals(marker.getStation())) {
+	                double j2k = Util.dateToJ2K(marker.getMarkerTime());
+	                int x = (int)((j2k - t[1]) / t[0]);
+	
+	                if (marker.getMarkerType().equalsIgnoreCase(Marker.P_MARKER_LABEL)) {
+	                    g.setColor(Marker.P_MARKER_COLOR);
+	                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.S_MARKER_LABEL)) {
+	                    g.setColor(Marker.S_MARKER_COLOR);
+	                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.CODA_MARKER_LABEL)) {
+	                    g.setColor(Marker.CODA_MARKER_COLOR);
+	                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.AZIMUTH_MARKER_LABEL)) {
+	                    g.setColor(Marker.AZIMUTH_MARKER_COLOR);
+	                } else if (marker.getMarkerType().equalsIgnoreCase(Marker.PARTICLE_MARKER_LABEL)) {
+	                    g.setColor(Marker.PARTICLE_MARKER_COLOR);
+	                }
+	                g.drawLine(x, plotHeight, x, -plotHeight);
+	                paintMarkerLabel(g, marker, x);
+	            }
+	        }
         }
-
     }
 
     /**

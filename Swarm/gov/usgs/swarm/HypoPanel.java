@@ -397,7 +397,7 @@ public class HypoPanel extends JPanel {
 					int pday = c.get(Calendar.DAY_OF_MONTH);
 					pHour = c.get(Calendar.HOUR_OF_DAY);
 					pMin = c.get(Calendar.MINUTE);
-					pSec = c.get(Calendar.SECOND);
+					pSec = c.get(Calendar.SECOND) + c.get(Calendar.MILLISECOND)/1000f;
 
 					pkDate = Float.parseFloat(Integer.toString(pyear - 1900)
 							+ (pmonth < 10 ? "0" + Integer.toString(pmonth)
@@ -426,7 +426,7 @@ public class HypoPanel extends JPanel {
 							+ (sMarker.getWeight() == null ? "0" : sMarker
 									.getWeight().toString());
 
-					sSec = c.get(Calendar.SECOND);
+					sSec = c.get(Calendar.SECOND) + c.get(Calendar.MILLISECOND)/1000f;
 				}
 
 				phaseRecordsList.add(new PhaseRecord(st,

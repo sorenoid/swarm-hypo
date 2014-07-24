@@ -3,6 +3,7 @@ package gov.usgs.swarm.map;
 import gov.usgs.swarm.Swarm;
 import gov.usgs.swarm.Throbber;
 import gov.usgs.swarm.database.model.HypoResults;
+import gov.usgs.swarm.wave.WaveViewPanel;
 import gov.usgs.util.ui.ExtensionFileFilter;
 import gov.usgs.vdx.calc.data.HypoArchiveOutput;
 import gov.usgs.vdx.calc.data.Hypocenter;
@@ -33,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -59,18 +61,12 @@ public class HypoOuputMapFrame extends JFrame {
 
 	private Throbber throbber;
 
-	JTextPane dataArea;
+	JTextArea dataArea;
 
 	private Border border;
 
 	private JTextField hypoOutput;
 	private JButton hypoSaveButton;
-
-	private JLabel rmsLabel;
-
-	private JLabel erhoutLabel;
-
-	private JLabel se3outLabel;
 
 	HypoArchiveOutput hy;
 
@@ -86,7 +82,7 @@ public class HypoOuputMapFrame extends JFrame {
 
 		mainPanel = new JPanel(new BorderLayout());
 
-		dataArea = new JTextPane();
+		dataArea = new JTextArea();
 		dataArea.setText("");
 		dataArea.setEditable(false);
 		dataArea.setFont(Font.getFont(Font.MONOSPACED));
@@ -101,33 +97,12 @@ public class HypoOuputMapFrame extends JFrame {
 		jp.add(hypoOutput);
 		jp.add(hypoSaveButton);
 
-		rmsLabel = new JLabel("<html><b>RMS :</b></html> ");
-		erhoutLabel = new JLabel("<html><b>ERHOUT :</b></html> ");
-		se3outLabel = new JLabel("<html><b>SE3OUT :</b></html> ");
-
-		FormLayout labellayout = new FormLayout(
-				"80dlu, 3dlu,  80dlu, 3dlu, 80dlu", "pref");
-
-		DefaultFormBuilder builder = new DefaultFormBuilder(labellayout);
-		builder.add(rmsLabel, "1,1,1,1,FILL,FILL");
-		builder.add(erhoutLabel, "3,1,1,1,FILL,FILL");
-		builder.add(se3outLabel, "5,1,1,1,FILL,FILL");
-		builder.getPanel().setBackground(Color.WHITE);
-
-//		JPanel mapPanelContainer = new JPanel();
-//		mapPanelContainer.setLayout(new BorderLayout());
-		// mapPanelContainer.add(mapPanel, BorderLayout.CENTER);
-//		mapPanelContainer.add(builder.getPanel(), BorderLayout.CENTER);
-
-//		splitPane.setBottomComponent();
-		mainPanel.add(builder.getPanel(), BorderLayout.NORTH);
 		mainPanel.add(scrollPane, BorderLayout.CENTER);
 		mainPanel.add(jp, BorderLayout.SOUTH);
 
 		setContentPane(mainPanel);
 
 		hypoSaveButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = getCustomFileChooser();
@@ -159,15 +134,9 @@ public class HypoOuputMapFrame extends JFrame {
 					} catch (JAXBException e1) {
 						e1.printStackTrace();
 					}
-
 				}
-
-				// }
 			}
-
-		}
-
-		);
+		});
 
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -182,9 +151,9 @@ public class HypoOuputMapFrame extends JFrame {
 		List<ClickableGeoLabel> result = new ArrayList<ClickableGeoLabel>();
 		for (Hypocenter h : centers) {
 			gov.usgs.swarm.map.Hypocenter marker = new gov.usgs.swarm.map.Hypocenter();
-			double lat = h.getLAT1() + h.getLAT2();
-			double lon = h.getLON1() + h.getLON2();
-			marker.text = lat + "," + lon;
+			double lat = h.getLAT1() + (h.getLAT2() / 60.0);
+			double lon = h.getLON1() + (h.getLON2() / 60.0);
+			marker.text = WaveViewPanel.roundTo(lat, 1000) + "," + WaveViewPanel.roundTo(lon, 1000);
 			marker.location = new Point2D.Double(lon, lat);
 			result.add(marker);
 		}
